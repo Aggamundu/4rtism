@@ -1,22 +1,64 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 import { supabaseClient } from '../../../utils/supabaseClient'
 
 export default function AuthPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [userId, setUserId] = useState('')
+  const [media, setMedia] = useState<any[]>([])
   
   const testAuth = async () => {
     const { data: { user } } = await supabaseClient.auth.getUser();
-    const userId = user?.id;
+    setUserId(user?.id as string)
     if (!userId) {
       alert('No user found')
       return
     } else {
       alert('User found')
       alert(userId)
+    }
+  }
+
+  const getMedia = async () => {
+    const { data, error } = await supabaseClient
+    .storage
+    .from('commissions')
+    .list(userId + "/", {
+      limit: 10,
+      offset: 0,
+      sortBy: {
+        column: 'name',
+        order: 'asc',
+      },
+    })
+    if (data) {
+      setMedia(data)
+    } else {
+      console.log(71, error)
+    }
+  }
+
+  const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    let file = e.target.files?.[0]
+    if (!file) return
+
+    const { data, error } = await supabaseClient
+    .storage
+    .from('commissions')
+    .upload(userId + "/" + uuidv4(), file)
+
+    if (data) {
+      getMedia();
+    }
+
+    if (error) {
+      alert(error.message)
+    } else {
+      alert('Image uploaded successfully')
     }
   }
 
@@ -72,7 +114,9 @@ export default function AuthPage() {
       alert('Login successful')
     }
   }
-
+  useEffect(() => {
+    getMedia()
+  }, [userId])
   return (
     <div className="p-4 max-w-sm mx-auto">
       <input
@@ -100,6 +144,22 @@ export default function AuthPage() {
       <button onClick={createCommission} disabled={loading} className="bg-purple-500 text-white px-4 py-2 rounded">
         Create Commission
       </button>
+      <button onClick={testAuth} disabled={loading} className="bg-purple-500 text-white px-4 py-2 rounded">
+        Test Auth
+      </button>
+      <input type="file" onChange = {(e) => uploadImage(e)} />
+      <div>
+        My Uploads:
+      </div>
+
+      {media.map((media) => {
+        return (
+          <div>
+            <img src={`https://fvfkrsqxbxzbwiojvghz.supabase.co/storage/v1/object/public/commissions/0862d694-0bde-4991-8ef9-e89b984f4365/${media.name}`}/>
+            {/* https://fvfkrsqxbxzbwiojvghz.supabase.co/storage/v1/object/public/commissions/0862d694-0bde-4991-8ef9-e89b984f4365 */}
+          </div>
+        )
+      })}
     </div>
   )
 }
