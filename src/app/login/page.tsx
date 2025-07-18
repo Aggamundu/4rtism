@@ -7,10 +7,56 @@ export default function AuthPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  
+  const testAuth = async () => {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const userId = user?.id;
+    if (!userId) {
+      alert('No user found')
+      return
+    } else {
+      alert('User found')
+      alert(userId)
+    }
+  }
+
+  const createCommission = async () => {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const userId = user?.id;
+    if (!userId) {
+      alert('No user found')
+      return
+    } else {
+      const res = await fetch("/api/commissions", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: userId,
+        }),
+      })
+      if (res.ok) {
+        alert('Commission request sent successfully!')
+      } else {
+        alert('Error sending commission request')
+      }
+    }
+  }
 
   const handleSignUp = async () => {
     setLoading(true)
     const { data, error } = await supabaseClient.auth.signUp({ email, password })
+    if (data?.user?.id) {
+      const res = await fetch("https://fvfkrsqxbxzbwiojvghz.supabase.co/functions/v1/swift-action", {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'create-profile',
+          user_id: data.user.id,
+        }),
+      })
+      console.log(data)
+    }
     setLoading(false)
     if (error) alert(error.message)
     else alert('Check your email for confirmation!')
@@ -23,8 +69,7 @@ export default function AuthPage() {
     if (error) {
       alert(error.message)
     } else {
-      // Redirect to profile creation page after successful login
-      window.location.href = '/create-profile'
+      alert('Login successful')
     }
   }
 
@@ -52,6 +97,9 @@ export default function AuthPage() {
           Sign Up
         </button>
       </div>
+      <button onClick={createCommission} disabled={loading} className="bg-purple-500 text-white px-4 py-2 rounded">
+        Create Commission
+      </button>
     </div>
   )
 }

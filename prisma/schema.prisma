@@ -319,7 +319,6 @@ model auth_users {
   mfa_factors                 mfa_factors[]
   one_time_tokens             one_time_tokens[]
   sessions                    sessions[]
-  gigs                        gigs[]
   profiles                    profiles?
 
   @@index([instance_id])
@@ -330,120 +329,29 @@ model auth_users {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model extras {
-  id          BigInt   @id @default(autoincrement())
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
-  title       String?
-  description String?
-  price       Float?   @db.Real
-  extra_days  Int?     @db.SmallInt
-  gig_id      BigInt?
-  gigs        gigs?    @relation(fields: [gig_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@schema("public")
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model faq {
-  id         BigInt   @id @default(autoincrement())
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  gig_id     BigInt?
-  question   String?
-  answer     String?
-  gigs       gigs?    @relation(fields: [gig_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@schema("public")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model gallery {
-  id         BigInt   @id @default(autoincrement())
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  type       String?
-  url        String?
-  subject    String?
-  theme      String?
-  tags       String[]
-  position   Int?     @db.SmallInt
-  gig_id     BigInt?
-  gigs       gigs?    @relation(fields: [gig_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@schema("public")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model gigs {
-  id           BigInt         @id @default(autoincrement())
-  created_at   DateTime       @default(now()) @db.Timestamptz(6)
-  category     String?
-  subcategory  String?
-  style        String?
-  technique    String?
-  theme        String?
-  subject      String?
-  description  String?
-  user_id      String?        @db.Uuid
-  keywords     String[]
-  extras       extras[]
-  faq          faq[]
-  gallery      gallery[]
-  users        auth_users?    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  packages     packages[]
-  requirements requirements[]
-
-  @@schema("public")
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model packages {
-  id               BigInt   @id @default(autoincrement())
-  created_at       DateTime @default(now()) @db.Timestamptz(6)
-  gig_id           BigInt?
-  name             String?
-  details          String?
-  delivery_days    BigInt?
-  revisions        BigInt?
-  source_file      Boolean?
-  high_resolution  Boolean?
-  background_scene Boolean?
-  color            Boolean?
-  full_body        Boolean?
-  commercial_use   Boolean?
-  shipping         Boolean?
-  price            Float?   @db.Real
-  gigs             gigs?    @relation(fields: [gig_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@schema("public")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model requirements {
-  id         BigInt   @id @default(autoincrement())
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  gig_id     BigInt?
-  question   String?
-  type       String?
-  options    String?
-  required   Boolean?
-  gigs       gigs?    @relation(fields: [gig_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@schema("public")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model profiles {
-  id                String     @id(map: "users_pkey") @db.Uuid
-  created_at        DateTime   @default(now()) @db.Timestamptz(6)
-  username          String?
-  display_name      String?
-  bio               String?
-  profile_image_url String?
-  phone_verified    Boolean?
-  users             auth_users @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_id_fkey")
+  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at  DateTime      @default(now()) @db.Timestamptz(6)
+  name        String?
+  biography   String?
+  image_url   String?
+  commissions commissions[]
+  users       auth_users    @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model commissions {
+  id          BigInt    @id(map: "commmissions_pkey") @default(autoincrement())
+  profile_id  String?   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  title       String?
+  type        String?
+  price       Float?    @db.Real
+  description String?
+  images      String[]
+  profiles    profiles? @relation(fields: [profile_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "commmissions_profile_id_fkey")
 
   @@schema("public")
 }
