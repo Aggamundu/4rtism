@@ -16,6 +16,14 @@
 
 .homepage-explore-container {
     width: 100vw;
-    height: 1000px;
     background-color: yellow;
+    padding: 0 10vw;
+
+    display: flex;
+    flex-flow: row wrap;
+    row-gap: 50px;
+    column-gap: 50px;
+    align-items: flex-start;
+    align-content: flex-start;
+    justify-content: space-between;
 }

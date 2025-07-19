@@ -1,0 +1,9 @@
+.card-container {
+    width: 20%;
+}
+
+.card-img {
+    width: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+}
