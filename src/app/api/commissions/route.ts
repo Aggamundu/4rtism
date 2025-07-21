@@ -3,14 +3,17 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await request.json()
-    const commission = await createCommission(userId)
+    const form = await request.json()
+    const commission = await createCommission(form)
     const safeCommission = {
       id: commission.id.toString(),
       title: commission.title,
       type: commission.type,
       price: commission.price,
       description: commission.description,
+      images: commission.images,
+      thumbnail: commission.thumbnail,
+      delivery_days: commission.delivery_days,
     }
     return NextResponse.json(safeCommission, { status: 201 })
   } catch (error) {

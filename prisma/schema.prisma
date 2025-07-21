@@ -343,15 +343,17 @@ model profiles {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model commissions {
-  id          BigInt    @id(map: "commmissions_pkey") @default(autoincrement())
-  profile_id  String?   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at  DateTime  @default(now()) @db.Timestamptz(6)
-  title       String?
-  type        String?
-  price       Float?    @db.Real
-  description String?
-  images      String[]
-  profiles    profiles? @relation(fields: [profile_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "commmissions_profile_id_fkey")
+  id            BigInt    @id(map: "commmissions_pkey") @default(autoincrement())
+  profile_id    String?   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  title         String?
+  type          String?
+  price         Float?    @db.Real
+  description   String?
+  images        String[]
+  thumbnail     String?
+  delivery_days Int?      @db.SmallInt
+  profiles      profiles? @relation(fields: [profile_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "commmissions_profile_id_fkey")
 
   @@schema("public")
 }

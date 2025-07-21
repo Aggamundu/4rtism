@@ -11,7 +11,6 @@ export default function AuthPage() {
   const [userId, setUserId] = useState('')
   const [media, setMedia] = useState<any[]>([])
 
-  //Displays user id of the current user
   const testAuth = async () => {
     const { data: { user } } = await supabaseClient.auth.getUser();
     setUserId(user?.id as string)
@@ -24,7 +23,6 @@ export default function AuthPage() {
     }
   }
 
-  //Gets all media for the current user
   const getMedia = async () => {
     const { data, error } = await supabaseClient
       .storage
@@ -51,7 +49,6 @@ export default function AuthPage() {
     }
   }
 
-  //Uploads an image to the current user's media
   const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     let file = e.target.files?.[0]
     if (!file) return
@@ -79,7 +76,6 @@ export default function AuthPage() {
     }
   }
 
-  //Creates a commission for the current user
   const createCommission = async () => {
     const { data: { user } } = await supabaseClient.auth.getUser();
     const userId = user?.id;
@@ -104,7 +100,6 @@ export default function AuthPage() {
     }
   }
 
-  //Signs up a new user
   const handleSignUp = async () => {
     setLoading(true)
     const { data, error } = await supabaseClient.auth.signUp({ email, password })
@@ -113,7 +108,6 @@ export default function AuthPage() {
     else alert('Check your email for confirmation!')
   }
 
-  //Logs in a user
   const handleLogin = async () => {
     setLoading(true)
     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password })
@@ -124,13 +118,9 @@ export default function AuthPage() {
       alert('Login successful')
     }
   }
-
-  //Gets all media for the current user
   useEffect(() => {
     getMedia()
   }, [userId])
-
-  //Displays the UI
   return (
     <div className="p-4 max-w-sm mx-auto">
       <input
