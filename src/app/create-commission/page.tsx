@@ -29,72 +29,40 @@ export default function CreateCommission() {
   const [secondImagePreview, setSecondImagePreview] = useState<string>();
   const [thirdImage, setThirdImage] = useState<File | null>(null);
   const [thirdImagePreview, setThirdImagePreview] = useState<string>();
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
-  const [thumbnailUrl, setThumbnailUrl] = useState<string>();
+
 
   const uploadImages = async () => {
     const { data: { user } } = await supabaseClient.auth.getUser();
     let files = [firstImage, secondImage, thirdImage]
     if (!files) return;
     const filePaths = files.map(f => user?.id + "/" + uuidv4());
+    let uploadedUrls:string[] = [];
+    let thumbnail = '';
 
-    if (files[0]) {
-      const { data, error } = await supabaseClient
-        .storage
-        .from('commissions')
-        .upload(filePaths[0], files[0])
-
-      if (data) {
-        const { data: urlData } = supabaseClient
-          .storage
-          .from('commissions')
-          .getPublicUrl(filePaths[0])
-
-        console.log('Image URL:', urlData.publicUrl)
-        setThumbnailUrl(urlData.publicUrl)
-      }
-      if (error) {
-        alert(error.message)
-      }
-    }
-    if (files[1]) {
-      const { data, error } = await supabaseClient
-        .storage
-        .from('commissions')
-        .upload(filePaths[1], files[1])
-
-      if (data) {
-        const { data: urlData } = supabaseClient
-          .storage
-          .from('commissions')
-          .getPublicUrl(filePaths[1])
-
-        setImageUrls([...imageUrls, urlData.publicUrl])
-      }
-      if (error) {
-        alert(error.message)
-      }
-    }
-    if (files[2]) {
-      const { data, error } = await supabaseClient
-        .storage
-        .from('commissions')
-        .upload(filePaths[2], files[2])
-
-      if (data) {
-        const { data: urlData } = supabaseClient
-          .storage
-          .from('commissions')
-          .getPublicUrl(filePaths[2])
-
-        setImageUrls([...imageUrls, urlData.publicUrl])
-      }
-      if (error) {
-        alert(error.message)
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file) {
+        const {data, error} = await supabaseClient.storage.from('commissions').upload(filePaths[i], file);
+        if (data) {
+          const {data: urlData} = await supabaseClient.storage.from('commissions').getPublicUrl(filePaths[i]);
+          if (i === 0) {
+            thumbnail = urlData.publicUrl;
+          } else {uploadedUrls.push(urlData.publicUrl);
+        }
+        if (error) {
+          console.error('Error uploading file:', error);
+          return;
+        }
       }
     }
   }
-  const handleSubmit = async () => {
+    return {
+      thumbnail: thumbnail,
+      images: uploadedUrls
+    };
+}
+
+  const handleSubmit = async (thumbnail: string, images: string[]) => {
     const { data: { user } } = await supabaseClient.auth.getUser();
     const res = await fetch('/api/commissions', {
       method: 'POST',
@@ -108,8 +76,8 @@ export default function CreateCommission() {
         price: form.price,
         deliveryDays: form.deliveryDays,
         description: form.description,
-        images: imageUrls,
-        thumbnail: thumbnailUrl,
+        images: images,
+        thumbnail: thumbnail,
         delivery_days: form.deliveryDays,
       })
     })
@@ -157,11 +125,12 @@ export default function CreateCommission() {
       </div>
       <div className="flex flex-col justify-center items-center mt-8">
         <button
-          className={form.title === '' || form.type === '' || form.price < 30 || form.deliveryDays === 0 || form.deliveryDays > 30 || form.description === ''
-            ? "w-[200px] bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors"
-            : "w-[200px] bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+          className={!firstImage || form.title === '' || form.type === '' || form.price < 30 || form.deliveryDays === 0 || form.deliveryDays > 30 || form.description === ''
+            ? "w-[200px] text-[14px] bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+            : "w-[200px] text-[14px] bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
           }
           disabled={
+            !firstImage ||
             form.title === '' ||
             form.type === '' ||
             form.price < 30 ||
@@ -170,9 +139,11 @@ export default function CreateCommission() {
             form.description === ''
           }
           onClick={async () => {
-            await uploadImages().then(() => {
-              handleSubmit();
-            });
+            const result = await uploadImages();
+            if (result) {
+              const {thumbnail, images} = result;
+              handleSubmit(thumbnail, images);
+            }
           }}
         >
           Create Commission
