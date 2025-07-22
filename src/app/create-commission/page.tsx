@@ -129,7 +129,7 @@ export default function CreateCommission() {
 
 
   return (
-    <div className="w-[700px] mx-auto p-8 min-h-screen flex flex-col space-y-6">
+    <div className="w-[700px] mx-auto p-8 min-h-screen flex flex-col space-y-3">
 
       <Title form={form} setForm={setForm} />
       <Type form={form} setForm={setForm} />
@@ -139,17 +139,36 @@ export default function CreateCommission() {
 
 
 
-      <div className="flex flex-col w-1/3">
-        <p className="text-[12px] font-[700] mb-2">Upload Images (Up to 3)</p>
+      <div className="flex flex-col m-0">
+        <p className="text-[14px] font-[700] m-0">Upload Images (Up to 3)</p>
       </div>
       <div className="flex flex-row gap-[10px]">
-        <ImageInput setImage={setFirstImage} setImagePreview={setFirstImagePreview} imagePreview={firstImagePreview} />
+        <div>
+          <ImageInput setImage={setFirstImage} setImagePreview={setFirstImagePreview} imagePreview={firstImagePreview} />
+          {!firstImage && (
+            <div className="text-[12px] m-0 text-red-400 text-center">
+              Thumbnail Required
+            </div>
+          )}
+        </div>
+
         <ImageInput setImage={setSecondImage} setImagePreview={setSecondImagePreview} imagePreview={secondImagePreview} />
         <ImageInput setImage={setThirdImage} setImagePreview={setThirdImagePreview} imagePreview={thirdImagePreview} />
       </div>
-      <div className="flex justify-center mt-8">
+      <div className="flex flex-col justify-center items-center mt-8">
         <button
-          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+          className={form.title === '' || form.type === '' || form.price < 30 || form.deliveryDays === 0 || form.deliveryDays > 30 || form.description === ''
+            ? "w-[200px] bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+            : "w-[200px] bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+          }
+          disabled={
+            form.title === '' ||
+            form.type === '' ||
+            form.price < 30 ||
+            form.deliveryDays === 0 ||
+            form.deliveryDays > 30 ||
+            form.description === ''
+          }
           onClick={async () => {
             await uploadImages().then(() => {
               handleSubmit();
@@ -158,6 +177,16 @@ export default function CreateCommission() {
         >
           Create Commission
         </button>
+        {(form.title === '' ||
+            form.type === '' ||
+            form.price < 30 ||
+            form.deliveryDays === 0 ||
+            form.deliveryDays > 30 ||
+            form.description === '') && (
+              <div className="text-xs text-gray-400">
+                Please fill in all fields
+              </div>
+            )}
       </div>
     </div>
   )

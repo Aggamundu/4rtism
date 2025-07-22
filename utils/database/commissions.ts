@@ -1,5 +1,4 @@
 import { prisma } from '../prisma'
-import { supabaseClient } from '../supabaseClient'
 
 export async function createCommission(form: any) {
   try {
@@ -23,3 +22,23 @@ export async function createCommission(form: any) {
     throw error
   }
 }
+
+// export async function getExpensiveCommissions() {
+//   const expensiveCommissions = await prisma.commissions.findMany({
+//     orderBy: {
+//       price: 'desc',
+//     },
+//     select: {
+//       thumbnail: true,
+//       delivery_days: true,
+//       price: true,
+//       profiles: {
+//         select: {
+//           name: true,
+//           avg_reviews: true,
+//         }
+//       }
+//     },
+//   });
+//   return expensiveCommissions;
+// }

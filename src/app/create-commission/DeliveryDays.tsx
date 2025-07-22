@@ -9,13 +9,23 @@ export default function DeliveryDays(props: FormProps) {
     </div>
     <div className="flex-1">
       <input
-        type="number"
-        placeholder="Number of Days"
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        placeholder="3"
         className="w-full text-[12px] p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        value={form.deliveryDays}
-        onChange={e => setForm((f: Form) => ({ ...f, deliveryDays: Number(e.target.value) }))}
-        required
+        value={form.deliveryDays=== 0 || form.deliveryDays>30 ? "" : form.deliveryDays}
+        onChange={e => {
+          // Only allow digits
+          const val = e.target.value;
+          if (/^[0-9]*$/.test(val)) {
+            setForm((f: Form) => ({ ...f, deliveryDays: Number(val) }));
+          }
+        }}
       />
+      <div className="text-right text-xs text-gray-400">
+        Between 1 and 30 days
+      </div>
     </div>
   </div>
   )

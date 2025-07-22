@@ -335,6 +335,7 @@ model profiles {
   name        String?
   biography   String?
   image_url   String?
+  avg_reviews Float?        @db.Real
   commissions commissions[]
   users       auth_users    @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
