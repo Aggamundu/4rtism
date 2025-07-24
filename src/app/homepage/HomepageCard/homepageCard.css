@@ -1,9 +1,10 @@
 .card-container {
-    width: 20%;
+    break-inside: avoid-column;
+    margin-bottom: 50px;
 }
 
 .card-img {
-    width: 100%;
     border-radius: 10px;
+    border: 3px solid rgb(71, 18, 18);
     object-fit: cover;
 }
