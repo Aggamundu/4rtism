@@ -44,10 +44,15 @@ export default function Homepage() {
     return (
         <div className="homepage-container">
             <div className="homepage-featured-container">
-
+                <div className="homepage-featured-info">
+                    hi
+                </div>
+                <div className="homepage-featured-picture-container">
+                    <img className="homepage-featured-picture" src={ "https://i.pinimg.com/736x/19/b6/46/19b646aefe22c74234f44eec71324364.jpg" } alt={ "egics" } />
+                </div>
             </div>
             <div className="homepage-filter-container">
-
+        
             </div>
             <div className="homepage-explore-container">
                 { pictures }
