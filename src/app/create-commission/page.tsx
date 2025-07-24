@@ -8,6 +8,7 @@ import ImageInput from "./ImageInput";
 import Price from "./Price";
 import Title from "./Title";
 import Type from "./Type";
+//TODO make width based on view width, think more about font sizes
 type Form = {
   title: string;
   type: string;

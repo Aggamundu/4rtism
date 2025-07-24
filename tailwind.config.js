@@ -6,7 +6,21 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'ibm-plex-mono': ['IBM Plex Mono', 'sans-serif'],
+      },
+    },
+    fontSize: {
+      xs: '12px',
+      sm: '14px',
+      base: '12px',
+      lg: '16px',
+      xl: '20px',
+      '2xl': '32px',
+      '3xl': '40px',
+      '4xl': '48px',
+    }
   },
   plugins: [],
 } 

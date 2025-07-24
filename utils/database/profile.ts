@@ -30,3 +30,12 @@ if (require.main === module) {
       process.exit(1)
     })
 }
+
+export async function getProfileByName(name: string) {
+  const profile = await prisma.profiles.findUnique({
+    where: {
+      name: name,
+    },
+  })
+  return profile
+}

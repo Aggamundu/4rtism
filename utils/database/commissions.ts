@@ -22,23 +22,11 @@ export async function createCommission(form: any) {
     throw error
   }
 }
-
-// export async function getExpensiveCommissions() {
-//   const expensiveCommissions = await prisma.commissions.findMany({
-//     orderBy: {
-//       price: 'desc',
-//     },
-//     select: {
-//       thumbnail: true,
-//       delivery_days: true,
-//       price: true,
-//       profiles: {
-//         select: {
-//           name: true,
-//           avg_reviews: true,
-//         }
-//       }
-//     },
-//   });
-//   return expensiveCommissions;
-// }
+export async function getCommissionsByProfileId(profileId: string) {
+  const commissions = await prisma.commissions.findMany({
+    where: {
+      profile_id: profileId,
+    },
+  })
+  return commissions
+}
