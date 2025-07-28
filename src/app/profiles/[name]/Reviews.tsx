@@ -29,14 +29,12 @@ export default function Reviews({ reviews }: { reviews: ReviewType[] }) {
       <Stars stars={1} percentage={0} numReviews={0} />
       <div className="flex items-center mb-.5 mt-2">
         <p className="mr-2">Sort by:</p>
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value as 'highest' | 'lowest')}
-          className="border border-gray-300 rounded-md px-2"
+        <button
+          onClick={() => setSort(sort === 'highest' ? 'lowest' : 'highest')}
+          className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-md transition-colors border border-gray-300"
         >
-          <option value="highest">Highest Reviews</option>
-          <option value="lowest">Lowest Reviews</option>
-        </select>
+          {sort === 'highest' ? 'Highest ↓' : 'Lowest ↑'}
+        </button>
       </div>
       {displayedReviews.map((review, index) => (
         <Review key={review.id || index} review={review} />

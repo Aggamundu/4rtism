@@ -1,0 +1,15 @@
+
+/* Dashboard-specific body styles */
+body.dashboard-page {
+  background: #F9FAFB;
+  min-height: 100vh;
+}
+
+/* body.dashboard-page .dashboard-content {
+  background: rgb(255, 255, 255);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  margin: 20px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+} */

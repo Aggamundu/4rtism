@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createProfile } from '../../../../utils/database/profile'
-import { getProfileByName } from '../../../../utils/database/profile'
+import { createProfile, getProfileByName } from '../../../../utils/database/profile'
 
 export async function POST(request: NextRequest) {
   try {

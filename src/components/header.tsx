@@ -6,6 +6,17 @@ export default function Header() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const categoriesRef = useRef<HTMLDivElement>(null);
+  const [randomPlaceholder, setRandomPlaceholder] = useState("What are you looking for?");
+
+  const placeholders = [
+    "Pregnant Elon Musk",
+    "What are you looking for?",
+  ];
+
+  useEffect(() => {
+    setRandomPlaceholder(placeholders[Math.floor(Math.random() * placeholders.length)]);
+  }, []);
+
 
   useEffect(() => {
     const checkOverflow = () => {
@@ -48,7 +59,7 @@ export default function Header() {
         <div className="relative w-full sm:w-[55%] flex justify-center order-3 sm:order-2">
           <input
             type="text"
-            placeholder="What are you looking for?"
+            placeholder={randomPlaceholder}
             className="pl-4 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full"
           />
           <svg
@@ -88,6 +99,13 @@ export default function Header() {
           <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Cyberpunk</a>
           <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Mecha</a>
           <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Vector</a>
+          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Fantasy</a>
+          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Furry</a>
+          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Landscape</a>
+          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Character Design</a>
+          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Concept Art</a>
+          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Pixel Art</a>
+          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Digital Painting</a>
         </div>
         {canScrollRight && (
           <button
