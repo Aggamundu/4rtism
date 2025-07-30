@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@material-tailwind/react": "^2.1.10",
     "@prisma/client": "^6.11.1",
     "@supabase/supabase-js": "^2.50.5",
     "next": "15.3.5",
