@@ -1,6 +1,6 @@
 "use client"
 import { useState } from 'react';
-import CommissionCard from "./CommissionCard";
+import CommissionCard from "../dashboard/CommissionCard";
 import CommissionType from "./CommissionType";
 
 export default function CommissionsPage({ commissions }: { commissions: CommissionType[] }) {
