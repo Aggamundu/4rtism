@@ -3,7 +3,7 @@ import { useState } from 'react';
 import RequestOverlay from "./RequestOverlay";
 import RequestType from "./RequestType";
 
-export default function RequestCards({ requests }: { requests: RequestType[] }) {
+export default function RequestCards({ requests, onRefresh }: { requests: RequestType[], onRefresh?: () => void }) {
   const [selectedRequest, setSelectedRequest] = useState<RequestType | null>(null);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
 
@@ -65,7 +65,7 @@ export default function RequestCards({ requests }: { requests: RequestType[] }) 
         <span className="text-sm text-gray-400">{getTimeAgo(created_at)}</span>
       </div>
     )
-  })
+  });
 
   return (
     <div>
@@ -81,6 +81,7 @@ export default function RequestCards({ requests }: { requests: RequestType[] }) 
             request={selectedRequest}
             isOpen={isOverlayOpen}
             onClose={closeOverlay}
+            onRefresh={onRefresh}
           />
         </div>
       </div>

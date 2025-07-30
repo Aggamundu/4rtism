@@ -20,7 +20,10 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchProfile = async () => {
       // Only fetch if user is loaded and has an ID
-      if (!user?.id) return;
+      if (!user?.id) {
+        console.log('No user ID');
+        return;
+      }
 
       try {
         const { data, error } = await supabaseClient
@@ -52,32 +55,41 @@ export default function DashboardPage() {
     };
   }, []);
 
+  const fetchRequests = async () => {
+    // Only fetch if user is loaded and has an ID
+    if (!user?.id) {
+      console.log('No user ID');
+      return;
+    }
+
+    console.log('Fetching requests for user:', user.id);
+    const { data, error } = await supabaseClient
+      .from('requests')
+      .select(`
+        *
+      `)
+      .eq('user_id', user.id);
+    if (error) {
+      console.error('Error fetching requests:', error);
+    } else {
+      console.log('Raw data from database:', data);
+      console.log('Number of requests found:', data?.length || 0);
+      const requests = data.map((request: any) => ({
+        id: request.id,
+        created_at: request.created_at,
+        title: request.title,
+        name: request.name,
+        description: request.description,
+        reference_images: request.reference_images,
+        email: request.email,
+      }));
+      setRequests(requests);
+    }
+  };
+
   useEffect(() => {
-    const fetchRequests = async () => {
-      const { data, error } = await supabaseClient
-        .from('requests')
-        .select(`
-          *,
-          profile:profiles(name)
-        `)
-        .eq('user_id', user.id);
-      if (error) {
-        console.error('Error fetching requests:', error);
-      } else {
-        const requests = data.map((request: any) => ({
-          id: request.id,
-          created_at: request.created_at,
-          title: request.title,
-          name: request.profile?.name || 'Unknown',
-          description: request.description,
-          reference_images: request.reference_images,
-          email: request.email,
-        }));
-        setRequests(requests);
-      }
-    };
     fetchRequests();
-  }, []);
+  }, [user?.id]);
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: '📊' },
@@ -126,7 +138,12 @@ export default function DashboardPage() {
         return (
           <div className="space-y-6">
             <OverviewCard commissions={24} money={120} rating={2.8} />
-            <RequestCards requests={defaultRequests} />
+            <RequestCards requests={requests} onRefresh={() => {
+              // Re-fetch requests
+              if (user?.id) {
+                fetchRequests();
+              }
+            }} />
           </div>
         );
       case 'commissions':
