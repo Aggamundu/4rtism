@@ -1,5 +1,5 @@
 "use client"
-import Header from '../../components/header';
+import Header from '../../components/Header';
 import { useEffect, useState } from 'react';
 import { supabaseClient } from '../../../utils/supabaseClient';
 import { useAuth } from '../../contexts/AuthContext';
