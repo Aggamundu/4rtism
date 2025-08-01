@@ -53,28 +53,35 @@ export default function MessagingPage() {
   useEffect(() => {
     if (!user?.id) return;
 
+    console.log('Setting up real-time subscription for user:', user.id);
+
     const channel = supabaseClient
       .channel('messages')
       .on('postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages',
-          filter: `receiver_id=eq.${user.id}`
+          table: 'messages'
         },
         (payload) => {
           console.log('New message received:', payload)
-          // Add new message to state if it's from the current conversation
-          if (selectedConversation && payload.new.sender_id === selectedConversation) {
-            setMessages(prev => [...prev, payload.new as Message]);
+          // Check if this message involves the current user
+          if (payload.new.sender_id === user.id || payload.new.receiver_id === user.id) {
+            // Add new message to state if it's from the current conversation
+            if (selectedConversation && payload.new.sender_id === selectedConversation) {
+              setMessages(prev => [...prev, payload.new as Message]);
+            }
+            // Refresh conversations to update last message
+            fetchConversations();
           }
-          // Refresh conversations to update last message
-          fetchConversations();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Subscription status:', status);
+      });
 
     return () => {
+      console.log('Cleaning up subscription');
       supabaseClient.removeChannel(channel);
     };
   }, [user?.id, selectedConversation]);

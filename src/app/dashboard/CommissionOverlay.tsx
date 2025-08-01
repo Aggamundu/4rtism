@@ -1,20 +1,32 @@
 "use client"
 import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { supabaseClient } from '../../../utils/supabaseClient';
 import CommissionType from "./CommissionType";
 
 interface CommissionOverlayProps {
   commission: CommissionType | null;
   isOpen: boolean;
   onClose: () => void;
+  onRefresh: () => void;
+  authId: string;
 }
 
-export default function CommissionOverlay({ commission, isOpen, onClose }: CommissionOverlayProps) {
+export default function CommissionOverlay({ commission, isOpen, onClose, onRefresh, authId }: CommissionOverlayProps) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
 
   if (!isOpen || !commission) return null;
 
-  const { id, title, description, status, dueDate, client, reference_images, submission_images } = commission;
+  const { id, title, description, status, dueDate, client_name, reference_images, submission_images, user_id, client_id, price, artist_name, delivery_days } = commission;
+
+  const changeStatus = async (status: string) => {
+    const { data, error } = await supabaseClient.from('orders').update({ status: status }).eq('id', id);
+    if (error) {
+      console.error('Error changing status:', error);
+      return;
+    }
+  }
 
   const getDaysUntilDue = (dueDate: string) => {
     const today = new Date();
@@ -23,6 +35,14 @@ export default function CommissionOverlay({ commission, isOpen, onClose }: Commi
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };
+
+  const setSubmissionImages = async (images: string[]) => {
+    const { data, error } = await supabaseClient.from('orders').update({ submission_images: images }).eq('id', id);
+    if (error) {
+      console.error('Error setting submission images:', error);
+      return;
+    }
+  }
 
   const getStatusElement = (status: string) => {
     switch (status) {
@@ -47,6 +67,9 @@ export default function CommissionOverlay({ commission, isOpen, onClose }: Commi
   };
 
   const handleSubmitFiles = async () => {
+    await changeStatus('Awaiting Approval');
+    await uploadImages();
+    onRefresh();
     if (selectedFiles.length === 0) return;
 
     setUploadProgress(0);
@@ -65,6 +88,29 @@ export default function CommissionOverlay({ commission, isOpen, onClose }: Commi
     setUploadProgress(0);
     onClose();
   };
+
+  const uploadImages = async () => {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    let files = selectedFiles;
+    if (!files) return;
+    const filePaths = files.map(f => user?.id + "/" + uuidv4());
+    const uploadedUrls: string[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file) {
+        const { data, error } = await supabaseClient.storage.from('commissions').upload(filePaths[i], file);
+        if (data) {
+          const { data: urlData } = await supabaseClient.storage.from('commissions').getPublicUrl(filePaths[i]);
+          uploadedUrls.push(urlData.publicUrl);
+        }
+        if (error) {
+          console.error('Error uploading file:', error);
+          return;
+        }
+      }
+    }
+    await setSubmissionImages(uploadedUrls);
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -87,8 +133,9 @@ export default function CommissionOverlay({ commission, isOpen, onClose }: Commi
           {/* Basic Info */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-            <p className="text-gray-600">Client: {client}</p>
-            <p className="text-sm text-gray-500">Due in {getDaysUntilDue(dueDate)} days</p>
+            <p className="text-gray-600">{authId === user_id ? `Client: ${client_name}` : `Artist: ${artist_name}`}</p>
+            <p className="text-sm text-gray-500">Delivery in {delivery_days} days</p>
+            <p className="text-base font-medium text-green-600">Price: ${price?.toFixed(2) || '0.00'}</p>
             <div className="mt-2">
               {getStatusElement(status)}
             </div>
@@ -136,7 +183,10 @@ export default function CommissionOverlay({ commission, isOpen, onClose }: Commi
                       className="w-full h-32 object-cover rounded-lg border border-gray-200"
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 rounded-lg flex items-center justify-center">
-                      <button className="opacity-0 group-hover:opacity-100 text-white bg-blue-500 px-3 py-1 rounded-md text-sm transition-opacity">
+                      <button
+                        onClick={() => window.open(image, '_blank')}
+                        className="opacity-0 group-hover:opacity-100 text-white bg-blue-500 px-3 py-1 rounded-md text-sm transition-opacity"
+                      >
                         View Full Size
                       </button>
                     </div>

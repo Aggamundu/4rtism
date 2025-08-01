@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabaseClient } from '../../../utils/supabaseClient';
 import { useAuth } from '../../contexts/AuthContext';
 import CommissionsPage from './CommissionsPage';
+import CommissionType from './CommissionType';
 import './dashboard.css';
 import MessagingPage from './MessagingPage';
 import OverviewCard from './OverviewCard';
@@ -16,6 +17,7 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [name, setName] = useState('');
   const [requests, setRequests] = useState<RequestType[]>([]);
+  const [orders, setOrders] = useState<CommissionType[]>([]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -82,13 +84,67 @@ export default function DashboardPage() {
         description: request.description,
         reference_images: request.reference_images,
         email: request.email,
+        user_id: request.user_id,
+        client_id: request.client_id,
       }));
       setRequests(requests);
     }
   };
 
+  const fetchOrders = async () => {
+    if (!user?.id) {
+      console.log('No user ID');
+      return;
+    }
+    const { data, error } = await supabaseClient
+      .from('orders')
+      .select(`*`)
+      .or(`user_id.eq.${user.id},client_id.eq.${user.id}`);
+
+    if (error) {
+      console.error('Error fetching orders:', error);
+    } else {
+      console.log('Orders query result:', data);
+      console.log('User ID:', user.id);
+      console.log('User ID type:', typeof user.id);
+
+      // Log each order to see the actual data structure
+      data?.forEach((order, index) => {
+        console.log(`Order ${index}:`, {
+          id: order.id,
+          user_id: order.user_id,
+          client_id: order.client_id,
+          user_id_type: typeof order.user_id,
+          client_id_type: typeof order.client_id
+        });
+      });
+      const orders = data?.map((order: any) => ({
+        id: order.id,
+        title: order.title,
+        description: order.description,
+        status: order.status,
+        dueDate: order.dueDate,
+        client: order.client,
+        reference_images: order.reference_images,
+        submission_images: order.submission_images,
+        user_id: order.user_id,
+        client_id: order.client_id,
+        client_name: order.name,
+        email: order.email,
+        price: order.price,
+        created_at: order.created_at,
+        artist_name: order.artist_name,
+        delivery_days: order.delivery_days,
+      }));
+      setOrders(orders);
+      console.log('Raw data from database:', data);
+      console.log('Number of orders found:', data?.length || 0);
+    }
+  };
+
   useEffect(() => {
     fetchRequests();
+    fetchOrders();
   }, [user?.id]);
 
   const tabs = [
@@ -98,31 +154,6 @@ export default function DashboardPage() {
     { id: 'messaging', label: 'Messaging', icon: '💬' },
   ];
 
-  // Default data for components
-  const defaultRequests = [
-    {
-      id: 1,
-      created_at: "2024-01-01T00:00:00Z",
-      title: "Character Design",
-      name: "John Doe",
-      description: "John Doe wants a character design for his new project",
-      reference_images: ["https://example.com/image1.jpg"],
-      email: "john.doe@example.com",
-    }
-  ];
-
-  const defaultCommissions = [
-    {
-      id: 1,
-      title: "Anime Character Design",
-      description: "Mike Chen wants an anime character design for his new project",
-      status: "in_progress",
-      dueDate: "2025-07-28",
-      client: "Mike Chen",
-      reference_images: ["https://example.com/image1.jpg"],
-      submission_images: ["https://example.com/image1.jpg"],
-    }
-  ];
 
   const defaultTransactions = [
     {
@@ -138,18 +169,64 @@ export default function DashboardPage() {
         return (
           <div className="space-y-6">
             <OverviewCard commissions={24} money={120} rating={2.8} />
-            <RequestCards requests={requests} onRefresh={() => {
-              // Re-fetch requests
-              if (user?.id) {
-                fetchRequests();
-              }
-            }} />
+            <RequestCards
+              requests={requests}
+              onRefresh={() => {
+                // Re-fetch requests
+                if (user?.id) {
+                  fetchRequests();
+                }
+              }}
+              name={name}
+              onOpenMessage={async (userId: string) => {
+                // Switch to messaging tab
+                setActiveTab('messaging');
+
+                // Check if conversation already exists
+                if (user?.id) {
+                  const { data: existingMessages, error } = await supabaseClient
+                    .from('messages')
+                    .select('*')
+                    .or(`and(sender_id.eq.${user.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${user.id})`)
+                    .limit(1);
+
+                  if (error) {
+                    console.error('Error checking existing messages:', error);
+                    return;
+                  }
+
+                  // If no messages exist, send "hi" message
+                  if (!existingMessages || existingMessages.length === 0) {
+                    const { error: sendError } = await supabaseClient
+                      .from('messages')
+                      .insert({
+                        sender_id: user.id,
+                        receiver_id: userId,
+                        content: 'hi',
+                        created_at: new Date().toISOString()
+                      });
+
+                    if (sendError) {
+                      console.error('Error sending initial message:', sendError);
+                    } else {
+                      console.log('Initial "hi" message sent to user:', userId);
+                    }
+                  } else {
+                    console.log('Conversation already exists with user:', userId);
+                  }
+                }
+              }}
+            />
           </div>
         );
       case 'commissions':
         return (
           <div className="space-y-6">
-            <CommissionsPage commissions={defaultCommissions} />
+            <CommissionsPage commissions={orders} onRefresh={() => {
+              if (user?.id) {
+                fetchOrders();
+              }
+            }} authId={user?.id} />
           </div>
         );
       case 'transactions':

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import RequestOverlay from "./RequestOverlay";
 import RequestType from "./RequestType";
 
-export default function RequestCards({ requests, onRefresh }: { requests: RequestType[], onRefresh?: () => void }) {
+export default function RequestCards({ requests, onRefresh, onOpenMessage, name }: { requests: RequestType[], onRefresh?: () => void, onOpenMessage?: (userId: string) => void, name: string }) {
   const [selectedRequest, setSelectedRequest] = useState<RequestType | null>(null);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
 
@@ -82,6 +82,8 @@ export default function RequestCards({ requests, onRefresh }: { requests: Reques
             isOpen={isOverlayOpen}
             onClose={closeOverlay}
             onRefresh={onRefresh}
+            onOpenMessage={onOpenMessage}
+            name={name}
           />
         </div>
       </div>

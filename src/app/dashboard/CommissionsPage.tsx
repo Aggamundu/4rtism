@@ -3,7 +3,7 @@ import { useState } from 'react';
 import CommissionCard from "../dashboard/CommissionCard";
 import CommissionType from "./CommissionType";
 
-export default function CommissionsPage({ commissions }: { commissions: CommissionType[] }) {
+export default function CommissionsPage({ commissions, onRefresh, authId }: { commissions: CommissionType[], onRefresh: () => void, authId: string }) {
   const [sortBy, setSortBy] = useState<'dueDate' | 'status'>('dueDate');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
@@ -37,7 +37,7 @@ export default function CommissionsPage({ commissions }: { commissions: Commissi
 
   const renderCommissionCards = () => {
     return sortedCommissions.map((commission) => (
-      <CommissionCard key={commission.id} commission={commission} />
+      <CommissionCard key={commission.id} commission={commission} onRefresh={onRefresh} authId={authId} />
     ))
   }
 

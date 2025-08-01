@@ -6,6 +6,8 @@ type RequestType = {
   description: string,
   reference_images: string[],
   email: string,
+  user_id: string,
+  client_id: string,
 }
 
 export default RequestType;

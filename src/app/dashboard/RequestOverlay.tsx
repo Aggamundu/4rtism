@@ -7,11 +7,14 @@ interface RequestOverlayProps {
   isOpen: boolean;
   onClose: () => void;
   onRefresh?: () => void;
+  onOpenMessage?: (userId: string) => void;
+  name: string;
 }
 
-export default function RequestOverlay({ request, isOpen, onClose, onRefresh }: RequestOverlayProps) {
+export default function RequestOverlay({ request, isOpen, onClose, onRefresh, onOpenMessage, name }: RequestOverlayProps) {
   const [isExtended, setIsExtended] = useState(false);
   const [price, setPrice] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   if (!isOpen || !request) return null;
 
   const validatePrice = (price: number) => {
@@ -29,6 +32,28 @@ export default function RequestOverlay({ request, isOpen, onClose, onRefresh }: 
     return true;
   };
 
+  const createOrder = async (price: number) => {
+    const { error } = await supabaseClient
+      .from('orders')
+      .insert({
+        price: price,
+        status: 'Awaiting Payment',
+        user_id: request.user_id,
+        client_id: request.client_id,
+        reference_images: request.reference_images,
+        description: request.description,
+        title: request.title,
+        name: request.name,
+        email: request.email,
+        artist_name: name,
+      });
+    if (error) {
+      console.error('Error creating order:', error);
+    } else {
+      console.log('Order created successfully');
+    }
+  };
+
   const deleteRequest = async () => {
     const { error } = await supabaseClient
       .from('requests')
@@ -38,6 +63,7 @@ export default function RequestOverlay({ request, isOpen, onClose, onRefresh }: 
       console.error('Error deleting request:', error);
     } else {
       console.log('Request deleted successfully');
+      setShowDeleteConfirm(false);
       onClose(); // Close the overlay after successful deletion
       onRefresh?.(); // Refresh the requests list
     }
@@ -133,16 +159,15 @@ export default function RequestOverlay({ request, isOpen, onClose, onRefresh }: 
           {/* Action Buttons */}
           <div className="flex space-x-4 pt-4 border-t border-gray-200">
             <button
-              onClick={() => setIsExtended(!isExtended)}
+              onClick={() => {
+                setIsExtended(!isExtended);
+              }}
               className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
             >
               Accept Request
             </button>
-            <button onClick={deleteRequest} className="flex-1 bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition-colors">
-              Decline Request
-            </button>
-            <button className="flex-1 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition-colors">
-              Contact Client
+            <button onClick={() => setShowDeleteConfirm(true)} className="flex-1 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-colors">
+              Delete Request
             </button>
           </div>
 
@@ -181,7 +206,10 @@ export default function RequestOverlay({ request, isOpen, onClose, onRefresh }: 
                     // Handle sending invoice logic here
                     console.log('Sending invoice for $' + price);
                     setIsExtended(false);
+                    createOrder(parseFloat(price));
                     setPrice("");
+                    onOpenMessage?.(request.client_id);
+                    onRefresh?.();
                   }}
                   disabled={!price || parseFloat(price) <= 0}
                   className="flex-1 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
@@ -202,6 +230,34 @@ export default function RequestOverlay({ request, isOpen, onClose, onRefresh }: 
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Overlay */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Confirm Deletion</h3>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to delete this request? This action cannot be undone.
+              </p>
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={deleteRequest}
+                  className="flex-1 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 

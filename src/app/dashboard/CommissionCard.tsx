@@ -3,9 +3,9 @@ import { useState } from 'react';
 import CommissionOverlay from "./CommissionOverlay";
 import CommissionType from "./CommissionType";
 
-export default function CommissionCard({ commission }: { commission: CommissionType }) {
+export default function CommissionCard({ commission, onRefresh, authId }: { commission: CommissionType, onRefresh: () => void, authId: string }) {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
-  const { id, title, description, status, dueDate, client } = commission;
+  const { id, title, description, status, dueDate, client_name, created_at, user_id, client_id, artist_name } = commission;
 
   const getDaysUntilDue = (dueDate: string) => {
     const today = new Date();
@@ -13,6 +13,11 @@ export default function CommissionCard({ commission }: { commission: CommissionT
     const diffTime = due.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
+  };
+
+  const getTimeAgo = (created_at: string) => {
+    const date = new Date(created_at);
+    return date.toLocaleString();
   };
 
   const getStatusElement = (status: string) => {
@@ -45,8 +50,15 @@ export default function CommissionCard({ commission }: { commission: CommissionT
         <div className="flex justify-between items-start">
           <div>
             <h4 className="font-semibold">{title}</h4>
-            <p className="text-sm text-gray-600">Client: {client}</p>
-            <p className="text-sm text-gray-500">Due in {getDaysUntilDue(dueDate)} days</p>
+            <p className="text-sm text-gray-600">
+              {authId === user_id ? `Client: ${client_name}` : `Artist: ${artist_name}`}
+            </p>
+            {status === 'Awaiting Payment' && (
+              <p className="text-sm text-gray-600">Invoice sent: {getTimeAgo(created_at)}</p>
+            )}
+            {status !== 'Awaiting Payment' && (
+              <p className="text-sm text-gray-500">Due in {getDaysUntilDue(dueDate)} days</p>
+            )}
           </div>
           {getStatusElement(status)}
         </div>
@@ -57,6 +69,8 @@ export default function CommissionCard({ commission }: { commission: CommissionT
         commission={commission}
         isOpen={isOverlayOpen}
         onClose={closeOverlay}
+        onRefresh={onRefresh}
+        authId={authId}
       />
     </>
   )
