@@ -10,7 +10,7 @@
 */
 .homepage-featured-container {
     width: 100vw;
-    padding: 0 20vw;
+    padding: 0 20%;
     height: 700px;
     
     display: flex;
@@ -46,7 +46,7 @@
 -- not yet made filter for pictures
 */
 .homepage-filter-container {
-    width: 100vw;
+    width: 100%;
     height: 50px;
     background-color: green;
 }
@@ -57,8 +57,8 @@
 .homepage-explore-container {
     box-sizing: border-box;
 
-    width: 100vw;
-    padding: 0 10vw;
+    width: 100%;
+    padding: 0;
 
     /* display: flex;
     flex-flow: row wrap;

@@ -1,0 +1,31 @@
+.request-details-container {
+    margin: auto;
+    padding: 0;
+    box-sizing: border-box;
+    width: 50%;
+    max-width: 800px;
+
+    /* temp padding */
+    padding-top: 100px;
+}
+
+.request-details-title {
+    height: 200px;
+    width: 100%;
+
+    text-align: center;
+    font-weight: bold;
+    font-size: 40px;
+}
+
+.form-container {
+    display: flex;
+    flex-flow: row wrap;
+    row-gap: 30px;
+    justify-content: space-around;
+}
+
+.form-card {
+    width: 45%;
+    height: 100px;
+}
