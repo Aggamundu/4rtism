@@ -281,9 +281,8 @@ export default function DashboardPage() {
     <div className="min-h-screen w-full">
       <Header />
       <div className="dashboard-content">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600">Welcome back, {name || user.user_metadata?.name || user.email?.split('@')[0] || 'User'}!</p>
+        <div className="mb-2 mt-2">
+          <h1 className="text-lg font-bold text-gray-900">Dashboard</h1>
         </div>
 
         {/* Tabs */}

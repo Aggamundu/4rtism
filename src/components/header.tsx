@@ -76,49 +76,7 @@ export default function Header() {
           <p className="text-base font-bold mr-4">Signup</p>
         </div>
       </div>
-      <div className="flex text-base items-center justify-between p-2">
-        {canScrollLeft && (
-          <button
-            onClick={() => scrollCategories('left')}
-            className="mr-2 p-1 hover:bg-gray-100 rounded transition-colors"
-          >
-            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-        )}
-        <div ref={categoriesRef} className="flex space-x-6 text-[10px] overflow-x-auto scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Trending</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Graphic Design/Logo</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Chibi</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Cartoon</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Anime</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Semi-Realistic/Realistic</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Hyper-Realistic</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">OC Portrait</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Cyberpunk</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Mecha</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Vector</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Fantasy</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Furry</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Landscape</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Character Design</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Concept Art</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Pixel Art</a>
-          <a href="#" className="text-gray-500 hover:text-black transition-colors whitespace-nowrap">Digital Painting</a>
-        </div>
-        {canScrollRight && (
-          <button
-            onClick={() => scrollCategories('right')}
-            className="ml-2 p-1 hover:bg-gray-100 rounded transition-colors"
-          >
-            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        )}
-      </div>
-      <div className="w-full h-[1px] bg-gray-300"></div>
+
     </div>
   )
 }

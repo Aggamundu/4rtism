@@ -25,7 +25,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} px-4 md:px-16`}>
+      <head>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
+        </style>
+      </head>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
           {children}
         </AuthProvider>

@@ -1,5 +1,8 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+
+const withMT = require("@material-tailwind/react/utils/withMT");
+
+module.exports = withMT({
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -8,29 +11,26 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'inter': ['Inter', 'sans-serif'],
+        'inter': ['Inter','sans-serif'],
+      },
+      colors: {
+        custom: {
+          lightgray: '#A4A3AD',
+          gray: '#484659',
+          darkgray: '#333146',
+          accent: '#7A73FF',
+        }
       },
     },
     fontSize: {
-      xs: '12px',
-      sm: '12px',
-      base: '12px',
-      lg: '16px',
-      xl: '20px',
-      '2xl': '32px',
-      '3xl': '40px',
-      '4xl': '48px',
+      sm: '14px',
+      base: '16px',
+      lg: '24px',
+      xl: '48px',
+      '2xl': '64px',
+      '3xl': '96px',
+      '4xl': '128px',
     }
-  },
-  plugins: [],
-}
-
-const withMT = require("@material-tailwind/react/utils/withMT");
-
-module.exports = withMT({
-  content: [],
-  theme: {
-    extend: {},
   },
   plugins: [],
 });

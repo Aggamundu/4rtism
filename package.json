@@ -11,10 +11,12 @@
   "dependencies": {
     "@material-tailwind/react": "^2.1.10",
     "@prisma/client": "^6.11.1",
+    "@stripe/stripe-js": "^7.7.0",
     "@supabase/supabase-js": "^2.50.5",
     "next": "15.3.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "stripe": "^13.4.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
