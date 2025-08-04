@@ -1,12 +1,12 @@
 import FormText from "../form-components/formText";
-import "./requestDetails.css";
+import "./requestCommission.css";
 
-export default function RequestDetails() {
+export default function requestCommission() {
 
     return (
-        <div className="request-details-container">
-            <div className="request-details-title">
-                Request Details
+        <div className="request-commissions-container">
+            <div className="request-commissions-title">
+                Request Commission
             </div>
             <div className="form-container">
                 <div className="form-card">
