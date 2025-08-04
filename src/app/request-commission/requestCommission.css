@@ -1,15 +1,14 @@
-.request-details-container {
+.request-commissions-container {
     margin: auto;
     padding: 0;
     box-sizing: border-box;
-    width: 50%;
-    max-width: 800px;
+    width: 100%;
 
     /* temp padding */
     padding-top: 100px;
 }
 
-.request-details-title {
+.request-commissions-title {
     height: 200px;
     width: 100%;
 
@@ -26,6 +25,6 @@
 }
 
 .form-card {
-    width: 45%;
+    width: 100%;
     height: 100px;
 }
