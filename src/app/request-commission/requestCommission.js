@@ -1,11 +1,13 @@
 "use client"
-import { useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import FormText from "../form-components/formText";
 import PictureCard from "../../PictureCard/pictureCard";
 import "./requestCommission.css";
 
 export default function requestCommission() {
     const [pictures, setPictures] = useState([]);
+    const rightRef = useRef(null);
+    const leftRef = useRef(null);
 
     const hardCodedPicturesData = [
         { pic: "https://fvfkrsqxbxzbwiojvghz.supabase.co/storage/v1/object/public/commissions/0862d694-0bde-4991-8ef9-e89b984f4365/34384bd7-234e-4c32-84ca-ffa3da7b615b", picAlt: "massive" },
@@ -38,14 +40,28 @@ export default function requestCommission() {
         loadHardCodedPictures();
     }, []);
 
+    useEffect(() => {
+        function syncHeight() {
+            if (rightRef.current && leftRef.current) {
+                const rightHeight = rightRef.current.offsetHeight;
+                leftRef.current.style.height = `${rightHeight}px`;
+            }
+        }
+
+        syncHeight(); // On mount
+        window.addEventListener("resize", syncHeight); // On resize
+
+        return () => window.removeEventListener("resize", syncHeight);
+    }, [pictures]); // re-sync after pictures render
+
     return (
-        <div className="request-commissions-container">
-            <div className="request-commissions-left">
+        <div className="request-commissions-container p-custom">
+            <div id="left" className="request-commissions-left" ref={leftRef}>
                 <div className="request-commissions-picture-container">
                     {pictures}
                 </div>
             </div>
-            <div className="request-commissions-right">
+            <div id="right" className="request-commissions-right" ref={rightRef}>
                 <div className="request-commissions-title">
                     Request Commission
                 </div>

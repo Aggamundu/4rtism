@@ -2,14 +2,12 @@
     box-sizing: border-box;
     width: 100%;
 
-    /* temp padding */
-    padding-top: 100px;
-    display: inline-block;
-    clear: both;
+    display: flex;
 }
 .request-commissions-right {
     width: 60%;
-    float: right;
+    padding-left: 3%;
+    justify-content: right;
 }
 .request-commissions-title {
     height: 200px;
@@ -33,7 +31,9 @@
 
 .request-commissions-left {
     width: 40%;
-    float: left;
+    justify-content: left;
+    flex-shrink: 10;
+    overflow-y: scroll;
 }
 .request-commissions-picture-container {
     width: 100%;
