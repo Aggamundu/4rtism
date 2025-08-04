@@ -5,29 +5,36 @@
 }
 
 /* the label of the input */
-.form-input-title {
+/* .form-input-title {
 
-}
+} */
 
 /* where the user types */
-.fomr-input {
-    border-radius: 15px;
+.form-input {
+    width: 100%;
+    height: 200px;
+    padding: 15px 17px; /* there are already 3px padding on top for some reason */
+
+    outline: 0px;
+    resize: none;
 }
 
 /* makes the error message and character limit the same line */
-.form-input-helper-container {
-    display: flex;
-
-}
-/* character limit */
-.form-input-character-limit {
-    font-size: small;
-    text-align: right;
+.form-input-error-container {
+    margin-top: 5px;
+    position: relative;
+    width: 100%;
 }
 /* error text */
 .form-input-error-text {
-    /* font-size: 16px; */
-    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+/* character limit */
+.form-input-character-limit {
+    position: absolute;
+    right: 10px;
+    top: 2px;
 }
 
 .green {
@@ -40,4 +47,8 @@
 
 .black {
     color: black;
+}
+
+.hidden {
+    display: none;
 }

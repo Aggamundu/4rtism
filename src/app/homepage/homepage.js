@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import HomepageCard from "./HomepageCard/homepageCard.js";
+import HomepageCard from "../../PictureCard/pictureCard.js";
 import "./homepage.css";
 
 
@@ -32,7 +32,7 @@ export default function Homepage() {
     const loadHardCodedPictures = () => {
         setPictures ( hardCodedPicturesData.map( ( data, index ) => 
             (
-                <HomepageCard key={ index } pic={ data.pic } picAlt={ data.picAlt } title={ data.picAlt } />
+                <HomepageCard key={ index } pic={ data.pic } title={ data.picAlt } />
             ))
         );
     };

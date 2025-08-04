@@ -57,17 +57,7 @@
 -- pinterest like gallery of picturess
 */
 .homepage-explore-container {
-  box-sizing: border-box;
-
   width: 100%;
-
-  /* display: flex;
-    flex-flow: row wrap;
-    row-gap: 50px;
-    column-gap: 50px;
-    align-items: flex-start;
-    align-content: flex-start;
-    justify-content: space-between; */
 
   column-count: 5;
   column-width: auto;
