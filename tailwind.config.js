@@ -19,11 +19,15 @@ module.exports = withMT({
           gray: '#484659',
           darkpurple: '#333146',
           accent: '#7A73FF',
+          yellow: '#FFBB00',
         }
       },
       borderRadius: {
         'card': '15px',
-        'banner': '30px',
+        'banner': '10px',
+      },
+      padding: {
+        'custom': '2%',
       },
     },
     fontSize: {

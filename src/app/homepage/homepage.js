@@ -43,7 +43,7 @@ export default function Homepage() {
 
     return (
         <div className="homepage-container">
-            <div className="homepage-explore-container px-8">
+            <div className="homepage-explore-container px-custom">
                 { pictures }
             </div>
         </div>
