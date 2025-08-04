@@ -17,7 +17,7 @@ module.exports = withMT({
         custom: {
           lightgray: '#A4A3AD',
           gray: '#484659',
-          darkgray: '#333146',
+          darkpurple: '#333146',
           accent: '#7A73FF',
         }
       },

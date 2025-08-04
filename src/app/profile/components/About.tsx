@@ -8,7 +8,7 @@ interface AboutProps {
 export default function About({ imageSrc, displayName, userName, bio }: AboutProps) {
   return (
     <div className="flex w-full flex-row items-start justify-left gap-x-6 px-8 mt-[1rem] flex-wrap">
-      <div className="md:block">
+      <div className="hidden sm:block">
         <img src={imageSrc} alt="Profile" className="w-[10rem] h-[10rem] rounded-full border-2 border-black" />
         <div className="flex flex-col items-left justify-start text-left relative -top-2">
           <div className="flex items-center gap-4">          <div className="text-xl font-bold">{displayName}</div>
@@ -29,7 +29,7 @@ export default function About({ imageSrc, displayName, userName, bio }: AboutPro
       </div>
 
       {/* mobile */}
-      <div className=" md:hidden">
+      <div className=" sm:hidden">
         <div className="flex flex-row">
           <img src={imageSrc} alt="Profile" className="w-[7rem] h-[7rem] rounded-full border-2 border-black mr-5" />
           <div className="flex flex-col items-left justify-start text-left relative -top-2">
@@ -48,9 +48,9 @@ export default function About({ imageSrc, displayName, userName, bio }: AboutPro
             </div>
           </div>
         </div>
-
-
-        <div className="text-sm text-custom-lightgray mb-0 relative top-1">{bio}</div>
+        <div className="text-sm text-custom-lightgray mb-0 relative top-1">
+          {bio}
+        </div>
       </div>
     </div>
   );
