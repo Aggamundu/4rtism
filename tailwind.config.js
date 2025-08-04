@@ -21,6 +21,10 @@ module.exports = withMT({
           accent: '#7A73FF',
         }
       },
+      borderRadius: {
+        'card': '15px',
+        'banner': '30px',
+      },
     },
     fontSize: {
       sm: '14px',
@@ -30,7 +34,7 @@ module.exports = withMT({
       '2xl': '64px',
       '3xl': '96px',
       '4xl': '128px',
-    }
+    },
   },
   plugins: [],
 });

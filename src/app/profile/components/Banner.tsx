@@ -4,7 +4,7 @@ interface BannerProps {
 
 export default function Banner({ imageSrc }: BannerProps) {
   return (
-    <div className="w-full sm:h-[7rem] h-[5rem] relative overflow-hidden rounded-b-[30px]">
+    <div className="w-full sm:h-[7rem] h-[5rem] relative overflow-hidden rounded-b-card">
       <img
         src={imageSrc}
         alt="Profile banner"
