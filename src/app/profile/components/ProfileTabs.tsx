@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import CommissionCardGrid from '../../home/components/CommissionCardGrid';
+import Homepage from '../../homepage/homepage';
 
 export default function ProfileTabs() {
   const [activeTab, setActiveTab] = useState<'commission' | 'portfolio' | 'reviews'>('commission');
@@ -81,8 +82,7 @@ export default function ProfileTabs() {
         )}
         {activeTab === 'portfolio' && (
           <div className="min-h-[200px]">
-            <h3 className="text-lg font-semibold mb-4">Portfolio</h3>
-            <p className="text-gray-600">Your portfolio work will appear here.</p>
+            <Homepage />
           </div>
         )}
         {activeTab === 'reviews' && (

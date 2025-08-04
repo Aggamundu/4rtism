@@ -1,10 +1,17 @@
 .card-container {
     break-inside: avoid-column;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
 }
 
 .card-img {
     border-radius: 10px;
-    border: 3px solid rgb(71, 18, 18);
     object-fit: cover;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #A4A3AD;
+    text-align: left;
+    margin-left:10px;
 }
