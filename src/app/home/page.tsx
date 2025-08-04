@@ -1,6 +1,6 @@
 "use client"
-import CommissionCardGrid from "../display-components/CommissionCardGrid";
-import WelcomeSection from "./WelcomeSection";
+import CommissionCardGrid from "./components/CommissionCardGrid";
+import WelcomeSection from "./components/WelcomeSection";
 
 export default function Home() {
   // Dummy commission data

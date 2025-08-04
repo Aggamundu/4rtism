@@ -11,6 +11,7 @@ interface CommissionCardProps {
   minHeight?: number;
   profile_image_url: string;
   rating: number;
+  showProfileInfo?: boolean;
 }
 
 export default function CommissionCard({
@@ -22,7 +23,8 @@ export default function CommissionCard({
   image_urls,
   profile_image_url,
   minHeight = 150,
-  rating
+  rating,
+  showProfileInfo = true
 }: CommissionCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -38,7 +40,7 @@ export default function CommissionCard({
   };
   return (
     <div
-      className="bg-custom-darkgray rounded-lg overflow-hidden "
+      className="bg-custom-darkgray rounded-lg overflow-hidden group"
       style={{ minHeight: `${minHeight}px` }}
     >
       <div className="relative">
@@ -48,18 +50,27 @@ export default function CommissionCard({
           className="w-full h-48 object-cover rounded-[15px] transition-all duration-300 ease-in-out"
         />
 
+        {/* Heart icon on hover */}
+        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <button className="bg-black bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-full">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </button>
+        </div>
+
         {/* Navigation buttons */}
         {images.length > 1 && (
           <>
             <button
               onClick={prevImage}
-              className="absolute text-white left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 w-6 h-6 rounded-full flex items-center justify-center hover:opacity-50 transition-opacity"
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-30 text-white text-opacity-30 w-6 h-6 rounded-full flex items-center justify-center "
             >
               ‹
             </button>
             <button
               onClick={nextImage}
-              className="absolute text-white right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 w-6 h-6 rounded-full flex items-center justify-center hover:opacity-50 transition-opacity"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-30 text-white text-opacity-30 w-6 h-6 rounded-full flex items-center justify-center"
             >
               ›
             </button>
@@ -84,12 +95,19 @@ export default function CommissionCard({
       </div>
       <div className="p-0">
         <h1 className="text-white font-medium mb-0">{title}</h1>
-        <div className="flex items-center">
-          <img src={profile_image_url} alt={artist} className="w-5 h-5 rounded-full mr-2" />
-          <span className="text-custom-lightgray text-sm">@{artist}</span>
-          <span className="text-custom-lightgray text-sm ml-auto mr-2">~${price}</span>
-          <span className="text-white text-sm">★ {rating}</span>
-        </div>
+        {showProfileInfo && (
+          <div className="flex items-center">
+            <img src={profile_image_url} alt={artist} className="w-5 h-5 rounded-full mr-2" />
+            <span className="text-custom-lightgray text-sm">@{artist}</span>
+            <span className="text-custom-lightgray text-sm ml-auto mr-2">~${price}</span>
+            <span className="text-white text-sm">★ {rating}</span>
+          </div>
+        )}
+        {!showProfileInfo && (
+          <div className="flex items-center justify-start">
+            <span className="text-custom-lightgray text-sm">~${price}</span>
+          </div>
+        )}
       </div>
     </div>
   );

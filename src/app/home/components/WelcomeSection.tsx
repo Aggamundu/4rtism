@@ -1,8 +1,8 @@
 "use client"
 import { useEffect, useRef, useState } from "react";
-import kai from "../../../public/images/kai.png";
-import kai2 from "../../../public/images/kai2.png";
-import kai3 from "../../../public/images/kai3.png";
+import kai from "../../../../public/images/kai.png";
+import kai2 from "../../../../public/images/kai2.png";
+import kai3 from "../../../../public/images/kai3.png";
 
 export default function WelcomeSection() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);

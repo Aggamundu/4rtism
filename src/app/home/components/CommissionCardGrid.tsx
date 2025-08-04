@@ -17,18 +17,20 @@ interface CommissionCardGridProps {
   minHeight?: number; // in pixels
   maxHeight?: number; // in pixels
   className?: string;
+  showProfileInfo?: boolean;
 }
 
 export default function CommissionCardGrid({
   commissions,
   minHeight = 300,
   maxHeight = 500,
-  className = ""
+  className = "",
+  showProfileInfo = true
 }: CommissionCardGridProps) {
   return (
     <div className={`w-full px-8 ${className}`}>
       <div
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-6 auto-rows-fr"
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-6 auto-rows-fr"
         style={{
           minHeight: `${minHeight}px`,
         }}
@@ -45,6 +47,7 @@ export default function CommissionCardGrid({
             image_urls={commission.image_urls}
             minHeight={minHeight / 2}
             rating={commission.rating}
+            showProfileInfo={showProfileInfo}
           />
         ))}
       </div>
