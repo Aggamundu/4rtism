@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import CommissionCardGrid from '../../home/components/CommissionCardGrid';
 import Homepage from '../../homepage/homepage';
+import ReviewTable from '../components/ReviewTable';
 
 export default function ProfileTabs() {
   const [activeTab, setActiveTab] = useState<'commission' | 'portfolio' | 'reviews'>('commission');
@@ -43,34 +44,36 @@ export default function ProfileTabs() {
   return (
     <div className="w-full mt-[1rem]">
       {/* Tab Navigation */}
-      <div className="px-8">
-        <button
-          onClick={() => setActiveTab('commission')}
-          className={`px-0 py-3 font-bold text-lg transition-colors border-b-2 px-[1rem] ${activeTab === 'commission'
-            ? 'text-white border-white'
-            : 'text-custom-lightgray border-custom-lightgray hover:text-gray-700'
-            }`}
-        >
-          Commission
-        </button>
-        <button
-          onClick={() => setActiveTab('portfolio')}
-          className={`px-0 py-3 font-bold text-lg transition-colors border-b-2 px-[1rem] ${activeTab === 'portfolio'
-            ? 'text-white border-white'
-            : 'text-custom-lightgray border-custom-lightgray hover:text-gray-700'
-            }`}
-        >
-          Portfolio
-        </button>
-        <button
-          onClick={() => setActiveTab('reviews')}
-          className={`px-0 py-3 font-bold text-lg transition-colors border-b-2 px-[1rem] ${activeTab === 'reviews'
-            ? 'text-white border-white'
-            : 'text-custom-lightgray border-custom-lightgray hover:text-gray-700'
-            }`}
-        >
-          Reviews
-        </button>
+      <div className="px-custom overflow-x-auto">
+        <div className="flex min-w-max">
+          <button
+            onClick={() => setActiveTab('commission')}
+            className={`px-0 py-3 font-bold text-lg transition-colors border-b-2 px-[1rem] whitespace-nowrap ${activeTab === 'commission'
+              ? 'text-white border-white'
+              : 'text-custom-lightgray border-custom-lightgray hover:text-gray-700'
+              }`}
+          >
+            Commission
+          </button>
+          <button
+            onClick={() => setActiveTab('portfolio')}
+            className={`px-0 py-3 font-bold text-lg transition-colors border-b-2 px-[1rem] whitespace-nowrap ${activeTab === 'portfolio'
+              ? 'text-white border-white'
+              : 'text-custom-lightgray border-custom-lightgray hover:text-gray-700'
+              }`}
+          >
+            Portfolio
+          </button>
+          <button
+            onClick={() => setActiveTab('reviews')}
+            className={`px-0 py-3 font-bold text-lg transition-colors border-b-2 px-[1rem] whitespace-nowrap ${activeTab === 'reviews'
+              ? 'text-white border-white'
+              : 'text-custom-lightgray border-custom-lightgray hover:text-gray-700'
+              }`}
+          >
+            Reviews
+          </button>
+        </div>
       </div>
 
       {/* Tab Content */}
@@ -87,8 +90,7 @@ export default function ProfileTabs() {
         )}
         {activeTab === 'reviews' && (
           <div className="min-h-[200px]">
-            <h3 className="text-lg font-semibold mb-4">Reviews</h3>
-            <p className="text-gray-600">Customer reviews will appear here.</p>
+            <ReviewTable />
           </div>
         )}
       </div>
