@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../../../../utils/supabaseClient";
-import { Commission, Picture } from "../../types/Types";
+import { useAuth } from "../../../contexts/AuthContext";
+import { Commission, Picture, Review } from "../../types/Types";
 import About from "./components/About";
 import Banner from "./components/Banner";
 import ProfileTabs from "./components/ProfileTabs";
@@ -15,10 +16,14 @@ interface ProfilePageProps {
 
 export default function ProfilePage({ params }: ProfilePageProps) {
   const [name, setName] = useState<string>('');
+  const { user } = useAuth();
+  //Data of artist from the page
   const [profile, setProfile] = useState<any>(null);
+  //UUID of profile page
   const [profileId, setProfileId] = useState<string>('');
   const [commissions, setCommissions] = useState<Commission[]>([]);
   const [pictures, setPictures] = useState<Picture[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const getProfile = async (userName: string) => {
     // Fetch profile data
     const { data, error } = await supabaseClient
@@ -35,6 +40,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
       // Call getCommissions after profile is fetched
       getCommissions(data.id, data);
       getPictures(data.id);
+      getReviews(data.id, data);
     }
   }
 
@@ -81,6 +87,27 @@ export default function ProfilePage({ params }: ProfilePageProps) {
     }
   }
 
+  const getReviews = async (profileId: string, profileData: any) => {
+    const { data, error } = await supabaseClient
+      .from('reviews')
+      .select('*, profiles(pfp_url, user_name)')
+      .eq('artist_id', profileId);
+
+    if (error) {
+      console.error(error);
+    } else {
+      const reviews = data.map((review: any) => ({
+        userImage: review.profiles.pfp_url,
+        userName: review.profiles.user_name,
+        reviewText: review.reviewText,
+        rating: review.rating,
+        date: review.created_at
+      }));
+      setReviews(reviews);
+      console.log(reviews);
+    }
+  }
+
   useEffect(() => {
     const getParams = async () => {
       const resolvedParams = await params;
@@ -97,14 +124,23 @@ export default function ProfilePage({ params }: ProfilePageProps) {
     displayName: profile?.display_name || "Loading...",
     userName: name,
     bio: profile?.biography || "",
-    banner: profile?.banner_url || null
+    bannerSrc: profile?.banner_url || null
   }
+
+  const handleProfileUpdate = async (updates: any) => {
+    console.log('Profile updated:', updates);
+    // Refresh the profile data after update
+    await getProfile(name);
+  };
 
   return (
     <div>
-      <Banner imageSrc={aboutProps.banner} />
-      <About imageSrc={aboutProps.imageSrc} displayName={aboutProps.displayName} userName={aboutProps.userName} bio={aboutProps.bio} />
-      <ProfileTabs commissions={commissions} pictures={pictures} />
+      <Banner imageSrc={profile?.banner_url || null} />
+
+      <About {...aboutProps} showSettings={user?.id === profileId} onUpdateProfile={handleProfileUpdate} />
+      <div className="relative top-[-3.5rem]">
+        <ProfileTabs commissions={commissions} pictures={pictures} reviews={reviews} />
+      </div>
     </div>
   );
 }

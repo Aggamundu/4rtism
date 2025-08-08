@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function CommissionCard({
   id,
@@ -13,9 +13,18 @@ export default function CommissionCard({
   showProfileInfo = true
 }: any) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [backgroundColor, setBackgroundColor] = useState("#1f2937"); // Default gray-800
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Use image_urls if available, otherwise use empty array
   const images = image_urls && image_urls.length > 0 ? image_urls : [];
+
+  // Extract edge color when image changes
+  useEffect(() => {
+    if (images.length > 0 && images[currentImageIndex]) {
+      extractEdgeColor(images[currentImageIndex]);
+    }
+  }, [currentImageIndex, images]);
 
   const nextImage = () => {
     if (images.length > 1) {
@@ -29,6 +38,98 @@ export default function CommissionCard({
     }
   };
 
+  // Function to extract edge color from image
+  const extractEdgeColor = (imageUrl: string) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+
+      try {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        const width = canvas.width;
+        const height = canvas.height;
+
+        // Sample pixels from the edges only
+        const edgePixels = [];
+
+        // Top edge
+        for (let x = 0; x < width; x += 2) {
+          const index = (0 * width + x) * 4;
+          if (data[index + 3] > 128) { // Check alpha
+            edgePixels.push({
+              r: data[index],
+              g: data[index + 1],
+              b: data[index + 2]
+            });
+          }
+        }
+
+        // Bottom edge
+        for (let x = 0; x < width; x += 2) {
+          const index = ((height - 1) * width + x) * 4;
+          if (data[index + 3] > 128) {
+            edgePixels.push({
+              r: data[index],
+              g: data[index + 1],
+              b: data[index + 2]
+            });
+          }
+        }
+
+        // Left edge
+        for (let y = 0; y < height; y += 2) {
+          const index = (y * width + 0) * 4;
+          if (data[index + 3] > 128) {
+            edgePixels.push({
+              r: data[index],
+              g: data[index + 1],
+              b: data[index + 2]
+            });
+          }
+        }
+
+        // Right edge
+        for (let y = 0; y < height; y += 2) {
+          const index = (y * width + (width - 1)) * 4;
+          if (data[index + 3] > 128) {
+            edgePixels.push({
+              r: data[index],
+              g: data[index + 1],
+              b: data[index + 2]
+            });
+          }
+        }
+
+        if (edgePixels.length > 0) {
+          // Calculate average edge color
+          const avgR = Math.round(edgePixels.reduce((sum, pixel) => sum + pixel.r, 0) / edgePixels.length);
+          const avgG = Math.round(edgePixels.reduce((sum, pixel) => sum + pixel.g, 0) / edgePixels.length);
+          const avgB = Math.round(edgePixels.reduce((sum, pixel) => sum + pixel.b, 0) / edgePixels.length);
+
+          setBackgroundColor(`rgb(${avgR}, ${avgG}, ${avgB})`);
+        }
+      } catch (error) {
+        console.log("Error extracting edge color:", error);
+      }
+    };
+
+    img.onerror = () => {
+      setBackgroundColor("#1f2937"); // Fallback to gray-800
+    };
+
+    img.src = imageUrl;
+  };
+
   return (
     <div
       className="bg-custom-darkgray rounded-lg overflow-hidden group"
@@ -39,13 +140,17 @@ export default function CommissionCard({
           <img
             src={images[currentImageIndex]}
             alt={title}
-            className="w-full h-48 object-cover rounded-[15px] transition-all duration-300 ease-in-out"
+            className="w-full h-48 object-contain rounded-[15px] transition-all duration-300 ease-in-out"
+            style={{ backgroundColor }}
           />
         ) : (
           <div className="w-full h-48 bg-gray-600 rounded-[15px] flex items-center justify-center">
             <span className="text-gray-400">No image</span>
           </div>
         )}
+
+        {/* Hidden canvas for color extraction */}
+        <canvas ref={canvasRef} className="hidden" />
 
         {/* Heart icon on hover */}
         <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">

@@ -40,6 +40,7 @@ module.exports = withMT({
     fontSize: {
       sm: '14px',
       base: '16px',
+      'md': '22px',
       lg: '24px',
       xl: '48px',
       '2xl': '64px',

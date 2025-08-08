@@ -1,5 +1,24 @@
 export default function ReviewCard({ userImage, userName, reviewText, rating, date }: { userImage: string, userName: string, reviewText: string, rating: number, date: string }) {
 
+  const formatRelativeTime = (dateString: string) => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    const diffInMonths = Math.floor(diffInDays / 30);
+    const diffInYears = Math.floor(diffInDays / 365);
+
+    if (diffInYears > 0) {
+      return `${diffInYears} year${diffInYears > 1 ? 's' : ''} ago`;
+    } else if (diffInMonths > 0) {
+      return `${diffInMonths} month${diffInMonths > 1 ? 's' : ''} ago`;
+    } else if (diffInDays > 0) {
+      return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+    } else {
+      return 'Today';
+    }
+  };
+
   const renderStars = (rating: number) => {
     const stars = [];
     const totalStars = 5;
@@ -30,12 +49,12 @@ export default function ReviewCard({ userImage, userName, reviewText, rating, da
       <div className="flex flex-row gap-x-2 items-center">
         <img src={userImage} alt="User" className="w-[24px] h-[24px] rounded-full" />
         <p className="text-base text-white font-bold">{userName}</p>
-        <p className="text-base text-custom-lightgray font-bold">{date}</p>
+        <p className="text-base text-custom-lightgray font-bold">{formatRelativeTime(date)}</p>
         <div className="flex items-center gap-x-1 my-2">
-        {renderStars(rating)}
+          {renderStars(rating)}
+        </div>
       </div>
-      </div>
- 
+
       <p className="text-base text-custom-lightgray">{reviewText}</p>
     </div>
   )
