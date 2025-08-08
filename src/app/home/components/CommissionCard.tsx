@@ -1,54 +1,51 @@
 "use client"
 import { useState } from "react";
 
-interface CommissionCardProps {
-  id: string;
-  title: string;
-  price: number;
-  artist: string;
-  image: string;
-  image_urls?: string[];
-  minHeight?: number;
-  profile_image_url: string;
-  rating: number;
-  showProfileInfo?: boolean;
-}
-
 export default function CommissionCard({
   id,
   title,
   price,
   artist,
-  image,
   image_urls,
-  profile_image_url,
+  pfp_url,
   minHeight = 150,
   rating,
   showProfileInfo = true
-}: CommissionCardProps) {
+}: any) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Use image_urls if available, otherwise fall back to the single image
-  const images = image_urls && image_urls.length > 0 ? image_urls : [image];
+  // Use image_urls if available, otherwise use empty array
+  const images = image_urls && image_urls.length > 0 ? image_urls : [];
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    if (images.length > 1) {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+    if (images.length > 1) {
+      setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+    }
   };
+
   return (
     <div
       className="bg-custom-darkgray rounded-lg overflow-hidden group"
       style={{ minHeight: `${minHeight}px` }}
     >
       <div className="relative">
-        <img
-          src={images[currentImageIndex]}
-          alt={title}
-          className="w-full h-48 object-cover rounded-[15px] transition-all duration-300 ease-in-out"
-        />
+        {images.length > 0 ? (
+          <img
+            src={images[currentImageIndex]}
+            alt={title}
+            className="w-full h-48 object-cover rounded-[15px] transition-all duration-300 ease-in-out"
+          />
+        ) : (
+          <div className="w-full h-48 bg-gray-600 rounded-[15px] flex items-center justify-center">
+            <span className="text-gray-400">No image</span>
+          </div>
+        )}
 
         {/* Heart icon on hover */}
         <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -80,7 +77,7 @@ export default function CommissionCard({
         {/* Image indicators */}
         {images.length > 1 && (
           <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
-            {images.map((_, index) => (
+            {images.map((_: string, index: number) => (
               <button
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
@@ -97,7 +94,7 @@ export default function CommissionCard({
         <h1 className="text-white font-medium mb-0">{title}</h1>
         {showProfileInfo && (
           <div className="flex items-center">
-            <img src={profile_image_url} alt={artist} className="w-5 h-5 rounded-full mr-2" />
+            <img src={pfp_url} alt={artist} className="w-5 h-5 rounded-full mr-2" />
             <span className="text-custom-lightgray text-sm">@{artist}</span>
             <span className="text-custom-lightgray text-sm ml-auto mr-2">~${price}</span>
             <span className="text-white text-sm">★ {rating}</span>

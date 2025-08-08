@@ -1,19 +1,8 @@
 import CommissionCard from "./CommissionCard";
-
-interface CommissionCard {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  artist: string;
-  image: string;
-  image_urls?: string[];
-  profile_image_url: string;
-  rating: number;
-}
+import { Commission } from "../../types/Types";
 
 interface CommissionCardGridProps {
-  commissions: CommissionCard[];
+  commissions: Commission[];
   minHeight?: number; // in pixels
   maxHeight?: number; // in pixels
   className?: string;
@@ -42,8 +31,7 @@ export default function CommissionCardGrid({
             title={commission.title}
             price={commission.price}
             artist={commission.artist}
-            profile_image_url={commission.profile_image_url}
-            image={commission.image}
+            profile_image_url={commission.pfp_url}
             image_urls={commission.image_urls}
             minHeight={minHeight / 2}
             rating={commission.rating}

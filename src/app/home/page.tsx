@@ -1,105 +1,65 @@
 "use client"
+import { useAuth } from "@/contexts/AuthContext";
 import CommissionCardGrid from "./components/CommissionCardGrid";
 import WelcomeSection from "./components/WelcomeSection";
 
 export default function Home() {
+  const { user } = useAuth();
   // Dummy commission data
   const dummyCommissions = [
     {
       id: "1",
-      title: "Custom Portrait",
-      description: "Beautiful hand-drawn portrait in your preferred style. Perfect for gifts or personal use.",
-      price: 75,
-      artist: "kaito",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-      profile_image_url: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
-      rating: 4.5,
+      title: "Digital Portrait Commission",
+      description: "Custom digital portrait in semi-realistic style",
+      price: 45.99,
+      artist: "artista_123",
       image_urls: [
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=300&fit=crop"
-      ]
+        "https://example.com/portrait1.jpg",
+        "https://example.com/portrait2.jpg"
+      ],
+      pfp_url: "https://example.com/artist1_pfp.jpg",
+      rating: 4.5
     },
     {
       id: "2",
-      title: "Fantasy Character Design",
-      description: "Unique fantasy character design with full color and detailed background.",
-      price: 120,
-      artist: "sarah",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-      profile_image_url: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face",
-      rating: 4.5,
+      title: "Character Design",
+      description: "Original character design in anime style",
+      price: 75.00,
+      artist: "anime_artist",
       image_urls: [
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=300&fit=crop"
-      ]
+        "https://example.com/character1.jpg",
+        "https://example.com/character2.jpg"
+      ],
+      pfp_url: "https://example.com/artist2_pfp.jpg",
+      rating: 5
     },
     {
       id: "3",
-      title: "Landscape Painting",
-      description: "Stunning landscape painting in oil or digital format. Customize the scene to your vision.",
-      price: 200,
-      artist: "mike",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-      profile_image_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
-      rating: 4.5,
+      title: "Pet Portrait",
+      description: "Realistic pet portrait in watercolor style",
+      price: 35.50,
+      artist: "pet_artist",
       image_urls: [
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop"
-      ]
+        "https://example.com/pet1.jpg"
+      ],
+      pfp_url: "https://example.com/artist3_pfp.jpg",
+      rating: 4.8
     },
     {
       id: "4",
-      title: "Anime Style Commission",
-      description: "High-quality anime style artwork. Perfect for fan art or original characters.",
-      price: 60,
-      artist: "luna",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-      profile_image_url: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
-      rating: 4.5,
+      title: "Logo Design",
+      description: "Professional logo design for your brand",
+      price: 89.99,
+      artist: "logo_master",
       image_urls: [
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=300&fit=crop"
-      ]
-    },
-    {
-      id: "5",
-      title: "Pet Portrait",
-      description: "Lovely pet portrait that captures your furry friend's personality perfectly.",
-      price: 45,
-      artist: "kaito",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-      profile_image_url: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
-      rating: 4.5,
-      image_urls: [
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=300&fit=crop"
-      ]
-    },
-    {
-      id: "6",
-      title: "Abstract Art Piece",
-      description: "Modern abstract artwork that will add a unique touch to any space.",
-      price: 150,
-      artist: "alex",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-      profile_image_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
-      rating: 4.5,
-      image_urls: [
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop"
-      ]
+        "https://example.com/logo1.jpg",
+        "https://example.com/logo2.jpg"
+      ],
+      pfp_url: "https://example.com/artist4_pfp.jpg",
+      rating: 4.2
     }
   ];
+
 
   return (
     <div className="relative">

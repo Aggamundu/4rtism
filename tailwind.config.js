@@ -10,9 +10,6 @@ module.exports = withMT({
   ],
   theme: {
     extend: {
-      fontFamily: {
-        'inter': ['Inter','sans-serif'],
-      },
       colors: {
         custom: {
           lightgray: '#A4A3AD',
@@ -20,6 +17,16 @@ module.exports = withMT({
           darkpurple: '#333146',
           accent: '#7A73FF',
           yellow: '#FFBB00',
+          lightpurple: '#7D78AC',
+          offwhite: '#F1F1F1',
+          pink: '#D90368',
+          orange: '#FB8B24',
+          jade: '#04A777',
+          green: '#688E26',
+          purple: '#820263',
+          brown: '#1C0015',
+          darkAccent: '#494599',
+
         }
       },
       borderRadius: {
