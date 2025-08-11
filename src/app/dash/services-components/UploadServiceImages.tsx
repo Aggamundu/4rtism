@@ -1,16 +1,67 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface UploadServiceImagesProps {
   initialImages?: string[];
+  onFilesChange?: (files: File[]) => void;
+  onImagesChange?: (images: string[]) => void;
 }
 
-export default function UploadServiceImages({ initialImages = [] }: UploadServiceImagesProps) {
+export default function UploadServiceImages({
+  initialImages = [],
+  onFilesChange,
+  onImagesChange
+}: UploadServiceImagesProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<string[]>(initialImages);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [fileInputKey, setFileInputKey] = useState(0);
+
+  // Use ref to store the latest callback
+  const onImagesChangeRef = useRef(onImagesChange);
+  onImagesChangeRef.current = onImagesChange;
+
+  // Use ref to store the latest files callback
+  const onFilesChangeRef = useRef(onFilesChange);
+  onFilesChangeRef.current = onFilesChange;
+
+  // Use ref to track previous initialImages
+  const prevInitialImagesRef = useRef<string[]>([]);
+
+  // Track if we've already initialized
+  const hasInitialized = useRef(false);
+
+  // Update uploadedImages when initialImages changes, but only if we haven't initialized yet
+  useEffect(() => {
+    if (!hasInitialized.current && initialImages) {
+      setUploadedImages(initialImages);
+      prevInitialImagesRef.current = initialImages;
+      hasInitialized.current = true;
+    } else if (hasInitialized.current && initialImages) {
+      // After initialization, only update if the content actually changed
+      const prevImages = JSON.stringify(prevInitialImagesRef.current);
+      const newImages = JSON.stringify(initialImages);
+      if (prevImages !== newImages) {
+        setUploadedImages(initialImages);
+        prevInitialImagesRef.current = initialImages;
+      }
+    }
+  }, [initialImages]);
+
+  // Notify parent when selectedFiles changes
+  useEffect(() => {
+    if (onFilesChangeRef.current) {
+      onFilesChangeRef.current(selectedFiles);
+    }
+  }, [selectedFiles]);
 
   const handleFileUpload = (files: FileList | null) => {
     if (files) {
       const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+
+      // Update the selected files state
+      setSelectedFiles(prev => [...prev, ...imageFiles]);
+
+      // Create preview URLs for display
       imageFiles.forEach(file => {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -23,12 +74,19 @@ export default function UploadServiceImages({ initialImages = [] }: UploadServic
     }
   };
 
+  const removeImage = (index: number) => {
+    setUploadedImages(prev => prev.filter((_, i) => i !== index));
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    // Reset file input to allow re-uploading the same file
+    setFileInputKey(prev => prev + 1);
+  };
+
   return (
     <div className="flex flex-col w-full sm:max-w-[60%] bg-white rounded-card px-custom py-[1%]">
-      <label className="text-black text-sm mb-2 font-bold">Upload Images</label>
+      <label className="text-black text-sm mb-2 font-bold">Upload Images *</label>
       <div className="flex flex-col px-custom py-[1%] items-center">
         <div
-          className={`flex items-center justify-center w-[30%] border-2 border-dashed rounded-lg p-4 transition-all duration-200 ${isDragOver
+          className={`flex items-center justify-center sm:w-[30%] border-2 border-dashed rounded-lg p-4 transition-all duration-200 aspect-square ${isDragOver
             ? 'border-custom-accent bg-blue-50'
             : 'border-[#484659] hover:border-custom-accent hover:bg-gray-50'
             }`}
@@ -61,6 +119,7 @@ export default function UploadServiceImages({ initialImages = [] }: UploadServic
               or browse
             </p>
             <input
+              key={fileInputKey}
               id="file-input"
               type="file"
               accept="image/*"
@@ -84,7 +143,7 @@ export default function UploadServiceImages({ initialImages = [] }: UploadServic
                     className="w-full h-full object-contain rounded-lg"
                   />
                   <button
-                    onClick={() => setUploadedImages(prev => prev.filter((_, i) => i !== index))}
+                    onClick={() => removeImage(index)}
                     className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
                   >
                     ×
@@ -96,6 +155,5 @@ export default function UploadServiceImages({ initialImages = [] }: UploadServic
         )}
       </div>
     </div>
-
   );
 }

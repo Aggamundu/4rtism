@@ -1,12 +1,11 @@
 interface Service {
   id: string;
-  image: string;
   title: string;
   price: string;
   description?: string;
   category?: string;
   deliveryTime?: string;
-  images?: string[];
+  image_urls: string[];
 }
 
 interface ServiceCardProps {
@@ -16,15 +15,21 @@ interface ServiceCardProps {
 
 export default function ServiceCard({ service, onCardClick }: ServiceCardProps) {
   return (
-    <div className="flex flex-row w-[100%] h-32 bg-white rounded-card text-base">
-      <img src={service.image} alt={service.title} className="w-[20%] rounded-l-card object-cover" />
-      <div className="grid grid-cols-3 w-[80%] items-center px-[5%]">
+    <div
+      className="flex flex-row w-[100%] h-[25%] bg-white rounded-card text-base cursor-pointer hover:bg-gray-50 transition-colors"
+      onClick={() => onCardClick(service)}
+    >
+      <img src={service.image_urls[0] || '/blank_pfp.webp'} alt={service.title} className="w-[20%] rounded-l-card object-cover" />
+      <div className="grid grid-cols-2 lg:grid-cols-3 w-[80%] items-center px-[5%]">
         <div className="text-center">{service.title}</div>
         <div className="text-custom-lightgray text-center">Est. ${service.price}</div>
-        <div className="flex flex-row text-center items-center justify-end">
+        <div className="hidden lg:flex flex-row text-center items-center justify-end">
           <button
             className="bg-black text-white hover:bg-black/80 rounded-card w-[40%] py-[.5%] px-custom"
-            onClick={() => onCardClick(service)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onCardClick(service);
+            }}
           >
             Edit
           </button>

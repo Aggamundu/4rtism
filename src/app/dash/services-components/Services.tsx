@@ -1,49 +1,77 @@
 'use client';
-import { useState } from 'react';
-import kai from "../../../../public/images/kai.png";
-import kai2 from "../../../../public/images/kai2.png";
+import { useAuth } from '@/contexts/AuthContext';
+import { useEffect, useState } from 'react';
+import { supabaseClient } from '../../../../utils/supabaseClient';
+import NewServiceOverlay from './NewServiceOverlay';
 import ServiceCard from './ServiceCard';
 import ServiceOverlay from './ServiceOverlay';
-import NewServiceOverlay from './NewServiceOverlay';
+
+interface Question {
+  id: string;
+  title: string;
+  type: 'short-answer' | 'paragraph' | 'multiple-choice' | 'checkboxes';
+  required: boolean;
+  options?: string[];
+}
 
 interface Service {
   id: string;
-  image: string;
   title: string;
   price: string;
   description?: string;
-  category?: string;
   deliveryTime?: string;
-  images?: string[];
+  image_urls?: string[];
+  questions?: Question[];
 }
 
 export default function Services() {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
+  const [services, setServices] = useState<any[]>([]);
+  const { user } = useAuth();
 
-  const services: Service[] = [
-    {
-      id: "1",
-      image: kai.src,
-      title: "Service 1",
-      price: "100",
-      description: "This is a description of service 1",
-      category: "Art",
-      deliveryTime: "3-5 days",
-      images: [kai.src, kai2.src]
-    },
-    {
-      id: "2",
-      image: kai2.src,
-      title: "Service 2",
-      price: "150",
-      description: "This is a description of service 2",
-      category: "Design",
-      deliveryTime: "1-2 weeks",
-      images: [kai2.src]
+  const fetchQuestions = async (commissionId: string) => {
+    const { data, error } = await supabaseClient.from('questions').select('id, question_text, type, is_required, question_options(option_text)').eq('commission_id', commissionId);
+    if (error) {
+      console.error('Error fetching questions:', error);
     }
-  ];
+    console.log('questions:', data);
+    return data;
+  }
+
+  const fetchCommissions = async () => {
+    const { data, error } = await supabaseClient.from('commissions').select('*').eq('profile_id', user?.id);
+    if (error) {
+      console.error('Error fetching commissions:', error);
+    }
+    if (!data) return;
+
+    const servicesWithQuestions = [];
+
+    for (const service of data) {
+      const questions: Question[] = [];
+      const questionsData = await fetchQuestions(service.id);
+      if (!questionsData) {
+        servicesWithQuestions.push(service);
+      } else {
+        for (const question of questionsData) {
+          questions.push({
+            id: question.id,
+            title: question.question_text,
+            type: question.type,
+            required: question.is_required,
+            options: question.question_options.map((option: any) => option.option_text)
+          });
+        }
+        servicesWithQuestions.push({ ...service, questions });
+      }
+    }
+    setServices(servicesWithQuestions);
+  }
+  useEffect(() => {
+    fetchCommissions();
+  }, []);
 
   const handleCardClick = (service: Service) => {
     setSelectedService(service);
@@ -58,11 +86,11 @@ export default function Services() {
 
   return (
     <div className="bg-custom-offwhite min-h-screen overflow-y-auto w-[100%] float-right text-black px-[5%] py-[.5%] rounded-[30px]">
-      <div className="flex flex-row items-center mb-6">
-        <div className="text-xl mr-[5%]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center mb-6 gap-4 sm:gap-0">
+        <div className="text-xl sm:mr-[5%]">
           Services
         </div>
-        <button className="bg-black text-white hover:bg-black/80 rounded-card w-[17%] py-[.5%] px-custom relative top-[10%]" onClick={() => setIsCreateFormOpen(true)}>
+        <button className="bg-black text-white hover:bg-black/80 rounded-card w-36 py-[.5%] px-custom" onClick={() => setIsCreateFormOpen(true)}>
           + Service
         </button>
       </div>
@@ -79,10 +107,12 @@ export default function Services() {
         isOpen={isOverlayOpen}
         onClose={handleCloseOverlay}
         service={selectedService}
+        onSuccess={fetchCommissions}
       />
       <NewServiceOverlay
         isOpen={isCreateFormOpen}
         onClose={handleCloseOverlay}
+        onSuccess={fetchCommissions}
       />
     </div>
   );

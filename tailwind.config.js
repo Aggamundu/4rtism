@@ -38,6 +38,7 @@ module.exports = withMT({
       },
     },
     fontSize: {
+      xs: '12px',
       sm: '14px',
       base: '16px',
       'md': '22px',

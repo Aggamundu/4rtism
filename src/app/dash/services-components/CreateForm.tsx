@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface Question {
   id: string;
@@ -9,11 +9,13 @@ interface Question {
 }
 
 interface CreateFormProps {
-  onQuestionChange?: (questions: Question[]) => void;
+  onQuestionChange?: (questions: Question[], deletedIds?: string[]) => void;
+  value?: Question[];
 }
 
-export default function CreateForm({ onQuestionChange }: CreateFormProps) {
-  const [questions, setQuestions] = useState<Question[]>([]);
+export default function CreateForm({ onQuestionChange, value }: CreateFormProps) {
+  const [questions, setQuestions] = useState<Question[]>(value || []);
+  const [deletedQuestionIds, setDeletedQuestionIds] = useState<string[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question>({
     id: '',
     title: '',
@@ -21,6 +23,12 @@ export default function CreateForm({ onQuestionChange }: CreateFormProps) {
     required: false,
     options: []
   });
+  useEffect(() => {
+    if (value) {
+      setQuestions(value);
+      setDeletedQuestionIds([]); // Clear deleted questions when value changes
+    }
+  }, [value]);
 
   const questionTypes = [
     { value: 'short-answer', label: 'Short answer', icon: '📝' },
@@ -44,7 +52,7 @@ export default function CreateForm({ onQuestionChange }: CreateFormProps) {
         required: false,
         options: []
       });
-      onQuestionChange?.(updatedQuestions);
+      onQuestionChange?.(updatedQuestions, deletedQuestionIds);
     }
   };
 
@@ -76,7 +84,13 @@ export default function CreateForm({ onQuestionChange }: CreateFormProps) {
   const removeQuestion = (id: string) => {
     const updatedQuestions = questions.filter(q => q.id !== id);
     setQuestions(updatedQuestions);
-    onQuestionChange?.(updatedQuestions);
+
+    // Track deleted question ID if it has a database ID (not a temporary one)
+    if (id.length > 10) { // Assuming database IDs are longer than temporary ones
+      setDeletedQuestionIds(prev => [...prev, id]);
+    }
+
+    onQuestionChange?.(updatedQuestions, [id]);
   };
 
   return (
