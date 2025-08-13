@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../../../../utils/supabaseClient";
 import { useAuth } from "../../../contexts/AuthContext";
-import { Commission, Picture, Review } from "../../types/Types";
+import { Commission, Option, Picture, Question, Review } from "../../types/Types";
 import About from "./components/About";
 import Banner from "./components/Banner";
 import ProfileTabs from "./components/ProfileTabs";
@@ -44,6 +44,53 @@ export default function ProfilePage({ params }: ProfilePageProps) {
     }
   }
 
+  const getOptions = async (questionId: number) => {
+    const { data, error } = await supabaseClient
+      .from('question_options')
+      .select('*')
+      .eq('question_id', questionId);
+
+    if (error) {
+      console.error(error);
+    }
+    if (data) {
+      const options: Option[] = [];
+      for (const option of data) {
+        options.push({
+          id: option.id,
+          option_text: option.option_text,
+          question_id: option.question_id
+        });
+      }
+      console.log('Options:', options);
+      return options;
+    }
+  }
+
+  const getQuestions = async (commissionId: number) => {
+    const questions: Question[] = [];
+    const { data, error } = await supabaseClient
+      .from('questions')
+      .select('*')
+      .eq('commission_id', commissionId);
+
+    if (error) {
+      console.error(error);
+    }
+    if (data) {
+      return Promise.all(data.map(async (question) => ({
+        id: question.id,
+        question_text: question.question_text,
+        type: question.type,
+        is_required: question.is_required,
+        options: await getOptions(question.id)
+      }))).then(questions => {
+        console.log('Questions:', questions);
+        return questions;
+      });
+    }
+  }
+
   const getCommissions = async (profileId: string, profileData: any) => {
     if (!profileId) return; // Don't query if profileId is empty
 
@@ -55,7 +102,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
     if (error) {
       console.error(error);
     } else {
-      const commissions = data.map((commission: any) => ({
+      const commissions = await Promise.all(data.map(async (commission: any) => ({
         id: commission.id,
         title: commission.title,
         description: commission.description,
@@ -63,8 +110,10 @@ export default function ProfilePage({ params }: ProfilePageProps) {
         artist: commission.artist,
         image_urls: commission.image_urls,
         pfp_url: profileData.pfp_url,
-        rating: commission.rating
-      }));
+        rating: commission.rating,
+        delivery_days: commission.delivery_days,
+        questions: await getQuestions(commission.id)
+      })));
       console.log(data);
       setCommissions(commissions);
     }
@@ -139,7 +188,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
       <About {...aboutProps} showSettings={user?.id === profileId} onUpdateProfile={handleProfileUpdate} />
       <div className="relative top-[-3.5rem]">
-        <ProfileTabs commissions={commissions} pictures={pictures} reviews={reviews} />
+        <ProfileTabs commissions={commissions} pictures={pictures} reviews={reviews} displayName={profile?.display_name || ''} />
       </div>
     </div>
   );

@@ -1,12 +1,5 @@
 import { useEffect, useState } from 'react';
-
-interface Question {
-  id: string;
-  title: string;
-  type: 'short-answer' | 'paragraph' | 'multiple-choice' | 'checkboxes';
-  required: boolean;
-  options?: string[];
-}
+import { Question } from '../../types/Types';
 
 interface CreateFormProps {
   onQuestionChange?: (questions: Question[], deletedIds?: string[]) => void;
@@ -17,10 +10,10 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
   const [questions, setQuestions] = useState<Question[]>(value || []);
   const [deletedQuestionIds, setDeletedQuestionIds] = useState<string[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question>({
-    id: '',
-    title: '',
+    id: 0,
+    question_text: '',
     type: 'short-answer',
-    required: false,
+    is_required: false,
     options: []
   });
   useEffect(() => {
@@ -38,18 +31,18 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
   ];
 
   const addQuestion = () => {
-    if (currentQuestion.title.trim()) {
+    if (currentQuestion.question_text.trim()) {
       const newQuestion = {
         ...currentQuestion,
-        id: Date.now().toString()
+        id: Date.now()
       };
       const updatedQuestions = [...questions, newQuestion];
       setQuestions(updatedQuestions);
       setCurrentQuestion({
-        id: '',
-        title: '',
+        id: 0,
+        question_text: '',
         type: 'short-answer',
-        required: false,
+        is_required: false,
         options: []
       });
       onQuestionChange?.(updatedQuestions, deletedQuestionIds);
@@ -63,14 +56,14 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
   const addOption = () => {
     setCurrentQuestion(prev => ({
       ...prev,
-      options: [...(prev.options || []), '']
+      options: [...(prev.options || []), { id: 0, option_text: '', question_id: 0 }]
     }));
   };
 
   const updateOption = (index: number, value: string) => {
     setCurrentQuestion(prev => ({
       ...prev,
-      options: prev.options?.map((opt, i) => i === index ? value : opt)
+      options: prev.options?.map((opt, i) => i === index ? { ...opt, option_text: value } : opt)
     }));
   };
 
@@ -81,16 +74,16 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
     }));
   };
 
-  const removeQuestion = (id: string) => {
+  const removeQuestion = (id: number) => {
     const updatedQuestions = questions.filter(q => q.id !== id);
     setQuestions(updatedQuestions);
 
     // Track deleted question ID if it has a database ID (not a temporary one)
-    if (id.length > 10) { // Assuming database IDs are longer than temporary ones
-      setDeletedQuestionIds(prev => [...prev, id]);
+    if (id > 1000000) { // Assuming database IDs are larger than temporary ones
+      setDeletedQuestionIds(prev => [...prev, id.toString()]);
     }
 
-    onQuestionChange?.(updatedQuestions, [id]);
+    onQuestionChange?.(updatedQuestions, [id.toString()]);
   };
 
   return (
@@ -119,7 +112,11 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
             </div>
             <button
               onClick={addQuestion}
-              disabled={!currentQuestion.title.trim()}
+              disabled={
+                !currentQuestion.question_text.trim() ||
+                ((currentQuestion.type === 'multiple-choice' || currentQuestion.type === 'checkboxes') &&
+                  (!currentQuestion.options || currentQuestion.options.length === 0 || currentQuestion.options.some(opt => !opt.option_text.trim())))
+              }
               className="bg-black text-white px-4 py-2 rounded-lg hover:bg-black/80 disabled:bg-gray-300 disabled:cursor-not-allowed w-[50%] sm:w-auto"
             >
               Add Question
@@ -134,8 +131,8 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
           </label>
           <input
             type="text"
-            value={currentQuestion.title}
-            onChange={(e) => updateCurrentQuestion('title', e.target.value)}
+            value={currentQuestion.question_text}
+            onChange={(e) => updateCurrentQuestion('question_text', e.target.value)}
             placeholder="Enter your question"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-accent"
           />
@@ -152,7 +149,7 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
                 <div key={index} className="flex items-center gap-2">
                   <input
                     type="text"
-                    value={option}
+                    value={option.option_text}
                     onChange={(e) => updateOption(index, e.target.value)}
                     placeholder={`Option ${index + 1}`}
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-custom-accent"
@@ -181,12 +178,12 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
             Required
           </label>
           <button
-            onClick={() => updateCurrentQuestion('required', !currentQuestion.required)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${currentQuestion.required ? 'bg-custom-accent' : 'bg-gray-300'
+            onClick={() => updateCurrentQuestion('is_required', !currentQuestion.is_required)}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${currentQuestion.is_required ? 'bg-custom-accent' : 'bg-gray-300'
               }`}
           >
             <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${currentQuestion.required ? 'translate-x-6' : 'translate-x-1'
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${currentQuestion.is_required ? 'translate-x-6' : 'translate-x-1'
                 }`}
             />
           </button>
@@ -209,16 +206,16 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
                       <span className="text-sm text-gray-500">
                         {questionTypes.find(t => t.value === question.type)?.label}
                       </span>
-                      {question.required && (
+                      {question.is_required && (
                         <span className="text-red-500 text-sm">*</span>
                       )}
                     </div>
-                    <h3 className="font-medium">{question.title}</h3>
+                    <h3 className="font-medium">{question.question_text}</h3>
                     {(question.type === 'multiple-choice' || question.type === 'checkboxes') && question.options && (
                       <div className="mt-2 space-y-1">
                         {question.options.map((option, index) => (
                           <div key={index} className="text-sm text-gray-600">
-                            {question.type === 'multiple-choice' ? '○' : '☐'} {option}
+                            {question.type === 'multiple-choice' ? '○' : '☐'} {option.option_text}
                           </div>
                         ))}
                       </div>

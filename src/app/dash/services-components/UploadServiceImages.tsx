@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 interface UploadServiceImagesProps {
   initialImages?: string[];
   onFilesChange?: (files: File[]) => void;
-  onImagesChange?: (images: string[]) => void;
+  onImagesChange?: (images: string[], deletedUrls?: string[]) => void;
 }
 
 export default function UploadServiceImages({
@@ -15,6 +15,7 @@ export default function UploadServiceImages({
   const [uploadedImages, setUploadedImages] = useState<string[]>(initialImages);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [fileInputKey, setFileInputKey] = useState(0);
+  const [deletedImageUrls, setDeletedImageUrls] = useState<string[]>([]);
 
   // Use ref to store the latest callback
   const onImagesChangeRef = useRef(onImagesChange);
@@ -23,6 +24,16 @@ export default function UploadServiceImages({
   // Use ref to store the latest files callback
   const onFilesChangeRef = useRef(onFilesChange);
   onFilesChangeRef.current = onFilesChange;
+
+  // Sanitize file name function
+  const sanitizeFileName = (fileName: string): string => {
+    return fileName
+      .replace(/[^a-zA-Z0-9.-]/g, '_') // Replace special characters with underscores
+      .replace(/\s+/g, '_') // Replace spaces with underscores
+      .replace(/_{2,}/g, '_') // Replace multiple consecutive underscores with single
+      .replace(/^_+|_+$/g, '') // Remove leading and trailing underscores
+      .toLowerCase(); // Convert to lowercase
+  };
 
   // Use ref to track previous initialImages
   const prevInitialImagesRef = useRef<string[]>([]);
@@ -58,11 +69,20 @@ export default function UploadServiceImages({
     if (files) {
       const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
 
-      // Update the selected files state
-      setSelectedFiles(prev => [...prev, ...imageFiles]);
+      // Update the selected files state with sanitized file names
+      const sanitizedFiles = imageFiles.map(file => {
+        const sanitizedName = sanitizeFileName(file.name);
+        const fileExtension = file.name.split('.').pop();
+        const newFileName = `${sanitizedName}.${fileExtension}`;
+
+        // Create a new File object with the sanitized name
+        return new File([file], newFileName, { type: file.type });
+      });
+
+      setSelectedFiles(prev => [...prev, ...sanitizedFiles]);
 
       // Create preview URLs for display
-      imageFiles.forEach(file => {
+      sanitizedFiles.forEach(file => {
         const reader = new FileReader();
         reader.onload = (e) => {
           if (e.target?.result) {
@@ -75,10 +95,26 @@ export default function UploadServiceImages({
   };
 
   const removeImage = (index: number) => {
-    setUploadedImages(prev => prev.filter((_, i) => i !== index));
-    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    const imageToRemove = uploadedImages[index];
+    const updatedImages = uploadedImages.filter((_, i) => i !== index);
+    const updatedFiles = selectedFiles.filter((_, i) => i !== index);
+
+    setUploadedImages(updatedImages);
+    setSelectedFiles(updatedFiles);
+
+    // Track deleted image URL if it's not a data URL (actual uploaded URL)
+    if (imageToRemove && !imageToRemove.startsWith('data:')) {
+      setDeletedImageUrls(prev => [...prev, imageToRemove]);
+    }
+
     // Reset file input to allow re-uploading the same file
     setFileInputKey(prev => prev + 1);
+
+    // Notify parent with updated images and deleted URLs
+    if (onImagesChangeRef.current) {
+      const actualUrls = updatedImages.filter(img => !img.startsWith('data:'));
+      onImagesChangeRef.current(actualUrls, [imageToRemove]);
+    }
   };
 
   return (

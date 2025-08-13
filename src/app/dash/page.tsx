@@ -31,9 +31,9 @@ export default function DashPage() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row">
+    <div className="flex flex-col sm:flex-row">
       {/* Mobile Navigation */}
-      <div className="lg:hidden w-full bg-gray-800 p-4">
+      <div className="sm:hidden w-full bg-gray-800 p-4">
         <div className="relative">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -66,7 +66,7 @@ export default function DashPage() {
       </div>
 
       {/* Desktop Sidebar */}
-      <div className="hidden lg:block w-[20%] h-screen text-white text-base px-custom">
+      <div className="hidden sm:block w-[20%] h-screen text-white text-base px-custom">
         <div className="relative top-[15%]">
           <div className="text-custom-lightgray mb-4">
             Seller
@@ -101,7 +101,7 @@ export default function DashPage() {
       </div>
 
       {/* Main Content */}
-      <div className="w-full lg:w-[80%] h-screen">
+      <div className="w-full sm:w-[80%] h-screen">
         {renderComponent()}
       </div>
     </div>

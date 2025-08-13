@@ -4,11 +4,17 @@ import CommissionCardGrid from '../../../home/components/CommissionCardGrid';
 import Homepage from '../../../homepage/homepage';
 import { Commission, Picture, Review } from '../../../types/Types';
 import ReviewTable from '../components/ReviewTable';
+import CommissionRequestOverlay from './CommissionRequestOverlay';
 import ReviewOverview from './ReviewOverview';
 
-export default function ProfileTabs({ commissions, pictures, reviews }: { commissions: Commission[], pictures: Picture[], reviews: Review[] }) {
+export default function ProfileTabs({ commissions, pictures, reviews, displayName }: { commissions: Commission[], pictures: Picture[], reviews: Review[], displayName: string }) {
   const [activeTab, setActiveTab] = useState<'commission' | 'portfolio' | 'reviews'>('commission');
-
+  const [selectedCommission, setSelectedCommission] = useState<Commission | null>(null);
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+  const handleCommissionClick = (commission: Commission) => {
+    setSelectedCommission(commission);
+    setIsOverlayOpen(true);
+  }
 
   return (
     <div className="w-full mt-0">
@@ -49,7 +55,8 @@ export default function ProfileTabs({ commissions, pictures, reviews }: { commis
       <div className="mt-[1rem]">
         {activeTab === 'commission' && (
           <div>
-            <CommissionCardGrid commissions={commissions} showProfileInfo={false} />
+            <CommissionCardGrid commissions={commissions} showProfileInfo={false} onCardClick={handleCommissionClick} />
+            {selectedCommission && <CommissionRequestOverlay isOpen={isOverlayOpen} onClose={() => setIsOverlayOpen(false)} commission={selectedCommission} displayName={displayName} />}
           </div>
         )}
         {activeTab === 'portfolio' && (

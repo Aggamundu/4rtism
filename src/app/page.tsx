@@ -1,12 +1,10 @@
 
-import Homepage from "./homepage/homepage";
-import RequestDetails from "./request-commission/requestCommission";
 import "./page.css";
+import RequestDetails from "./request-commission/requestCommission";
 
 export default function Home() {
-    return (
-        <div className="cancel-default">
-            <RequestDetails />
-        </div>
-    );
+  return (
+    <div className="cancel-default">
+    </div>
+  );
 }

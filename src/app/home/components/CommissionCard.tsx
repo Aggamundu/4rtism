@@ -1,17 +1,20 @@
 "use client"
 import { useEffect, useRef, useState } from "react";
+import { Commission } from "../../types/Types";
+
+interface CommissionCardProps {
+  commission: Commission;
+  showProfileInfo?: boolean;
+  onCardClick: (commission: Commission) => void;
+}
 
 export default function CommissionCard({
-  id,
-  title,
-  price,
-  artist,
-  image_urls,
-  pfp_url,
-  minHeight = 150,
-  rating,
-  showProfileInfo = true
-}: any) {
+  commission,
+  showProfileInfo = true,
+  onCardClick
+}: CommissionCardProps) {
+
+  const { title, price, artist, image_urls, pfp_url, rating } = commission;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [backgroundColor, setBackgroundColor] = useState("#1f2937"); // Default gray-800
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -132,8 +135,8 @@ export default function CommissionCard({
 
   return (
     <div
-      className="bg-custom-darkgray rounded-lg overflow-hidden group"
-      style={{ minHeight: `${minHeight}px` }}
+      onClick={() => onCardClick(commission)}
+      className="bg-custom-darkgray rounded-lg overflow-hidden group hover:cursor-pointer"
     >
       <div className="relative">
         {images.length > 0 ? (
@@ -154,7 +157,14 @@ export default function CommissionCard({
 
         {/* Heart icon on hover */}
         <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <button className="bg-black bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-full">
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              // Add your heart/favorite logic here
+            }}
+            className="bg-black bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-full"
+          >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
@@ -165,13 +175,21 @@ export default function CommissionCard({
         {images.length > 1 && (
           <>
             <button
-              onClick={prevImage}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                prevImage();
+              }}
               className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-30 text-white text-opacity-30 w-6 h-6 rounded-full flex items-center justify-center "
             >
               ‹
             </button>
             <button
-              onClick={nextImage}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                nextImage();
+              }}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-30 text-white text-opacity-30 w-6 h-6 rounded-full flex items-center justify-center"
             >
               ›
@@ -195,7 +213,7 @@ export default function CommissionCard({
           </div>
         )}
       </div>
-      <div className="p-0">
+      <div className="p-0 ">
         <h1 className="text-white font-medium mb-0">{title}</h1>
         {showProfileInfo && (
           <div className="flex items-center">

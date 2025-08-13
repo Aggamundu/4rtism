@@ -5,14 +5,8 @@ import { supabaseClient } from '../../../../utils/supabaseClient';
 import NewServiceOverlay from './NewServiceOverlay';
 import ServiceCard from './ServiceCard';
 import ServiceOverlay from './ServiceOverlay';
+import { Option, Question } from '../../types/Types';
 
-interface Question {
-  id: string;
-  title: string;
-  type: 'short-answer' | 'paragraph' | 'multiple-choice' | 'checkboxes';
-  required: boolean;
-  options?: string[];
-}
 
 interface Service {
   id: string;
@@ -32,7 +26,7 @@ export default function Services() {
   const { user } = useAuth();
 
   const fetchQuestions = async (commissionId: string) => {
-    const { data, error } = await supabaseClient.from('questions').select('id, question_text, type, is_required, question_options(option_text)').eq('commission_id', commissionId);
+    const { data, error } = await supabaseClient.from('questions').select('id, question_text, type, is_required, question_options(id, option_text, question_id)').eq('commission_id', commissionId);
     if (error) {
       console.error('Error fetching questions:', error);
     }
@@ -58,10 +52,14 @@ export default function Services() {
         for (const question of questionsData) {
           questions.push({
             id: question.id,
-            title: question.question_text,
+            question_text: question.question_text,
             type: question.type,
-            required: question.is_required,
-            options: question.question_options.map((option: any) => option.option_text)
+            is_required: question.is_required,
+            options: question.question_options.map((option: Option) => ({
+              id: option.id,
+              option_text: option.option_text,
+              question_id: option.question_id
+            }))
           });
         }
         servicesWithQuestions.push({ ...service, questions });
@@ -84,6 +82,38 @@ export default function Services() {
     setSelectedService(null);
   };
 
+  const deleteService = async (service: Service) => {
+    const { data, error } = await supabaseClient.from('commissions').delete().eq('profile_id', user?.id).eq('id', service.id);
+    if (error) {
+      console.error('Error deleting service:', error);
+    }
+    fetchCommissions();
+  }
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [serviceToDelete, setServiceToDelete] = useState<Service | null>(null);
+
+  const handleDeleteService = (service: Service) => {
+    setServiceToDelete(service);
+    setShowDeleteModal(true);
+  }
+
+  const confirmDelete = () => {
+    if (serviceToDelete) {
+      deleteService(serviceToDelete);
+      setShowDeleteModal(false);
+      setServiceToDelete(null);
+    }
+  }
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setServiceToDelete(null);
+  }
+
+
+
+
   return (
     <div className="bg-custom-offwhite min-h-screen overflow-y-auto w-[100%] float-right text-black px-[5%] py-[.5%] rounded-[30px]">
       <div className="flex flex-col sm:flex-row items-start sm:items-center mb-6 gap-4 sm:gap-0">
@@ -100,6 +130,7 @@ export default function Services() {
             key={service.id}
             service={service}
             onCardClick={handleCardClick}
+            deleteService={handleDeleteService}
           />
         ))}
       </div>
@@ -114,6 +145,30 @@ export default function Services() {
         onClose={handleCloseOverlay}
         onSuccess={fetchCommissions}
       />
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Delete Service</h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete this service? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

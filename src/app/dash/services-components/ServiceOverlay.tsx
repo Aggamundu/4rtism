@@ -6,6 +6,7 @@ import TextArea from "../components/TextArea";
 import CreateForm from "./CreateForm";
 import TextInput from "./TextInput";
 import UploadServiceImages from "./UploadServiceImages";
+import { Option, Question} from "../../types/Types";
 
 interface Service {
   id: string;
@@ -18,13 +19,6 @@ interface Service {
   questions?: Question[];
 }
 
-interface Question {
-  id: string;
-  title: string;
-  type: 'short-answer' | 'paragraph' | 'multiple-choice' | 'checkboxes';
-  required: boolean;
-  options?: string[];
-}
 
 interface ServiceOverlayProps {
   isOpen: boolean;
@@ -43,6 +37,7 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: 
   });
   const [questions, setQuestions] = useState<Question[]>([]);
   const [deletedQuestionIds, setDeletedQuestionIds] = useState<string[]>([]);
+  const [deletedImageUrls, setDeletedImageUrls] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -73,10 +68,33 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: 
     const hasDescription = formData.description.trim().length > 0;
     const hasValidPrice = formData.price.trim() && !priceError;
     const hasValidDeliveryTime = formData.delivery_days.trim().length > 0 && !deliveryTimeError;
-    const hasImages = formData.image_urls && formData.image_urls.length > 0;
+    const hasImagesOrFiles = formData.image_urls && formData.image_urls.length > 0 || selectedFiles.length > 0;
 
-    return hasTitle && hasDescription && hasValidPrice && hasValidDeliveryTime && hasImages;
+    return hasTitle && hasDescription && hasValidPrice && hasValidDeliveryTime && hasImagesOrFiles;
   };
+
+  // const getQuestions = async (serviceId: string) => {
+  //   const { data, error } = await supabaseClient
+  //     .from('questions')
+  //     .select('*')
+  //     .eq('commission_id', serviceId);
+
+  //   if (error) {
+  //     console.error(error);
+  //   } else {
+  //     const questions: Question[] = [];
+  //     for(const question of data) {
+  //       questions.push({
+  //         id: question.id,
+  //         title: question.question_text,
+  //         type: question.type,
+  //         required: question.is_required,
+  //         options: question.options
+  //       });
+  //     }
+  //     setQuestions(questions);
+  //   }
+  // }
 
   useEffect(() => {
     if (service) {
@@ -91,6 +109,7 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: 
     }
   }, [service]);
 
+  // Handle question changes
   const handleQuestionChange = (newQuestions: Question[], deletedIds: string[] = []) => {
     setQuestions(newQuestions);
     if (deletedIds.length > 0) {
@@ -100,6 +119,17 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: 
 
 
   const deleteQuestion = async (questionId: string) => {
+    // First delete the question options
+    const { error: optionsError } = await supabaseClient
+      .from('question_options')
+      .delete()
+      .eq('question_id', parseInt(questionId));
+
+    if (optionsError) {
+      console.error('Error deleting question options:', optionsError);
+    }
+
+    // Then delete the question
     const { data, error } = await supabaseClient.from('questions').delete().eq('id', questionId);
     if (error) {
       console.error('Error deleting question:', error);
@@ -109,6 +139,28 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: 
   const deleteQuestions = async (questionIds: string[]) => {
     for (const questionId of questionIds) {
       await deleteQuestion(questionId);
+    }
+  }
+
+  const deleteImagesFromStorage = async (imageUrls: string[]) => {
+    for (const imageUrl of imageUrls) {
+      try {
+        // Extract the file path from the URL
+        const urlParts = imageUrl.split('/');
+        const fileName = urlParts[urlParts.length - 1];
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        const filePath = `${user?.id}/${fileName}`;
+
+        const { error } = await supabaseClient.storage
+          .from('images')
+          .remove([filePath]);
+
+        if (error) {
+          console.error('Error deleting image from storage:', error);
+        }
+      } catch (error) {
+        console.error('Error deleting image:', error);
+      }
     }
   }
 
@@ -146,6 +198,70 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: 
 
     return uploadedUrls;
   };
+
+  // Create options for a question
+  const createOptions = async (question: any, questionId: string) => {
+    console.log('Creating options for question:', questionId);
+    console.log('Options to create:', question.options);
+
+    for (const option of question.options) {
+      console.log('Creating option:', option);
+
+      const { data, error } = await supabaseClient.from('question_options').insert({
+        question_id: questionId,
+        option_text: option.option_text,
+        order: question.options.indexOf(option)
+      });
+
+      if (error) {
+        console.error('Error creating option:', error);
+        console.log('option data:', {
+          question_id: questionId,
+          option_text: option,
+          order: question.options.indexOf(option)
+        });
+        throw error;
+      }
+
+      console.log('Option created successfully:', data);
+    }
+  }
+
+  // Create questions for a commission
+  //TODO Fix creating options
+  const createQuestion = async (commissionId: number) => {
+    console.log('Creating questions for commission:', commissionId);
+    console.log('Questions to create:', questions);
+
+    for (const question of questions) {
+      console.log('Creating question:', question);
+
+      const { data, error } = await supabaseClient.from('questions').insert({
+        commission_id: commissionId,
+        question_text: question.question_text,
+        type: question.type,
+        is_required: question.is_required,
+      }).select();
+
+      if (error) {
+        console.error('Error creating question:', error);
+        console.log('question data:', {
+          commission_id: commissionId,
+          question_text: question.question_text,
+          type: question.type,
+          is_required: question.is_required,
+        });
+        throw error;
+      }
+
+      console.log('Question created successfully:', data);
+
+      if (data && (data[0].type === 'multiple-choice' || data[0].type === 'checkboxes') && question.options && question.options.length > 0) {
+        console.log('Creating options for question:', data[0].id);
+        await createOptions(question, data[0].id);
+      }
+    }
+  }
 
   const handleSubmit = async () => {
     try {
@@ -186,6 +302,14 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: 
         setDeletedQuestionIds([]); // Clear the deleted questions list
       }
 
+      // Delete removed images from storage
+      if (deletedImageUrls.length > 0) {
+        await deleteImagesFromStorage(deletedImageUrls);
+        setDeletedImageUrls([]); // Clear the deleted image URLs list
+      }
+
+
+
       // Start with existing images from formData
       let finalImageUrls = [...formData.image_urls];
 
@@ -213,6 +337,14 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: 
         image_urls: finalImageUrls, // Use the final image URLs here
       }).eq('id', service?.id);
 
+      //Delete all questions
+      await deleteQuestions(questions.map(q => q.id.toString()));
+
+      // Create questions if any exist
+      if (questions.length > 0 && service?.id) {
+        await createQuestion(parseInt(service.id));
+      }
+
       if (error) {
         console.error('Error updating service:', error);
         alert('Error updating service. Please try again.');
@@ -222,7 +354,7 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: 
       }
 
       console.log('Service updated successfully');
-      
+
       // Close the overlay after successful submission
       onClose();
     } catch (error) {
@@ -281,7 +413,12 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: 
 
           <UploadServiceImages
             onFilesChange={(files) => setSelectedFiles(files)}
-            onImagesChange={(images) => setFormData(prev => ({ ...prev, image_urls: images }))}
+            onImagesChange={(images, deletedUrls) => {
+              setFormData(prev => ({ ...prev, image_urls: images }));
+              if (deletedUrls && deletedUrls.length > 0) {
+                setDeletedImageUrls(prev => [...prev, ...deletedUrls]);
+              }
+            }}
             initialImages={formData.image_urls} />
           <div className="flex flex-col w-full sm:max-w-[60%] bg-white rounded-card px-custom py-[1%]">
             <TextInput

@@ -26,6 +26,7 @@ module.exports = withMT({
           purple: '#820263',
           brown: '#1C0015',
           darkAccent: '#494599',
+          blue: '#5865f2',
 
         }
       },
