@@ -25,7 +25,7 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
   const [editImageSrc, setEditImageSrc] = useState(imageSrc);
   const [editBannerSrc, setEditBannerSrc] = useState(bannerSrc || '');
   const [isLoading, setIsLoading] = useState(false);
-  const maxLength = 50; // Characters to show before "see more"
+  const maxLength = 0; // Characters to show before "see more"
 
   // Update edit state when props change
   useEffect(() => {
@@ -36,8 +36,6 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
   }, [displayName, bio, imageSrc, bannerSrc]);
 
   const shouldShowSeeMore = bio.length > maxLength;
-  const displayText = isExpanded ? bio : bio.slice(0, maxLength) + (shouldShowSeeMore ? '...' : '');
-
   const handleSeeMore = () => {
     setShowOverlay(true);
   };
@@ -162,37 +160,39 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
   return (
     <>
       <div className="flex w-full flex-row items-start justify-left gap-x-6 px-custom sm:px-custom mt-[.5rem] flex-wrap">
-        <img src={imageSrc} alt="Profile" className="hidden sm:block w-[10rem] h-[10rem] rounded-full border-2 border-black object-cover relative top-[-4rem]" />
+        <img src={imageSrc} alt="Profile" className="hidden sm:block w-[10rem] h-[10rem] rounded-full border-2 border-custom-darkpurple object-cover relative top-[-4rem]" />
         <div className="hidden sm:flex flex-col items-left justify-start text-left relative top-[-1.5rem]">
           <div className="flex items-center gap-4">
             <div className="text-xl font-bold">{displayName}</div>
 
           </div>
           <div className="relative -top-2">
-            <div className="flex flex-row items-center">
-              <div className="text-base mb-0">@{userName}</div>
-              <button className="bg-custom-gray w-7 h-7 justify-center text-white rounded-full hover:bg-opacity-80 transition-all flex items-center ml-[1%] mr-[1%]">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-              </button>
+            <div className="flex flex-row items-center w-[100%] justify-between">
+              <div className="flex items-center">
+                <div className="text-base mb-0">@{userName}</div>
+                <button className="bg-custom-gray w-7 h-7 justify-center text-white rounded-full hover:bg-opacity-80 transition-all flex items-center ml-[1%] mr-[1%]">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                </button>
+              </div>
               {showSettings && (
                 <button
                   onClick={handleSettingsClick}
                   className="text-custom-white hover:text-custom-accent transition-colors px-4 py-1 rounded-lg border border-custom-lightgray text-sm font-medium"
                 >
-                  Edit profile
+                  Edit
                 </button>
               )}
             </div>
             <div className="text-sm text-custom-lightgray mb-0 relative top-1">
-              {displayText}
+
               {shouldShowSeeMore && (
                 <button
                   onClick={handleSeeMore}
                   className="text-custom-accent hover:text-custom-darkAccent font-medium ml-1"
                 >
-                  see more
+                  About me
                 </button>
               )}
             </div>
@@ -202,41 +202,41 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
         {/* mobile */}
         <div className="sm:hidden">
           <div className="flex flex-row">
-            <img src={imageSrc} alt="Profile" className="w-[7rem] h-[7rem] rounded-full border-2 border-black mr-[1%] relative top-[-3.5rem]" />
-            <div className="flex flex-col items-left justify-start text-left relative top-[-1.5rem]">
+            <img src={imageSrc} alt="Profile" className="w-[7rem] h-[7rem] rounded-full border-4 border-custom-darkpurple mr-[1%] relative top-[-2.5rem]" />
+            <div className="flex flex-col items-left justify-start text-left relative top-[-2.5rem]">
               <div className="flex items-center gap-4">
-                <div className="text-md font-bold">{displayName}</div>
+                <div className="text-xl font-bold">{displayName}</div>
               </div>
               <div className="relative -top-2">
-                <div className="flex flex-row items-center">
-                  <div className="text-base mb-0">@{userName}</div>
-                  <button className="bg-custom-gray w-7 h-7 justify-center text-white rounded-full hover:bg-opacity-80 transition-all flex items-center ml-[1%] mr-[1%]">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                  </button>
+                <div className="flex flex-row items-center justify-between w-full">
+                  <div className="flex items-center">
+                    <div className="text-base mb-0">@{userName}</div>
+                    <button className="bg-custom-gray w-7 h-7 justify-center text-white rounded-full hover:bg-opacity-80 transition-all flex items-center ml-[3%] mr-[1%]">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                    </button>
+                  </div>
+                  {showSettings && (
+                    <button
+                      onClick={handleSettingsClick}
+                      className="text-custom-white hover:text-custom-accent transition-colors px-4 py-1 rounded-lg border border-custom-lightgray text-sm font-medium"
+                    >
+                      Edit
+                    </button>
+                  )}
                 </div>
-                {showSettings && (
-                  <button
-                    onClick={handleSettingsClick}
-                    className="text-custom-white hover:text-custom-accent transition-colors px-4 py-1 rounded-lg border border-custom-lightgray text-sm font-medium mt-2"
-                  >
-                    Edit profile
-                  </button>
-                )}
+              </div>
+              <div className="text-sm text-custom-lightgray mb-0 relative mb-3">
+                <button
+                  onClick={handleSeeMore}
+                  className="text-custom-accent hover:text-custom-darkAccent font-medium ml-1 relative top-[-.7rem]"
+                >
+                  About me
+                </button>
+
               </div>
             </div>
-          </div>
-          <div className="text-sm text-custom-lightgray mb-0 relative top-[-2.6rem] mb-3">
-            {displayText}
-            {shouldShowSeeMore && (
-              <button
-                onClick={handleSeeMore}
-                className="text-custom-accent hover:text-custom-darkAccent font-medium ml-1"
-              >
-                see more
-              </button>
-            )}
           </div>
         </div>
       </div>
@@ -244,7 +244,7 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
       {/* Bio Overlay */}
       {showOverlay && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-custom-darkpurple rounded-card max-h-[95vh] overflow-y-auto w-full sm:w-[50rem] p-custom relative">
+          <div className="bg-custom-darkpurple rounded-card w-full sm:w-[50rem] p-custom relative">
             <div className="flex justify-between items-center mb-4">
               <button
                 onClick={handleCloseOverlay}
@@ -255,7 +255,7 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
                 </svg>
               </button>
             </div>
-            <div className="text-custom-lightgray">
+            <div className="text-whitebreak-words whitespace-pre-wrap">
               {bio}
             </div>
           </div>
@@ -324,7 +324,7 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
                 <img
                   src={editImageSrc}
                   alt="Profile"
-                  className="w-24 h-24 rounded-full border-2 border-custom-gray object-cover"
+                  className="w-24 h-24 rounded-full border-4 border-custom-darkpurple object-cover"
                 />
                 <label className="absolute bottom-0 right-0 bg-custom-accent text-white rounded-full p-2 cursor-pointer hover:bg-opacity-80 transition-colors">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

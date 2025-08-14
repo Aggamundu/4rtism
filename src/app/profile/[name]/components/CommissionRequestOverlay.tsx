@@ -1,6 +1,10 @@
 "use client"
 import { useEffect, useRef, useState } from "react";
-import { Commission } from "../../../types/Types";
+import toast from 'react-hot-toast';
+import { v4 as uuidv4 } from 'uuid';
+import { supabaseClient } from "../../../../../utils/supabaseClient";
+import { useAuth } from "../../../../contexts/AuthContext";
+import { Answer, Commission } from "../../../types/Types";
 import Question from "./Question";
 import UploadImages from "./UploadImages";
 
@@ -12,12 +16,163 @@ export default function CommissionRequestOverlay({
 }: {
   isOpen: boolean,
   onClose: () => void,
-  commission: Commission,
+  commission: Commission | null,
   displayName: string
 }) {
+  if (!commission) return null;
+
   const { image_urls, price, title, description, delivery_days, pfp_url, artist, questions } = commission;
   const [backgroundColor, setBackgroundColor] = useState("#1f2937");
+  const [deletedImageUrls, setDeletedImageUrls] = useState<string[]>([]);
+
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { user } = useAuth();
+
+  const [formData, setFormData] = useState({
+    image_urls: [] as string[],
+    description: "",
+    answers: [] as Answer[]
+  });
+
+  // Reset state when commission changes (same pattern as ServiceOverlay)
+  useEffect(() => {
+    setFormData({
+      image_urls: [],
+      description: "",
+      answers: []
+    })
+    setSelectedFiles([])
+    setDeletedImageUrls([])
+  }, [commission])
+
+  const formValidation = () => {
+    if (formData.image_urls.length === 0 || formData.description.length === 0) {
+      return false;
+    }
+    if (formData.image_urls.length > 10) {
+      return false;
+    }
+    return true;
+  }
+
+  const checkForm = () => {
+    console.log("Multiple Choice Selected", formData.answers.filter(a => a.selected_option_ids !== null));
+  }
+
+  const saveAnswer = (answer: Answer) => {
+    setFormData(prev => ({
+      ...prev,
+      answers: [...prev.answers.filter(a => a.question_id !== answer.question_id), answer]
+    }));
+  };
+
+  const saveCheckboxAnswer = (questionId: number, optionId: number, isChecked: boolean) => {
+    setFormData(prev => {
+      const existingAnswer = prev.answers.find(a => a.question_id === questionId);
+      let selectedIds = existingAnswer?.selected_option_ids || [];
+
+      if (isChecked) {
+        // Add option if checked
+        selectedIds = [...selectedIds, optionId];
+      } else {
+        // Remove option if unchecked
+        selectedIds = selectedIds.filter(id => id !== optionId);
+      }
+
+      const newAnswer = { question_id: questionId, selected_option_ids: selectedIds };
+
+      return {
+        ...prev,
+        answers: [...prev.answers.filter(a => a.question_id !== questionId), newAnswer]
+      };
+    });
+  };
+
+  const createResponse = async (image_urls: string[]) => {
+    const { data, error } = await supabaseClient.from("responses").insert({
+      commission_id: commission.id,
+      user_id: user?.id,
+      description: formData.description,
+      image_urls: image_urls,
+      status: "Request",
+      payment: "Unpaid",
+    }).select();
+    if (data) {
+      console.log("Response created", data);
+      await createAnswer(data[0].id, formData.answers);
+      return data[0];
+    } else {
+      console.log("Error creating response", error);
+      return null;
+    }
+  }
+
+  const createAnswer = async (id: number, answers: Answer[]) => {
+    for (const answer of answers) {
+      const { data, error } = await supabaseClient.from("answers").insert({
+        response_id: id,
+        question_id: answer.question_id,
+        answer_text: answer.answer_text,
+        selected_option_id: answer.selected_option_id,
+        selected_option_ids: answer.selected_option_ids
+      });
+    }
+  }
+
+  // Upload multiple images to Supabase Storage
+  const uploadImagesToStorage = async (files: File[]): Promise<string[]> => {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const uploadedUrls: string[] = [];
+
+    // Upload each file individually
+    for (const file of files) {
+      const filePath = `${user?.id}/${uuidv4()}_${file.name}`;
+
+      const { data, error } = await supabaseClient.storage
+        .from('images')
+        .upload(filePath, file);
+
+      if (error) {
+        console.error('Error uploading image:', error);
+        throw error;
+      }
+
+      // Get public URL for this file
+      const { data: urlData } = supabaseClient.storage
+        .from('images')
+        .getPublicUrl(filePath);
+
+      uploadedUrls.push(urlData.publicUrl);
+
+    }
+
+    return uploadedUrls;
+  };
+
+  const handleSubmit = async () => {
+    // Upload files to storage if any are selected
+    let uploadedUrls: string[] = [];
+    if (selectedFiles.length > 0) {
+      uploadedUrls = await uploadImagesToStorage(selectedFiles);
+      console.log("Uploaded URLs:", uploadedUrls);
+    }
+
+    // Update form data with uploaded image URLs
+    const updatedFormData = {
+      ...formData,
+      image_urls: uploadedUrls
+    };
+
+    const response = await createResponse(updatedFormData.image_urls);
+    if (response) {
+      onClose();
+      toast.success("Request sent successfully :)");
+    } else {
+      toast.error("Error sending request :(");
+    }
+  }
+
 
   // Function to extract edge color from image
   const extractEdgeColor = (imageUrl: string) => {
@@ -122,6 +277,7 @@ export default function CommissionRequestOverlay({
     <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${isOpen ? '' : 'hidden'}`}>
       <div className="bg-custom-darkpurple rounded-card max-h-[95vh] overflow-y-auto w-full p-custom relative">
         <div className="fixed top-0 right-0 left-0 bg-custom-darkpurple p-[1%] z-50 flex justify-end items-center border-b border-custom-gray">
+          <button className="bg-custom-accent text-white px-4 py-2 rounded-full" onClick={checkForm}>Check form</button>
           <button
             onClick={onClose}
             className="text-custom-lightgray hover:text-gray-700"
@@ -187,7 +343,13 @@ export default function CommissionRequestOverlay({
                 <div className="w-[100%] sm:w-[90%] border-[1px] border-custom-gray rounded-card p-custom">
                   <p className="break-words whitespace-pre-wrap text-custom-lightgray">{description}</p>
                 </div>
-                <UploadImages />
+                <UploadImages onFilesChange={(files) => setSelectedFiles(files)}
+                  onImagesChange={(images, deletedUrls) => {
+                    setFormData(prev => ({ ...prev, image_urls: images }));
+                    if (deletedUrls && deletedUrls.length > 0) {
+                      setDeletedImageUrls(prev => [...prev, ...deletedUrls]);
+                    }
+                  }} initialImages={formData.image_urls} />
                 <div className="mb-[1%]">
                   <div className="py-[1%]">
                     <span className="text-white text-sm font-medium">
@@ -199,13 +361,25 @@ export default function CommissionRequestOverlay({
                     className="sm:w-[90%] w-[100%] bg-custom-gray text-white rounded-lg p-3 focus:outline-none resize-none"
                     rows={4}
                     placeholder="Enter your commission details..."
+                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                   />
                 </div>
                 {questions?.map((question, index) => (
-                  <Question key={index} question={question} />
+                  <Question key={index} question={question} saveAnswer={saveAnswer} saveCheckboxAnswer={saveCheckboxAnswer} />
                 ))}
               </div>
-              <button className="bg-custom-accent text-white px-4 py-2 rounded-full">Request Commission</button>
+              <button
+                className={`px-4 py-2 rounded-full transition-all duration-200 ${selectedFiles.length === 0 || formData.description.length === 0 ||
+                  questions?.some(q => q.is_required && !formData.answers.some(a => a.question_id === q.id))
+                  ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                  : 'bg-custom-accent text-white hover:bg-custom-accent/90 active:scale-95 cursor-pointer'
+                  }`}
+                onClick={handleSubmit}
+                disabled={selectedFiles.length === 0 || formData.description.length === 0 ||
+                  questions?.some(q => q.is_required && !formData.answers.some(a => a.question_id === q.id))}
+              >
+                Request Commission
+              </button>
 
             </div>
           </div>

@@ -6,23 +6,13 @@ import NewServiceOverlay from './NewServiceOverlay';
 import ServiceCard from './ServiceCard';
 import ServiceOverlay from './ServiceOverlay';
 import { Option, Question } from '../../types/Types';
-
-
-interface Service {
-  id: string;
-  title: string;
-  price: string;
-  description?: string;
-  deliveryTime?: string;
-  image_urls?: string[];
-  questions?: Question[];
-}
+import { Service } from '../../types/Types';
 
 export default function Services() {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
-  const [services, setServices] = useState<any[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
   const { user } = useAuth();
 
   const fetchQuestions = async (commissionId: string) => {

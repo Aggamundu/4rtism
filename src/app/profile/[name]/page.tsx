@@ -170,7 +170,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
   const aboutProps = {
     imageSrc: profile?.pfp_url || null,
-    displayName: profile?.display_name || "Loading...",
+    displayName: profile?.display_name || name,
     userName: name,
     bio: profile?.biography || "",
     bannerSrc: profile?.banner_url || null

@@ -1,8 +1,106 @@
 'use client';
-import { useState } from 'react';
+import { CommissionRequest, AnswerDisplay } from '@/app/types/Types';
+import { useEffect, useState } from 'react';
+import { supabaseClient } from '../../../../utils/supabaseClient';
+import { useAuth } from '../../../contexts/AuthContext';
 import CommissionGrid from './CommissionGrid';
+
 export default function CommissionsSeller() {
   const [activeTab, setActiveTab] = useState<'active' | 'completed' | 'all'>('active');
+  const [commissionsData, setCommissionsData] = useState<CommissionRequest[]>([]);
+  const [answersData, setAnswersData] = useState<AnswerDisplay[]>([]);
+  const { user } = useAuth();
+
+  const fetchUsername = async (userId: string) => {
+    const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', userId).single();
+    if (data) {
+      return data.user_name;
+    } else {
+      console.log(error);
+    }
+  }
+
+  const fetchCommissionTitle = async (commissionId: string) => {
+    const { data, error } = await supabaseClient.from('commissions').select('*').eq('id', commissionId).single();
+    if (data) {
+      return data.title;
+    }
+  }
+  // const fetchCommissionTitle
+
+  const fetchAnswers = async (responseId: number) => {
+    const answers: AnswerDisplay[] = [];
+    const { data, error } = await supabaseClient.from('answers').select('*, questions!inner(question_text, type)').eq('response_id', responseId);
+    if (data) {
+      for (const answer of data) {
+        switch (answer.questions.type) {
+          case 'short-answer':
+          case 'paragraph':
+            answers.push({
+              question_text: answer.questions.question_text,
+              type: answer.questions.type,
+              answer_text: answer.answer_text,
+            });
+            break;
+          case 'multiple-choice':
+            const { data: option, error } = await supabaseClient.from('question_options').select('*').eq('id', answer.selected_option_id).single();
+            answers.push({
+              question_text: answer.questions.question_text,
+              type: answer.questions.type,
+              selected_option: option.option_text,
+            });
+            break;
+          case 'checkboxes':
+            const selectedOptions: string[] = [];
+            for (const option_id of answer.selected_option_ids) {
+              const { data: option, error } = await supabaseClient.from('question_options').select('*').eq('id', option_id).single();
+              selectedOptions.push(option.option_text);
+            }
+            answers.push({
+              question_text: answer.questions.question_text,
+              type: answer.questions.type,
+              selected_options: selectedOptions,
+            })
+            break;
+        }
+      }
+    }
+    return answers;
+  }
+
+  const fetchResponses = async () => {
+    const { data, error } = await supabaseClient.from('responses').select('*, commissions!inner(title)').eq('commissions.profile_id', user?.id);
+    if (data) {
+      const commissions: CommissionRequest[] = [];
+      console.log(data);
+      for (const response of data) {
+        const answers = await fetchAnswers(response.id);
+        commissions.push({
+          status: response.status,
+          payment: response.payment,
+          submitted: response.created_at,
+          confirmed: response.confirmed,
+          //TODO: Add these
+          client: response.user_id,
+          commission_title: response.commissions.title,
+
+          description: response.description,
+          reference_image_urls: response.image_urls,
+          submission_urls: response.submission_urls,
+          answers: answers, 
+        })
+      }
+      setCommissionsData(commissions);
+    } else {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchResponses();
+  }, [user?.id]);
+
+
 
   return (
     <div className="bg-custom-offwhite min-h-screen overflow-y-auto w-[100%] float-right text-black px-[5%] py-[.5%] rounded-[30px]">
@@ -45,19 +143,19 @@ export default function CommissionsSeller() {
       <div>
         {activeTab === 'active' && (
           <div>
-            <CommissionGrid activeTab={activeTab} />
+            <CommissionGrid activeTab={activeTab} commissionsData={commissionsData} />
           </div>
         )}
 
         {activeTab === 'completed' && (
           <div>
-            <CommissionGrid activeTab={activeTab} />
+            <CommissionGrid activeTab={activeTab} commissionsData={commissionsData} />
           </div>
         )}
 
         {activeTab === 'all' && (
           <div>
-            <CommissionGrid activeTab={activeTab} />
+            <CommissionGrid activeTab={activeTab} commissionsData={commissionsData} />
           </div>
         )}
       </div>

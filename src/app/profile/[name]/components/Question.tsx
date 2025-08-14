@@ -1,7 +1,11 @@
-import type { Question } from "../../../types/Types";
+import type { Answer, Question } from "../../../types/Types";
 
-export default function Question({ question }: { question: Question }) {
-  const { question_text, type, is_required, options } = question;
+export default function Question({ question, saveAnswer, saveCheckboxAnswer }: {
+  question: Question,
+  saveAnswer: (answer: Answer) => void,
+  saveCheckboxAnswer?: (questionId: number, optionId: number, isChecked: boolean) => void
+}) {
+  const { id, question_text, type, is_required, options } = question;
 
   if (type === 'short-answer' || type === 'paragraph') {
     return (
@@ -17,12 +21,14 @@ export default function Question({ question }: { question: Question }) {
             className="sm:w-[90%] w-[100%] bg-custom-gray text-white rounded-lg p-3 resize-none focus:outline-none"
             rows={4}
             placeholder="Enter your answer..."
+            onChange={(e) => saveAnswer({ question_id: question.id, answer_text: e.target.value })}
           />
         ) : (
           <input
             type="text"
             className="sm:w-[90%] w-[100%] bg-custom-gray text-white rounded-lg p-3 focus:outline-none"
             placeholder="Enter your answer..."
+            onChange={(e) => saveAnswer({ question_id: id, answer_text: e.target.value })}
           />
         )}
       </div>
@@ -43,6 +49,7 @@ export default function Question({ question }: { question: Question }) {
             <label key={option.id} className="flex items-center space-x-3 cursor-pointer">
               <input
                 type="checkbox"
+                onChange={(e) => saveCheckboxAnswer?.(id, option.id, e.target.checked)}
                 className="appearance-none w-4 h-4 bg-white border-2 rounded border-white checked:bg-custom-blue"
               />
               <span className="text-white text-sm">{option.option_text}</span>
@@ -67,7 +74,8 @@ export default function Question({ question }: { question: Question }) {
             <label key={option.id} className="flex items-center space-x-3 cursor-pointer">
               <input
                 type="radio"
-                name={`question-${question.id}`}
+                name={`question-${id}`}
+                onChange={(e) => saveAnswer({ question_id: id, selected_option_id: option.id })}
                 className="w-4 h-4 appearance-none bg-white border-2 border-white rounded-full checked:bg-custom-blue"
               />
               <span className="text-white text-sm">{option.option_text}</span>

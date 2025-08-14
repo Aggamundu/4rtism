@@ -56,7 +56,6 @@ export default function ProfileTabs({ commissions, pictures, reviews, displayNam
         {activeTab === 'commission' && (
           <div>
             <CommissionCardGrid commissions={commissions} showProfileInfo={false} onCardClick={handleCommissionClick} />
-            {selectedCommission && <CommissionRequestOverlay isOpen={isOverlayOpen} onClose={() => setIsOverlayOpen(false)} commission={selectedCommission} displayName={displayName} />}
           </div>
         )}
         {activeTab === 'portfolio' && (

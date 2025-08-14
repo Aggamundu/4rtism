@@ -1,6 +1,6 @@
 import StatusPayment from "./StatusPayment";
 
-interface CommissionCardProps {
+interface CommissionRequestCardProps {
   status: string;
   payment: string;
   title: string;
@@ -10,13 +10,13 @@ interface CommissionCardProps {
   onCardClick: (commission: any) => void;
 }
 
-export default function CommissionCard({ status, payment, title, submitted, confirmed, client, onCardClick }: CommissionCardProps) {
-  const commission = { status, payment, title, submitted, confirmed, client };
+export default function CommissionRequestCard({ status, payment, title, submitted, confirmed, client, onCardClick }: CommissionRequestCardProps) {
+  const commissionRequest = { status, payment, title, submitted, confirmed, client };
 
   return (
     <div
       className="flex flex-row bg-white text-sm text-black rounded-card items-center justify-evenly py-[1%] px-4 cursor-pointer hover:bg-gray-50"
-      onClick={() => onCardClick(commission)}
+      onClick={() => onCardClick(commissionRequest)}
     >
       <div className="flex-1 flex items-center justify-center">
         <StatusPayment name={status} />

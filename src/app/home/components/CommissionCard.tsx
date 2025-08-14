@@ -17,6 +17,7 @@ export default function CommissionCard({
   const { title, price, artist, image_urls, pfp_url, rating } = commission;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [backgroundColor, setBackgroundColor] = useState("#1f2937"); // Default gray-800
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Use image_urls if available, otherwise use empty array
