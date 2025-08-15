@@ -1,15 +1,17 @@
+'use client'
+import { useParams } from 'next/navigation';
 import React, { useState } from "react";
-import { useRouter } from 'next/router';
 
 export default function Refresh() {
-  const {query: {id: connectedAccountId}} = useRouter();
+  const params = useParams();
+  const connectedAccountId = params.id as string;
   const [accountLinkCreatePending, setAccountLinkCreatePending] = useState(false);
   const [error, setError] = useState(false);
 
   React.useEffect(() => {
     if (connectedAccountId) {
       setAccountLinkCreatePending(true);
-        fetch("/api/account_link", {
+      fetch("/api/account_link", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

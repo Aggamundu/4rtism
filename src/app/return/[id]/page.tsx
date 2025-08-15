@@ -1,4 +1,10 @@
-export default function Return() {
+'use client'
+
+import React from "react";
+
+export default function Return({ params }: { params: { id: string } }) {
+  const { id } = params;
+  console.log(id);
   return (
     <div className="container">
       <div className="banner">

@@ -1,5 +1,5 @@
 'use client';
-import { CommissionRequest, AnswerDisplay, ServiceDisplay } from '@/app/types/Types';
+import { AnswerDisplay, CommissionRequest } from '@/app/types/Types';
 import { useEffect, useState } from 'react';
 import { supabaseClient } from '../../../../utils/supabaseClient';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -9,6 +9,8 @@ export default function CommissionsSeller() {
   const [activeTab, setActiveTab] = useState<'active' | 'completed' | 'all'>('active');
   const [commissionsData, setCommissionsData] = useState<CommissionRequest[]>([]);
   const [answersData, setAnswersData] = useState<AnswerDisplay[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
   const fetchUsername = async (userId: string) => {
@@ -73,35 +75,43 @@ export default function CommissionsSeller() {
   }
 
   const fetchResponses = async () => {
-    const { data, error } = await supabaseClient.from('responses').select('*, commissions!inner(title)').eq('commissions.profile_id', user?.id);
-    if (data) {
-      const commissions: CommissionRequest[] = [];
-      for (const response of data) {
-        const answers = await fetchAnswers(response.id);
-        const service = await CreateServiceDisplay(response.commission_id);
-        const name = await fetchUsername(response.user_id);
-        commissions.push({
-          status: response.status,
-          payment: response.payment,
-          submitted: response.created_at,
-          confirmed: response.confirmed,
-          client: name,
-          service: service || { title: '', price: '', image_urls: [] },
-          commission_title: response.commissions.title,
-          commission_id: response.commission_id,
-          description: response.description,
-          reference_image_urls: response.image_urls,
-          submission_urls: response.submission_urls,
-          answers: answers, 
-          instagram: response.instagram,
-          discord: response.discord,
-          twitter: response.twitter
-        })
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabaseClient.from('responses').select('*, commissions!inner(title)').eq('commissions.profile_id', user?.id);
+      if (data) {
+        const commissions: CommissionRequest[] = [];
+        for (const response of data) {
+          const answers = await fetchAnswers(response.id);
+          const service = await CreateServiceDisplay(response.commission_id);
+          const name = await fetchUsername(response.user_id);
+          commissions.push({
+            status: response.status,
+            payment: response.payment,
+            submitted: response.created_at,
+            confirmed: response.confirmed,
+            client: name,
+            service: service || { title: '', price: '', image_urls: [] },
+            commission_title: response.commissions.title,
+            commission_id: response.commission_id,
+            description: response.description,
+            reference_image_urls: response.image_urls,
+            submission_urls: response.submission_urls,
+            answers: answers,
+            instagram: response.instagram,
+            discord: response.discord,
+            twitter: response.twitter
+          })
+        }
+        setCommissionsData(commissions);
+        console.log("commissions data", commissions);
+      } else {
+        console.log("error", error);
       }
-      setCommissionsData(commissions);
-      console.log("commissions data", commissions);
-    } else {
-      console.log("error", error);
+    } catch (error) {
+      console.error("Error fetching responses:", error);
+      setError("Failed to load commissions. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -150,22 +160,48 @@ export default function CommissionsSeller() {
 
       {/* Tab Content */}
       <div>
-        {activeTab === 'active' && (
-          <div>
-            <CommissionGrid activeTab={activeTab} commissionsData={commissionsData} />
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-custom-green mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading commissions...</p>
+            </div>
           </div>
-        )}
+        ) : error ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <p className="text-red-600 mb-4">{error}</p>
+              <button
+                onClick={() => {
+                  setError(null);
+                  fetchResponses();
+                }}
+                className="bg-custom-green hover:bg-custom-green/90 text-white font-bold py-2 px-4 rounded"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            {activeTab === 'active' && (
+              <div>
+                <CommissionGrid activeTab={activeTab} commissionsData={commissionsData} />
+              </div>
+            )}
 
-        {activeTab === 'completed' && (
-          <div>
-            <CommissionGrid activeTab={activeTab} commissionsData={commissionsData} />
-          </div>
-        )}
+            {activeTab === 'completed' && (
+              <div>
+                <CommissionGrid activeTab={activeTab} commissionsData={commissionsData} />
+              </div>
+            )}
 
-        {activeTab === 'all' && (
-          <div>
-            <CommissionGrid activeTab={activeTab} commissionsData={commissionsData} />
-          </div>
+            {activeTab === 'all' && (
+              <div>
+                <CommissionGrid activeTab={activeTab} commissionsData={commissionsData} />
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

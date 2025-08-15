@@ -33,11 +33,11 @@ export default function DashPage() {
   return (
     <div className="flex flex-col sm:flex-row">
       {/* Mobile Navigation */}
-      <div className="sm:hidden w-full bg-gray-800 p-4">
+      <div className="sm:hidden w-full bg-custom-darkgray p-4">
         <div className="relative">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="w-full bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center justify-between"
+            className="w-full bg-custom-gray text-white px-4 py-2 rounded-lg flex items-center justify-between"
           >
             <span>{navOptions.find(option => option.value === activeNav)?.label}</span>
             <svg className={`w-5 h-5 transition-transform ${isMobileMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,7 +46,7 @@ export default function DashPage() {
           </button>
 
           {isMobileMenuOpen && (
-            <div className="absolute top-full left-0 right-0 bg-gray-700 rounded-lg mt-1 z-50">
+            <div className="absolute top-full left-0 right-0 bg-custom-gray rounded-lg mt-1 z-50">
               {navOptions.map((option) => (
                 <button
                   key={option.value}
@@ -54,7 +54,7 @@ export default function DashPage() {
                     setActiveNav(option.value);
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`w-full text-left px-4 py-2 hover:bg-gray-600 ${activeNav === option.value ? 'text-custom-accent bg-gray-600' : 'text-white'
+                  className={`w-full text-left px-4 py-2 hover:bg-custom-lightgray ${activeNav === option.value ? 'text-custom-beige bg-custom-lightgray' : 'text-white'
                     }`}
                 >
                   {option.label}
@@ -74,25 +74,25 @@ export default function DashPage() {
           <nav className="space-y-4 flex flex-col items-center pl-[10%]">
             <button
               onClick={() => setActiveNav('commissions')}
-              className={`w-[100%] text-left ${activeNav === 'commissions' ? 'text-custom-accent' : ''}`}
+              className={`w-[100%] text-left ${activeNav === 'commissions' ? 'text-custom-beige' : ''}`}
             >
               Commissions
             </button>
             <button
               onClick={() => setActiveNav('services')}
-              className={`w-[100%] text-left ${activeNav === 'services' ? 'text-custom-accent' : ''}`}
+              className={`w-[100%] text-left ${activeNav === 'services' ? 'text-custom-beige' : ''}`}
             >
               Services
             </button>
             <button
               onClick={() => setActiveNav('stripe')}
-              className={`w-[100%] text-left ${activeNav === 'stripe' ? 'text-custom-accent' : ''}`}
+              className={`w-[100%] text-left ${activeNav === 'stripe' ? 'text-custom-beige' : ''}`}
             >
               Stripe Dashboard
             </button>
             <button
               onClick={() => setActiveNav('portfolio')}
-              className={`w-[100%] text-left ${activeNav === 'portfolio' ? 'text-custom-accent' : ''}`}
+              className={`w-[100%] text-left ${activeNav === 'portfolio' ? 'text-custom-beige' : ''}`}
             >
               Portfolio
             </button>

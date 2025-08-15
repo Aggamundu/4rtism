@@ -217,7 +217,7 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
             {isExpanded && (
               <button
                 onClick={() => setIsExpanded(false)}
-                className="text-custom-accent hover:text-white transition-colors text-sm mt-1"
+                className="text-custom-lightblue hover:text-white transition-colors text-sm mt-1"
               >
                 Show less
               </button>

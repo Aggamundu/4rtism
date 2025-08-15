@@ -1,22 +1,21 @@
 import { useEffect, useState } from "react";
-import kai from "../../../../public/images/kai.png";
 
+import { CommissionRequest } from "../../types/Types";
 import AcceptOverlay from "./AcceptOverlay";
+import ApprovalOverlay from "./ApprovalOverlay";
+import CommissionCard from "./CommissionCard";
 import ReviewOverlay from "./ReviewOverlay";
 import WIPOverlay from "./WIPOverlay";
-import ApprovalOverlay from "./ApprovalOverlay";
-import { CommissionRequest } from "../../types/Types";
-import CommissionRequestCard from "./CommissionCard";
 
 
 export default function CommissionGrid({ activeTab, commissionsData }: { activeTab: string, commissionsData: CommissionRequest[] }) {
-  const [commissions, setCommissions] = useState<any[]>([]);
-  const [selectedCommission, setSelectedCommission] = useState<any>(null);
+  const [commissions, setCommissions] = useState<CommissionRequest[]>([]);
+  const [selectedCommission, setSelectedCommission] = useState<CommissionRequest | undefined>(undefined);
   const [isAcceptOverlayOpen, setIsAcceptOverlayOpen] = useState(false);
   const [isReviewOverlayOpen, setIsReviewOverlayOpen] = useState(false);
   const [isWIPOverlayOpen, setIsWIPOverlayOpen] = useState(false);
   const [isApprovalOverlayOpen, setIsApprovalOverlayOpen] = useState(false);
-  
+
   useEffect(() => {
     if (activeTab === "active") {
       setCommissions(commissionsData.filter((commission) => commission.status === "Request" || commission.status === "Pending" || commission.status === "WIP" || commission.status === "Approval"));
@@ -25,9 +24,9 @@ export default function CommissionGrid({ activeTab, commissionsData }: { activeT
     } else if (activeTab === "all") {
       setCommissions(commissionsData);
     }
-  }, [activeTab]);
+  }, [activeTab, commissionsData]);
 
-  const handleCardClick = (commission: any) => {
+  const handleCardClick = (commission: CommissionRequest) => {
     setSelectedCommission(commission);
     switch (commission.status) {
       case "Request":
@@ -45,6 +44,9 @@ export default function CommissionGrid({ activeTab, commissionsData }: { activeT
       case "Completed":
         setIsApprovalOverlayOpen(true);
         break;
+      default:
+        console.log("default", commission.status);
+        break;
     }
   };
 
@@ -53,7 +55,7 @@ export default function CommissionGrid({ activeTab, commissionsData }: { activeT
     setIsReviewOverlayOpen(false);
     setIsWIPOverlayOpen(false);
     setIsApprovalOverlayOpen(false);
-    setSelectedCommission(null);
+    setSelectedCommission(undefined);
   };
 
   return (
@@ -64,16 +66,15 @@ export default function CommissionGrid({ activeTab, commissionsData }: { activeT
         <div className="flex-1 text-center">Submitted</div>
         <div className="flex-1 text-center">Confirmed</div>
         <div className="flex-1 text-center">Client/Title</div>
-        <div className="w-8"></div>
       </div>
       {commissions.map((commission, index) => (
-        <CommissionRequestCard key={index} commission={commission} onCardClick={handleCardClick} />
+        <CommissionCard key={index} commission={commission} onCardClick={handleCardClick} />
       ))}
 
       <AcceptOverlay
         isOpen={isAcceptOverlayOpen}
         onClose={handleCloseOverlay}
-        commission={commissionsData[0]}
+        commission={selectedCommission}
       />
       <ReviewOverlay
         isOpen={isReviewOverlayOpen}

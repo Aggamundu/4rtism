@@ -22,7 +22,7 @@ export default function ServiceCard({ service, onCardClick, deleteService }: Ser
       <img src={service.image_urls[0] || '/blank_pfp.webp'} alt={service.title} className="w-[30%] rounded-l-card object-cover" />
       <div className="grid grid-cols-2 sm:grid-cols-3 w-[80%] items-center px-[1%] sm:px-[5%]">
         <div className="text-center">{service.title}</div>
-        <div className="hidden sm:block text-custom-lightgray text-center">Est. ${service.price}</div>
+        <div className="sm:block text-custom-lightgray text-center">Est. ${service.price}</div>
         <div className="flex flex-row  text-center items-center justify-end">
           <button
             className="bg-black text-white hover:bg-black/80 rounded-card w-[40%] py-[.5%] px-custom"

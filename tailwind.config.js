@@ -23,12 +23,13 @@ module.exports = withMT({
           pink: '#D970D7',
           orange: '#FB8B24',
           jade: '#04A777',
-          green: '#688E26',
+          green: '#62d446',
           purple: '#820263',
           brown: '#1C0015',
           darkAccent: '#494599',
           blue: '#569CD6',
           lightblue: '#4EC2FF',
+          beige: '#e1c08c',
 
         }
       },
