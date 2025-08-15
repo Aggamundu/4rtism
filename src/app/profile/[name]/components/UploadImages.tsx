@@ -113,13 +113,13 @@ const hasInitialized = useRef(false);
 
 
   return (
-    <div className="flex flex-col w-full sm:max-w-[90%] bg-custom-darkpurple rounded-card py-[1%]">
-      <label className="text-white text-sm">Reference Images<span className="text-red-500 ml-1">*</span></label>
+    <div className="flex flex-col w-full sm:max-w-[90%] bg-custom-darkgray rounded-card py-[1%]">
+      <label className="text-white text-sm">Reference Images</label>
 
       <div className="flex flex-col py-[1%] items-center">
         <div
           className={`flex items-center justify-center w-[100%] border-2 border-dashed rounded-lg p-4 transition-all duration-200 ${isDragOver
-            ? 'border-custom-accent bg-blue-50'
+            ? 'border-custom-accent bg-custom-gray'
             : 'border-custom-gray'
             }`}
           onDragOver={(e) => {
@@ -140,10 +140,10 @@ const hasInitialized = useRef(false);
           }}
         >
           <div className="flex flex-col items-center">
-            <svg className={`w-8 h-8 mb-2 ${isDragOver ? 'text-black' : 'text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg className={`w-8 h-8 mb-2 `} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
-            <p className={`text-sm mb-1 ${isDragOver ? 'text-black' : 'text-white'}`}>Drag file</p>
+            <p className={`text-sm mb-1 `}>Drag file</p>
             <p
               className={`text-sm mb-1 cursor-pointer text-custom-accent underline`}
               onClick={() => document.getElementById('file-input')?.click()}

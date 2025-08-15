@@ -6,6 +6,7 @@ import TextArea from "../components/TextArea";
 import CreateForm from "./CreateForm";
 import TextInput from "./TextInput";
 import UploadServiceImages from "./UploadServiceImages";
+import { toast } from "react-hot-toast";
 
 interface Service {
   id: string;
@@ -262,8 +263,10 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: Servic
       clearForm();
       onSuccess?.();
       onClose();
+      toast.success('Service created successfully');
     } catch (error) {
       console.error('Error submitting form:', error);
+      toast.error('Error creating service. Please try again.');
       // Handle error (show toast, etc.)
     } finally {
       setIsSubmitting(false);
@@ -274,19 +277,21 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: Servic
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-custom-offwhite rounded-card max-h-[95vh] overflow-y-auto w-full relative">
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+      <div className="bg-custom-offwhite rounded-card max-h-[100vh] overflow-y-auto w-full relative">
+        <div className="sticky top-0 bg-custom-offwhite z-10 flex justify-end items-center p-4 border-b border-gray-200">
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
         <div className="flex flex-col p-6 justify-center items-center gap-y-4">
           <div className="flex flex-col w-full sm:max-w-[60%] bg-white rounded-card px-custom py-[1%]">
             <TextInput
-              title="Title *"
+              title="Title"
               value={formData.title}
               onChange={(value) => setFormData(prev => ({ ...prev, title: value }))}
               maxLength={50}
@@ -295,7 +300,7 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: Servic
           </div>
 
           <TextArea
-            title="Description *"
+            title="Description"
             value={formData.description}
             onChange={(value) => setFormData(prev => ({ ...prev, description: value }))}
             maxLength={500}
@@ -303,7 +308,7 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: Servic
           />
           <div className="flex flex-col w-full sm:max-w-[60%] bg-white rounded-card px-custom py-[1%]">
             <TextInput
-              title="Price (USD) *"
+              title="Price (USD)"
               value={formData.price}
               onChange={(value) => {
                 setFormData(prev => ({ ...prev, price: value }));
@@ -321,7 +326,7 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: Servic
           />
           <div className="flex flex-col w-full sm:max-w-[60%] bg-white rounded-card px-custom py-[1%]">
             <TextInput
-              title="Delivery Time (Days) *"
+              title="Delivery Time (Days)"
               value={formData.deliveryTime}
               onChange={(value) => {
                 setFormData(prev => ({ ...prev, deliveryTime: value }));
@@ -338,10 +343,10 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: Servic
         </div>
         <div className="flex flex-row justify-center items-center gap-x-4 pb-[1%]">
           <button
-            className={`rounded-card w-[50%] sm:w-[17%] py-[.5%] px-custom relative top-[10%] ${isSubmitting
+            className={`rounded-card w-[50%] sm:w-[25%] py-[.5%] px-custom relative top-[10%] ${isSubmitting
               ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
               : isFormValid()
-                ? 'bg-custom-accent text-white hover:bg-custom-darkAccent cursor-pointer'
+                ? 'bg-custom-accent text-white hover:bg-custom-accent/90 active:scale-95 cursor-pointer'
                 : 'bg-gray-400 text-gray-600 cursor-not-allowed'
               }`}
             onClick={handleSubmit}

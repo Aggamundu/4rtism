@@ -67,7 +67,7 @@ export default function CommissionGrid({ activeTab, commissionsData }: { activeT
         <div className="w-8"></div>
       </div>
       {commissions.map((commission, index) => (
-        <CommissionRequestCard key={index} {...commission} onCardClick={handleCardClick} />
+        <CommissionRequestCard key={index} commission={commission} onCardClick={handleCardClick} />
       ))}
 
       <AcceptOverlay

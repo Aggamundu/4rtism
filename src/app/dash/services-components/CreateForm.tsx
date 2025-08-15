@@ -101,7 +101,7 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
               <select
                 value={currentQuestion.type}
                 onChange={(e) => updateCurrentQuestion('type', e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-accent text-sm"
+                className="px-3 py-1 border border-gray-300 rounded-lg focus:outline-none text-sm"
               >
                 {questionTypes.map((type) => (
                   <option key={type.value} value={type.value}>
@@ -134,7 +134,7 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
             value={currentQuestion.question_text}
             onChange={(e) => updateCurrentQuestion('question_text', e.target.value)}
             placeholder="Enter your question"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-accent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none "
           />
         </div>
 
@@ -152,7 +152,7 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
                     value={option.option_text}
                     onChange={(e) => updateOption(index, e.target.value)}
                     placeholder={`Option ${index + 1}`}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-custom-accent"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none "
                   />
                   <button
                     onClick={() => removeOption(index)}
@@ -164,7 +164,7 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
               ))}
               <button
                 onClick={addOption}
-                className="text-custom-accent hover:text-custom-darkAccent text-sm"
+                className="text-custom-accent hover:text-custom-accent/90 text-sm"
               >
                 + Add Option
               </button>
@@ -173,7 +173,7 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
         )}
 
         {/* Required Toggle */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center gap-x-2 justify-end">
           <label className="text-sm font-medium text-gray-700">
             Required
           </label>

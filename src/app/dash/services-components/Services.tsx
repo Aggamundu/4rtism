@@ -110,7 +110,7 @@ export default function Services() {
         <div className="text-xl sm:mr-[5%]">
           Services
         </div>
-        <button className="bg-black text-white hover:bg-black/80 rounded-card w-36 py-[.5%] px-custom" onClick={() => setIsCreateFormOpen(true)}>
+        <button className="bg-black text-white hover:bg-black/80 rounded-card  py-[.5%] px-custom" onClick={() => setIsCreateFormOpen(true)}>
           + Service
         </button>
       </div>

@@ -17,17 +17,28 @@ export interface Answer {
   selected_option_ids?: number[] | null;
 }
 
+export interface ServiceDisplay {
+  title: string;
+  price: string;
+  image_urls: string[];
+}
+
 export interface CommissionRequest {
   status: string;
   payment: "Unpaid" | "Paid";
   submitted: string;
   client: string;
   commission_title: string;
+  commission_id: string;
   confirmed: string;
   description: string;
   reference_image_urls: string[] | null;
   submission_urls: string[] | null;
   answers: AnswerDisplay[];
+  instagram: string;
+  discord: string;
+  twitter: string;
+  service: ServiceDisplay;
 }
 
 export interface Service {

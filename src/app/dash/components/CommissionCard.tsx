@@ -1,17 +1,14 @@
 import StatusPayment from "./StatusPayment";
+import { CommissionRequest } from "../../types/Types";
 
 interface CommissionRequestCardProps {
-  status: string;
-  payment: string;
-  title: string;
-  submitted: string;
-  confirmed: string;
-  client: string;
+  commission: CommissionRequest;
   onCardClick: (commission: any) => void;
 }
 
-export default function CommissionRequestCard({ status, payment, title, submitted, confirmed, client, onCardClick }: CommissionRequestCardProps) {
-  const commissionRequest = { status, payment, title, submitted, confirmed, client };
+export default function CommissionRequestCard({ commission, onCardClick }: CommissionRequestCardProps) {
+  const commissionRequest = { commission };
+  const { status, payment, commission_title, submitted, confirmed, client } = commission;
 
   return (
     <div
@@ -34,7 +31,7 @@ export default function CommissionRequestCard({ status, payment, title, submitte
       </div>
       <div className="flex-1 text-center">
         <div>{client}</div>
-        <div>{title}</div>
+        <div>{commission_title}</div>
       </div>
       <div className="w-8 flex justify-center">
         <button className="bg-custom-gray w-8 h-8 justify-center text-white rounded-full hover:bg-opacity-80 transition-all flex items-center">

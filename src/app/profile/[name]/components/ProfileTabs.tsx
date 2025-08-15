@@ -17,7 +17,7 @@ export default function ProfileTabs({ commissions, pictures, reviews, displayNam
   }
 
   return (
-    <div className="w-full mt-0">
+    <div className="w-full mt-0 relative sm:top-[-2.5rem] top-[-1rem]">
       {/* Tab Navigation */}
       <div className="px-custom overflow-x-auto">
         <div className="flex min-w-max gap-x-[1rem] text-base sm:text-lg">

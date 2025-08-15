@@ -24,7 +24,7 @@ export default function CommissionRequestOverlay({
   const { image_urls, price, title, description, delivery_days, pfp_url, artist, questions } = commission;
   const [backgroundColor, setBackgroundColor] = useState("#1f2937");
   const [deletedImageUrls, setDeletedImageUrls] = useState<string[]>([]);
-
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { user } = useAuth();
@@ -32,7 +32,10 @@ export default function CommissionRequestOverlay({
   const [formData, setFormData] = useState({
     image_urls: [] as string[],
     description: "",
-    answers: [] as Answer[]
+    answers: [] as Answer[],
+    instagram: "",
+    discord: "",
+    twitter: ""
   });
 
   // Reset state when commission changes (same pattern as ServiceOverlay)
@@ -40,24 +43,33 @@ export default function CommissionRequestOverlay({
     setFormData({
       image_urls: [],
       description: "",
-      answers: []
+      answers: [],
+      instagram: "",
+      discord: "",
+      twitter: ""
     })
     setSelectedFiles([])
     setDeletedImageUrls([])
   }, [commission])
 
-  const formValidation = () => {
-    if (formData.image_urls.length === 0 || formData.description.length === 0) {
-      return false;
-    }
-    if (formData.image_urls.length > 10) {
-      return false;
-    }
-    return true;
+  const checkButtonDisabled = () => {
+    const hasRequiredQuestions = questions?.some(q => q.is_required && !formData.answers.some(a => a.question_id === q.id));
+    const hasValidSocials = hasValidSocialMedia();
+
+    return hasRequiredQuestions || !hasValidSocials;
   }
 
-  const checkForm = () => {
-    console.log("Multiple Choice Selected", formData.answers.filter(a => a.selected_option_ids !== null));
+  const getButtonClasses = () => {
+    return checkButtonDisabled()
+      ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+      : 'bg-custom-accent text-white hover:bg-custom-accent/90 active:scale-95 cursor-pointer';
+  }
+
+  const hasValidSocialMedia = () => {
+    const hasInstagram = formData.instagram !== "" && formData.instagram.trim() !== "";
+    const hasDiscord = formData.discord !== "" && formData.discord.trim() !== "";
+    const hasTwitter = formData.twitter !== "" && formData.twitter.trim() !== "";
+    return hasInstagram || hasDiscord || hasTwitter;
   }
 
   const saveAnswer = (answer: Answer) => {
@@ -97,6 +109,9 @@ export default function CommissionRequestOverlay({
       image_urls: image_urls,
       status: "Request",
       payment: "Unpaid",
+      instagram: formData.instagram,
+      discord: formData.discord,
+      twitter: formData.twitter
     }).select();
     if (data) {
       console.log("Response created", data);
@@ -152,6 +167,7 @@ export default function CommissionRequestOverlay({
 
   const handleSubmit = async () => {
     // Upload files to storage if any are selected
+    onClose();
     let uploadedUrls: string[] = [];
     if (selectedFiles.length > 0) {
       uploadedUrls = await uploadImagesToStorage(selectedFiles);
@@ -166,7 +182,6 @@ export default function CommissionRequestOverlay({
 
     const response = await createResponse(updatedFormData.image_urls);
     if (response) {
-      onClose();
       toast.success("Request sent successfully :)");
     } else {
       toast.error("Error sending request :(");
@@ -273,11 +288,24 @@ export default function CommissionRequestOverlay({
     }
   }, [image_urls]);
 
+  // Prevent body scrolling when overlay is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup function to restore scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   return (
-    <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${isOpen ? '' : 'hidden'}`}>
-      <div className="bg-custom-darkpurple rounded-card max-h-[95vh] overflow-y-auto w-full p-custom relative">
-        <div className="fixed top-0 right-0 left-0 bg-custom-darkpurple p-[1%] z-50 flex justify-end items-center border-b border-custom-gray">
-          <button className="bg-custom-accent text-white px-4 py-2 rounded-full" onClick={checkForm}>Check form</button>
+    <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${isOpen ? '' : 'hidden'}`} onClick={onClose}>
+      <div className="bg-custom-darkgray rounded-card max-h-[100vh] overflow-y-auto w-full p-[3%] relative scrollbar-thin scrollbar-thumb-custom-gray scrollbar-track-transparent hover:scrollbar-thumb-custom-lightgray" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed top-0 right-0 left-0 bg-custom-darkgray p-[1%] z-50 flex justify-end items-center border-b border-custom-gray">
           <button
             onClick={onClose}
             className="text-custom-lightgray hover:text-gray-700"
@@ -290,7 +318,7 @@ export default function CommissionRequestOverlay({
         <div className="text-white pt-[5%] sm:pt-[0%]">
           <div className="flex flex-col sm:flex-row gap-[1%]">
             {/* Images - Slideshow on mobile, fixed column on desktop */}
-            <div className="w-full sm:w-[40%] sm:h-[90vh] sm:overflow-y-auto sm:pr-4 sm:sticky sm:top-0">
+            <div className="w-full sm:w-[40%] sm:h-[90vh] sm:overflow-y-auto sm:pr-4 sm:sticky sm:top-0 scrollbar-thin scrollbar-thumb-custom-gray scrollbar-track-transparent hover:scrollbar-thumb-custom-lightgray">
               {/* Mobile image */}
               <div className="sm:hidden">
                 <div className="relative">
@@ -321,7 +349,7 @@ export default function CommissionRequestOverlay({
             </div>
 
             {/* Content - Full width on mobile, 60% on desktop */}
-            <div className="w-full sm:w-[60%] sm:h-[90vh] sm:overflow-y-auto">
+            <div className="w-full sm:w-[60%] sm:h-[90vh] sm:overflow-y-auto scrollbar-thin scrollbar-thumb-custom-gray scrollbar-track-transparent hover:scrollbar-thumb-custom-lightgray">
               <p className="text-xl font-bold">{title}</p>
               <div className="relative -top-[1rem]">
                 <div className="flex flex-row gap-[3%] text-lg text-custom-lightgray ">
@@ -343,6 +371,45 @@ export default function CommissionRequestOverlay({
                 <div className="w-[100%] sm:w-[90%] border-[1px] border-custom-gray rounded-card p-custom">
                   <p className="break-words whitespace-pre-wrap text-custom-lightgray">{description}</p>
                 </div>
+                {/* Socials */}
+                <div className="mb-[1%] flex flex-col gap-y-[2%]">
+                  <div className="py-[1%]">
+                    <span className="text-white text-sm font-medium">
+                      Contact Information {!hasValidSocialMedia() && <span className="text-red-500">*</span>}
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-[1%] mb-[1%]">
+                    <span className="text-custom-lightgray text-sm font-medium">
+                      Instagram:
+                    </span>
+                    <input
+                      className="sm:w-[90%] w-[100%] bg-custom-gray text-white rounded-lg p-3 focus:outline-none resize-none"
+                      placeholder=""
+                      onChange={(e) => setFormData(prev => ({ ...prev, instagram: e.target.value }))}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-[1%] mb-[1%]">
+                    <span className="text-custom-lightgray text-sm font-medium">
+                      Discord:
+                    </span>
+                    <input
+                      className="sm:w-[90%] w-[100%] bg-custom-gray text-white rounded-lg p-3 focus:outline-none resize-none"
+                      placeholder=""
+                      onChange={(e) => setFormData(prev => ({ ...prev, discord: e.target.value }))}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-[1%] mb-[1%]">
+                    <span className="text-custom-lightgray text-sm font-medium">
+                      Twitter:
+                    </span>
+                    <input
+                      className="sm:w-[90%] w-[100%] bg-custom-gray text-white rounded-lg p-3 focus:outline-none resize-none"
+                      placeholder=""
+                      onChange={(e) => setFormData(prev => ({ ...prev, twitter: e.target.value }))}
+                    />
+                  </div>
+
+                </div>
                 <UploadImages onFilesChange={(files) => setSelectedFiles(files)}
                   onImagesChange={(images, deletedUrls) => {
                     setFormData(prev => ({ ...prev, image_urls: images }));
@@ -354,7 +421,6 @@ export default function CommissionRequestOverlay({
                   <div className="py-[1%]">
                     <span className="text-white text-sm font-medium">
                       Describe your commission
-                      <span className="text-red-500 ml-1">*</span>
                     </span>
                   </div>
                   <textarea
@@ -368,18 +434,15 @@ export default function CommissionRequestOverlay({
                   <Question key={index} question={question} saveAnswer={saveAnswer} saveCheckboxAnswer={saveCheckboxAnswer} />
                 ))}
               </div>
-              <button
-                className={`px-4 py-2 rounded-full transition-all duration-200 ${selectedFiles.length === 0 || formData.description.length === 0 ||
-                  questions?.some(q => q.is_required && !formData.answers.some(a => a.question_id === q.id))
-                  ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                  : 'bg-custom-accent text-white hover:bg-custom-accent/90 active:scale-95 cursor-pointer'
-                  }`}
-                onClick={handleSubmit}
-                disabled={selectedFiles.length === 0 || formData.description.length === 0 ||
-                  questions?.some(q => q.is_required && !formData.answers.some(a => a.question_id === q.id))}
-              >
-                Request Commission
-              </button>
+              <div className="flex justify-end mr-[10%]">
+                <button
+                  className={`px-4 py-2 rounded-full transition-all duration-200 ${getButtonClasses()}`}
+                  onClick={handleSubmit}
+                  disabled={checkButtonDisabled()}
+                >
+                  Request Commission
+                </button>
+              </div>
 
             </div>
           </div>

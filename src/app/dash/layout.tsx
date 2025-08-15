@@ -6,7 +6,7 @@ interface DashLayoutProps {
 
 export default function DashLayout({ children, }: DashLayoutProps) {
   return (
-    <div className="bg-gradient-to-b from-custom-darkpurple to-custom-lightpurple h-screen overflow-y-auto">
+    <div className="bg-gradient-to-b from-custom-darkgray to-custom-gray h-screen overflow-y-auto">
       {children}
     </div>
   );

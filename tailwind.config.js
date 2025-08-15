@@ -13,20 +13,22 @@ module.exports = withMT({
       colors: {
         custom: {
           lightgray: '#A4A3AD',
-          gray: '#484659',
+          gray: '#3d3d3d',
+          darkgray: '#1e1e1e',
           darkpurple: '#333146',
           accent: '#569cd6',
           yellow: '#FFBB00',
           lightpurple: '#7D78AC',
           offwhite: '#F1F1F1',
-          pink: '#D90368',
+          pink: '#D970D7',
           orange: '#FB8B24',
           jade: '#04A777',
           green: '#688E26',
           purple: '#820263',
           brown: '#1C0015',
           darkAccent: '#494599',
-          blue: '#5865f2',
+          blue: '#569CD6',
+          lightblue: '#4EC2FF',
 
         }
       },
@@ -35,14 +37,14 @@ module.exports = withMT({
         'banner': '10px',
       },
       padding: {
-        'custom': '2%',
+        'custom': '5%',
       },
     },
     fontSize: {
       xs: '12px',
       sm: '14px',
       base: '16px',
-      'md': '22px',
+      'md': '20px',
       lg: '24px',
       xl: '48px',
       '2xl': '64px',

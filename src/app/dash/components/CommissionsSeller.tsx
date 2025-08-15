@@ -1,5 +1,5 @@
 'use client';
-import { CommissionRequest, AnswerDisplay } from '@/app/types/Types';
+import { CommissionRequest, AnswerDisplay, ServiceDisplay } from '@/app/types/Types';
 import { useEffect, useState } from 'react';
 import { supabaseClient } from '../../../../utils/supabaseClient';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -20,10 +20,14 @@ export default function CommissionsSeller() {
     }
   }
 
-  const fetchCommissionTitle = async (commissionId: string) => {
+  const CreateServiceDisplay = async (commissionId: string) => {
     const { data, error } = await supabaseClient.from('commissions').select('*').eq('id', commissionId).single();
     if (data) {
-      return data.title;
+      return {
+        title: data.title,
+        price: data.price,
+        image_urls: data.image_urls
+      }
     }
   }
   // const fetchCommissionTitle
@@ -72,27 +76,32 @@ export default function CommissionsSeller() {
     const { data, error } = await supabaseClient.from('responses').select('*, commissions!inner(title)').eq('commissions.profile_id', user?.id);
     if (data) {
       const commissions: CommissionRequest[] = [];
-      console.log(data);
       for (const response of data) {
         const answers = await fetchAnswers(response.id);
+        const service = await CreateServiceDisplay(response.commission_id);
+        const name = await fetchUsername(response.user_id);
         commissions.push({
           status: response.status,
           payment: response.payment,
           submitted: response.created_at,
           confirmed: response.confirmed,
-          //TODO: Add these
-          client: response.user_id,
+          client: name,
+          service: service || { title: '', price: '', image_urls: [] },
           commission_title: response.commissions.title,
-
+          commission_id: response.commission_id,
           description: response.description,
           reference_image_urls: response.image_urls,
           submission_urls: response.submission_urls,
           answers: answers, 
+          instagram: response.instagram,
+          discord: response.discord,
+          twitter: response.twitter
         })
       }
       setCommissionsData(commissions);
+      console.log("commissions data", commissions);
     } else {
-      console.log(error);
+      console.log("error", error);
     }
   }
 
