@@ -85,6 +85,7 @@ export default function CommissionsSeller() {
           const service = await CreateServiceDisplay(response.commission_id);
           const name = await fetchUsername(response.user_id);
           commissions.push({
+            response_id: response.id,
             status: response.status,
             payment: response.payment,
             submitted: response.created_at,

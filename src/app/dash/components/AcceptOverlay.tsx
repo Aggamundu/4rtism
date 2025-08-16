@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { supabaseClient } from "../../../../utils/supabaseClient";
+import { useAuth } from "../../../contexts/AuthContext";
 import { AnswerDisplay, CommissionRequest } from "../../types/Types";
 import ImageDisplay from "./ImageDisplay";
 import ServiceDisplay from "./ServiceDisplay";
 import TextDisplay from "./TextDisplay";
-import { supabaseClient } from "../../../../utils/supabaseClient";
-import { useAuth } from "../../../contexts/AuthContext";
 
 interface AcceptOverlayProps {
   isOpen: boolean;
@@ -14,17 +14,114 @@ interface AcceptOverlayProps {
 }
 
 export default function AcceptOverlay({ isOpen, onClose, commission }: AcceptOverlayProps) {
+  if (!isOpen || !commission) return null;
+
   const [showRejectConfirmation, setShowRejectConfirmation] = useState(false);
   const [showInvoiceOverlay, setShowInvoiceOverlay] = useState(false);
   const [invoicePrice, setInvoicePrice] = useState("");
+  const [message, setMessage] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
+  const [artistEmail, setArtistEmail] = useState("");
+  const [artistName, setArtistName] = useState("");
+  const [paymentLink, setPaymentLink] = useState("");
   const { user } = useAuth();
-  if (!isOpen || !commission) return null;
+
   const getStripeAccountId = async () => {
     const { data, error } = await supabaseClient.from("profiles").select("stripe_account_id").eq("id", user?.id).single();
     if (error) {
       console.error(error);
     }
     return data?.stripe_account_id;
+  }
+  const getArtistName = async (userId: string) => {
+    const { data, error } = await supabaseClient.from("profiles").select("user_name").eq("id", userId).single();
+    if (error) {
+      console.error(error);
+    }
+    setArtistName(data?.user_name || "");
+  }
+
+  const getClientEmail = async (response_id: number) => {
+    const { data, error } = await supabaseClient.from("emails").select("email").eq("response_id", response_id).single();
+    if (error) {
+      console.error(error);
+    }
+    setClientEmail(data?.email || "");
+  }
+
+
+  const sendEmail = async (paymentLink: string) => {
+    const emailHTML = `
+      <div style="min-height: 100vh; background-color: #f3f4f6; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+        <div style="background-color: white; border-radius: 0.5rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); padding: 2rem; max-width: 28rem; width: 100%; margin: 0 auto;">
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <h1 style="font-size: 1.5rem; font-weight: 700; color: #1f2937;">Payment Request</h1>
+            <p style="color: #4b5563; margin-top: 0.5rem;">from ${artistName}</p>
+          </div>
+
+          <div style="background-color: #f9fafb; padding: 1rem; border-radius: 0.375rem; margin-bottom: 1.5rem;">
+            <p style="font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Message from the Artist:</p>
+            <div style="background-color: white; padding: 1rem; border-radius: 0.375rem; border: 1px solid #e5e7eb;">
+              <p style="color: #1f2937; font-style: italic;">
+                ${message}
+              </p>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 2rem;">
+            <div style="background-color: #f9fafb; padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+              <p style="font-size: 0.875rem; color: #4b5563;">Commission Title</p>
+              <p style="font-size: 1.125rem; font-weight: 500; color: #111827;">${commission.commission_title}</p>
+            </div>
+
+            <div style="background-color: #f9fafb; padding: 1rem; border-radius: 0.375rem;">
+              <p style="font-size: 0.875rem; color: #4b5563;">Amount Due</p>
+              <p style="font-size: 1.125rem; font-weight: 500; color: #111827;">$${invoicePrice}</p>
+            </div>
+          </div>
+
+          <div style="margin: 0 -0.5rem;">
+            <a 
+              href="${paymentLink}"
+              style="display: block; width: 100%; background-color: #2563eb; color: white; text-align: center; padding: 1rem 1.5rem; border-radius: 0.375rem; text-decoration: none; font-size: 1.125rem; font-weight: 500; box-sizing: border-box;"
+            >
+              Pay Now →
+            </a>
+          </div>
+
+          <div style="margin-top: 1.5rem; text-align: center;">
+            <p style="font-size: 0.875rem; color: #6b7280;">
+              Secure payment powered by Stripe
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const text = `
+Payment Request
+from ${artistName}
+
+Message from the Artist:
+${message}
+
+Commission Title: ${commission.commission_title}
+Amount Due: $${invoicePrice}
+
+To complete your payment, please visit: ${paymentLink}
+
+Secure payment powered by Stripe
+    `;
+
+    const response = await fetch('/api/mail', {
+      method: 'POST',
+      body: JSON.stringify({
+        to: clientEmail,
+        subject: commission.commission_title,
+        text: text,
+        html: emailHTML,
+      }),
+    });
   }
 
   const createPaymentLink = async () => {
@@ -36,17 +133,21 @@ export default function AcceptOverlay({ isOpen, onClose, commission }: AcceptOve
         },
         body: JSON.stringify({
           amount: parseFloat(invoicePrice),
-          description:commission.commission_title,
+          description: commission.commission_title,
           stripeAccount: await getStripeAccountId(),
           metadata: {
-            commissionId: commission.commission_id,
+            responseId: commission.response_id,
           },
         })
       })
       const data = await response.json();
-      if(data.paymentLink) {
-        window.open(data.paymentLink, '_blank');
-      } else if(data.error) {
+
+      if (data.paymentLink) {
+        setPaymentLink(data.paymentLink);
+        await sendEmail(data.paymentLink);
+        toast.success("Invoice sent");
+
+      } else if (data.error) {
         toast.error(data.error);
       }
     } catch (error) {
@@ -59,7 +160,7 @@ export default function AcceptOverlay({ isOpen, onClose, commission }: AcceptOve
     setShowInvoiceOverlay(false);
     setInvoicePrice("");
     toast.success("Invoice sent");
-    onClose();
+    // onClose();
     await createPaymentLink();
   }
 
@@ -98,6 +199,12 @@ export default function AcceptOverlay({ isOpen, onClose, commission }: AcceptOve
         )
     }
   }
+
+  useEffect(() => {
+    setArtistEmail(user.email);
+    getClientEmail(commission.response_id);
+    getArtistName(user.id);
+  }, [user, commission]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -200,7 +307,7 @@ export default function AcceptOverlay({ isOpen, onClose, commission }: AcceptOve
       {showInvoiceOverlay && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
           <div className="bg-white rounded-lg p-6 max-w-md mx-4">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Send Invoice</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Send Payment</h3>
             <p className="text-gray-700 mb-4">
               Enter the price for this commission to send an invoice to the client.
             </p>
@@ -216,6 +323,17 @@ export default function AcceptOverlay({ isOpen, onClose, commission }: AcceptOve
                 placeholder="0.00"
                 min="0"
                 step="0.01"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-custom-green focus:border-transparent"
+              />
+            </div>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Send a message to your client
+              </label>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Enter your message here..."
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-custom-green focus:border-transparent"
               />
             </div>

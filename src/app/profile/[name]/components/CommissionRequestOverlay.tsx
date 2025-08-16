@@ -35,7 +35,8 @@ export default function CommissionRequestOverlay({
     answers: [] as Answer[],
     instagram: "",
     discord: "",
-    twitter: ""
+    twitter: "",
+    email: ""
   });
 
   // Reset state when commission changes (same pattern as ServiceOverlay)
@@ -46,17 +47,39 @@ export default function CommissionRequestOverlay({
       answers: [],
       instagram: "",
       discord: "",
-      twitter: ""
+      twitter: "",
+      email: ""
     })
     setSelectedFiles([])
     setDeletedImageUrls([])
   }, [commission])
 
   const checkButtonDisabled = () => {
-    const hasRequiredQuestions = questions?.some(q => q.is_required && !formData.answers.some(a => a.question_id === q.id));
-    const hasValidSocials = hasValidSocialMedia();
+    // Check if any required questions are missing answers
+    const hasMissingRequiredQuestions = questions?.some(q => {
+      if (!q.is_required) return false; // Skip non-required questions
 
-    return hasRequiredQuestions || !hasValidSocials;
+      // Check if this required question has an answer
+      const hasAnswer = formData.answers.some(a => a.question_id === q.id);
+
+      // For different question types, check if the answer has content
+      if (hasAnswer) {
+        const answer = formData.answers.find(a => a.question_id === q.id);
+        if (q.type === 'short-answer' || q.type === 'paragraph') {
+          return !answer?.answer_text || answer.answer_text.trim() === '';
+        } else if (q.type === 'multiple-choice') {
+          return !answer?.selected_option_id;
+        } else if (q.type === 'checkboxes') {
+          return !answer?.selected_option_ids || answer.selected_option_ids.length === 0;
+        }
+      }
+
+      return !hasAnswer; // No answer found for this required question
+    });
+
+    const hasValidEmail = formData.email !== "" && formData.email.trim() !== "" && /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(formData.email);
+
+    return hasMissingRequiredQuestions || !hasValidEmail;
   }
 
   const getButtonClasses = () => {
@@ -65,11 +88,8 @@ export default function CommissionRequestOverlay({
       : 'bg-custom-accent text-white hover:bg-custom-accent/90 active:scale-95 cursor-pointer';
   }
 
-  const hasValidSocialMedia = () => {
-    const hasInstagram = formData.instagram !== "" && formData.instagram.trim() !== "";
-    const hasDiscord = formData.discord !== "" && formData.discord.trim() !== "";
-    const hasTwitter = formData.twitter !== "" && formData.twitter.trim() !== "";
-    return hasInstagram || hasDiscord || hasTwitter;
+  const hasValidEmail = () => {
+    return formData.email !== "" && formData.email.trim() !== "" && /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(formData.email);
   }
 
   const saveAnswer = (answer: Answer) => {
@@ -101,6 +121,18 @@ export default function CommissionRequestOverlay({
     });
   };
 
+  const saveEmail = async (email: string, responseId: number) => {
+    const { data, error } = await supabaseClient.from("emails").insert({
+      response_id: responseId,
+      email: email
+    });
+    if (data) {
+      console.log("Email saved", data);
+    } else {
+      console.log("Error saving email", error);
+    }
+  }
+
   const createResponse = async (image_urls: string[]) => {
     const { data, error } = await supabaseClient.from("responses").insert({
       commission_id: commission.id,
@@ -111,10 +143,11 @@ export default function CommissionRequestOverlay({
       payment: "Unpaid",
       instagram: formData.instagram,
       discord: formData.discord,
-      twitter: formData.twitter
+      twitter: formData.twitter,
     }).select();
     if (data) {
       console.log("Response created", data);
+      await saveEmail(formData.email, data[0].id);
       await createAnswer(data[0].id, formData.answers);
       return data[0];
     } else {
@@ -375,10 +408,23 @@ export default function CommissionRequestOverlay({
                 <div className="mb-[1%] flex flex-col gap-y-[2%]">
                   <div className="py-[1%]">
                     <span className="text-white text-sm font-medium">
-                      Contact Information {!hasValidSocialMedia() && <span className="text-red-500">*</span>}
+                      Contact Information
                     </span>
                   </div>
                   <div className="flex flex-col gap-[1%] mb-[1%]">
+                    <span className="text-custom-lightgray text-sm font-medium">
+                      Email: {!hasValidEmail() && <span className="text-red-500">*</span>}
+                    </span>
+                    <input
+                      className="sm:w-[90%] w-[100%] bg-custom-gray text-white rounded-lg p-3 focus:outline-none resize-none mb-[1%]"
+                      placeholder=""
+                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    />
+                   <div className="py-[1%]">
+                    <span className="text-white text-sm font-medium">
+                      Socials <span className="ml-1 text-custom-lightgray text-xs font-medium">1 recommended</span>
+                    </span>
+                    </div>
                     <span className="text-custom-lightgray text-sm font-medium">
                       Instagram:
                     </span>

@@ -24,6 +24,7 @@ export interface ServiceDisplay {
 }
 
 export interface CommissionRequest {
+  response_id: number;
   status: string;
   payment: "Unpaid" | "Paid";
   submitted: string;

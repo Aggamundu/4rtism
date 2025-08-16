@@ -71,26 +71,34 @@ export default function CommissionGrid({ activeTab, commissionsData }: { activeT
         <CommissionCard key={index} commission={commission} onCardClick={handleCardClick} />
       ))}
 
-      <AcceptOverlay
-        isOpen={isAcceptOverlayOpen}
-        onClose={handleCloseOverlay}
-        commission={selectedCommission}
-      />
-      <ReviewOverlay
-        isOpen={isReviewOverlayOpen}
-        onClose={handleCloseOverlay}
-        commission={commissionsData[0]}
-      />
-      <WIPOverlay
-        isOpen={isWIPOverlayOpen}
-        onClose={handleCloseOverlay}
-        commission={commissionsData[0]}
-      />
-      <ApprovalOverlay
-        isOpen={isApprovalOverlayOpen}
-        onClose={handleCloseOverlay}
-        commission={commissionsData[0]}
-      />
+      {isAcceptOverlayOpen && selectedCommission && (
+        <AcceptOverlay
+          isOpen={isAcceptOverlayOpen}
+          onClose={handleCloseOverlay}
+          commission={selectedCommission}
+        />
+      )}
+      {isReviewOverlayOpen && (
+        <ReviewOverlay
+          isOpen={isReviewOverlayOpen}
+          onClose={handleCloseOverlay}
+          commission={commissionsData[0]}
+        />
+      )}
+      {isWIPOverlayOpen && (
+        <WIPOverlay
+          isOpen={isWIPOverlayOpen}
+          onClose={handleCloseOverlay}
+          commission={commissionsData[0]}
+        />
+      )}
+      {isApprovalOverlayOpen && (
+        <ApprovalOverlay
+          isOpen={isApprovalOverlayOpen}
+          onClose={handleCloseOverlay}
+          commission={commissionsData[0]}
+        />
+      )}
     </div>
   )
 }
