@@ -3,6 +3,7 @@ import { useState } from 'react';
 import CommissionsSeller from './components/CommissionsSeller';
 import Portfolio from './portfolio-components/Portfolio';
 import Services from './services-components/Services';
+import Stripe from './stripe-components/Stripe';
 
 export default function DashPage() {
   const [activeNav, setActiveNav] = useState('commissions');
@@ -22,7 +23,7 @@ export default function DashPage() {
       case 'services':
         return <Services />
       case 'stripe':
-        return <div className="text-white">Stripe Dashboard Component</div>;
+        return <Stripe />;
       case 'portfolio':
         return <Portfolio />;
       default:

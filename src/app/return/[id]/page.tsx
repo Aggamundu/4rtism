@@ -1,23 +1,41 @@
 'use client'
+import { use, useEffect } from "react";
+import { supabaseClient } from "../../../../utils/supabaseClient";
+import { useAuth } from "../../../contexts/AuthContext";
 
-import React from "react";
+export default function Return({ params }: { params: Promise<{ id: string }> }) {
+  const { user } = useAuth();
+  const updateStripeAccountInformation = async () => {
+    const { data, error } = await supabaseClient.from("profiles").update({
+      added_stripe_information: true,
+    }).eq("id", user?.id);
+    if (error) {
+      console.log(user?.id);
+      console.error(error);
+    } else {
+      console.log("success");
+    }
+  }
 
-export default function Return({ params }: { params: { id: string } }) {
-  const { id } = params;
+  useEffect(() => {
+    updateStripeAccountInformation();
+  }, [user]);
+
+  const { id } = use(params);
   console.log(id);
   return (
-    <div className="container">
-      <div className="banner">
-        <h2>4rtism</h2>
-      </div>
-      <div className="content">
-        <h2>Details submitted</h2>
-        <p>That's everything we need for now</p>
-      </div>
-      <div className="info-callout">
-        <p>
-        This is a sample app for Stripe-hosted Connect onboarding. <a href="https://docs.stripe.com/connect/onboarding/quickstart?connect-onboarding-surface=hosted" target="_blank" rel="noopener noreferrer">View docs</a>
-        </p>
+    <div className="bg-gradient-to-b from-custom-darkgray to-custom-gray h-screen overflow-y-auto">
+      <div className="flex flex-col items-center justify-center h-full text-white">
+        <div className="text-center max-w-md mx-auto px-4">
+          <h2 className="text-2xl font-bold mb-4 text-custom-beige">Details submitted</h2>
+          <p className="text-custom-lightgray mb-8">That's everything we need for now</p>
+          <a
+            href="/dash"
+            className="bg-custom-accent hover:bg-custom-accent/90 text-white font-bold py-3 px-8 rounded-full inline-block transition-colors"
+          >
+            Return to Dashboard
+          </a>
+        </div>
       </div>
     </div>
   );

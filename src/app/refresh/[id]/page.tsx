@@ -1,12 +1,17 @@
 'use client'
 import { useParams } from 'next/navigation';
 import React, { useState } from "react";
+import { useAuth } from "../../../contexts/AuthContext";
+import { supabaseClient } from "../../../../utils/supabaseClient";
 
 export default function Refresh() {
   const params = useParams();
   const connectedAccountId = params.id as string;
   const [accountLinkCreatePending, setAccountLinkCreatePending] = useState(false);
   const [error, setError] = useState(false);
+  const { user } = useAuth();
+
+ 
 
   React.useEffect(() => {
     if (connectedAccountId) {
@@ -44,7 +49,7 @@ export default function Refresh() {
       </div>
       <div className="content">
         <h2>Add information to start accepting money</h2>
-        <p>4rtism is the world's leading air travel platform: join our team of pilots to help people travel faster.</p>
+        <p>4rtism is the best way to get paid for your commissions.</p>
         {error && <p className="error">Something went wrong!</p>}
       </div>
       <div className="dev-callout">
