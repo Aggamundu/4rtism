@@ -8,7 +8,7 @@ import ReviewOverlay from "./ReviewOverlay";
 import WIPOverlay from "./WIPOverlay";
 
 
-export default function CommissionGrid({ activeTab, commissionsData }: { activeTab: string, commissionsData: CommissionRequest[] }) {
+export default function CommissionGrid({ activeTab, commissionsData, onRefresh }: { activeTab: string, commissionsData: CommissionRequest[], onRefresh?: () => void }) {
   const [commissions, setCommissions] = useState<CommissionRequest[]>([]);
   const [selectedCommission, setSelectedCommission] = useState<CommissionRequest | undefined>(undefined);
   const [isAcceptOverlayOpen, setIsAcceptOverlayOpen] = useState(false);
@@ -65,7 +65,7 @@ export default function CommissionGrid({ activeTab, commissionsData }: { activeT
         <div className="flex-1 text-center">Payment</div>
         <div className="flex-1 text-center">Submitted</div>
         <div className="flex-1 text-center">Confirmed</div>
-        <div className="flex-1 text-center">Client/Title</div>
+        <div className="flex-1 text-center">Client</div>
       </div>
       {commissions.map((commission, index) => (
         <CommissionCard key={index} commission={commission} onCardClick={handleCardClick} />
@@ -76,27 +76,29 @@ export default function CommissionGrid({ activeTab, commissionsData }: { activeT
           isOpen={isAcceptOverlayOpen}
           onClose={handleCloseOverlay}
           commission={selectedCommission}
+          onRefresh={onRefresh}
         />
       )}
       {isReviewOverlayOpen && (
         <ReviewOverlay
           isOpen={isReviewOverlayOpen}
           onClose={handleCloseOverlay}
-          commission={commissionsData[0]}
+          commission={selectedCommission}
         />
       )}
       {isWIPOverlayOpen && (
         <WIPOverlay
-          isOpen={isWIPOverlayOpen}
-          onClose={handleCloseOverlay}
-          commission={commissionsData[0]}
-        />
+        isOpen={isWIPOverlayOpen}
+        onClose={handleCloseOverlay}
+        commission={selectedCommission}
+        onRefresh={onRefresh}
+      />
       )}
       {isApprovalOverlayOpen && (
         <ApprovalOverlay
           isOpen={isApprovalOverlayOpen}
           onClose={handleCloseOverlay}
-          commission={commissionsData[0]}
+          commission={selectedCommission}
         />
       )}
     </div>

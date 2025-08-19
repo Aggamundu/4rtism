@@ -28,8 +28,8 @@ export interface CommissionRequest {
   status: string;
   payment: "Unpaid" | "Paid";
   submitted: string;
-  client: string;
   commission_title: string;
+  client_email: string;
   commission_id: string;
   confirmed: string;
   description: string;

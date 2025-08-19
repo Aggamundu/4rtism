@@ -20,14 +20,14 @@ export default function Stripe() {
     console.log(data);
   }
 
-  const getStripeAccountId = async () => {
-    const { data, error } = await supabaseClient.from("profiles").select("stripe_account_id").eq("id", user?.id).single();
-    if (error) {
-      console.error(error);
-    } else {
-      setConnectedAccountId(data?.stripe_account_id);
-    }
-  }
+  // const getStripeAccountId = async () => {
+  //   const { data, error } = await supabaseClient.from("profiles").select("stripe_account_id").eq("id", user?.id).single();
+  //   if (error) {
+  //     console.error(error);
+  //   } else {
+  //     setConnectedAccountId(data?.stripe_account_id);
+  //   }
+  // }
 
   const checkIsComplete = async () => {
     const { data, error } = await supabaseClient.from("profiles").select("added_stripe_information").eq("id", user?.id).single();
@@ -42,7 +42,7 @@ export default function Stripe() {
   }
 
   useEffect(() => {
-    getStripeAccountId();
+    // getStripeAccountId();
     checkIsComplete();
   }, [user]);
 

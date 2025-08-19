@@ -4,12 +4,14 @@ interface UploadServiceImagesProps {
   initialImages?: string[];
   onFilesChange?: (files: File[]) => void;
   onImagesChange?: (images: string[], deletedUrls?: string[]) => void;
+  title?: string;
 }
 
 export default function UploadServiceImages({
   initialImages = [],
   onFilesChange,
-  onImagesChange
+  onImagesChange,
+  title
 }: UploadServiceImagesProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<string[]>(initialImages);
@@ -119,7 +121,7 @@ export default function UploadServiceImages({
 
   return (
     <div className="flex flex-col w-full sm:max-w-[60%] bg-white rounded-card px-custom py-[1%]">
-      <label className="text-black text-sm mb-2 font-bold">Upload Images <span className="text-red-500"> *</span></label>
+      <label className="text-black text-sm mb-2 font-bold">{title || "Upload Images"} <span className="text-red-500"> *</span></label>
       <div className="flex flex-col px-custom py-[1%] items-center">
         <div
           className={`flex items-center justify-center sm:w-[30%] border-2 border-dashed rounded-lg p-4 transition-all duration-200 aspect-square ${isDragOver

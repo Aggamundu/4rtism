@@ -13,13 +13,8 @@ export default function CommissionsSeller() {
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
-  const fetchUsername = async (userId: string) => {
-    const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', userId).single();
-    if (data) {
-      return data.user_name;
-    } else {
-      console.log(error);
-    }
+  const onRefresh = () => {
+    fetchResponses();
   }
 
   const CreateServiceDisplay = async (commissionId: string) => {
@@ -83,14 +78,13 @@ export default function CommissionsSeller() {
         for (const response of data) {
           const answers = await fetchAnswers(response.id);
           const service = await CreateServiceDisplay(response.commission_id);
-          const name = await fetchUsername(response.user_id);
+          const { data: clientData, error: clientError } = await supabaseClient.from('emails').select('*').eq('response_id', response.id).single();
           commissions.push({
             response_id: response.id,
             status: response.status,
             payment: response.payment,
             submitted: response.created_at,
             confirmed: response.confirmed,
-            client: name,
             service: service || { title: '', price: '', image_urls: [] },
             commission_title: response.commissions.title,
             commission_id: response.commission_id,
@@ -100,7 +94,8 @@ export default function CommissionsSeller() {
             answers: answers,
             instagram: response.instagram,
             discord: response.discord,
-            twitter: response.twitter
+            twitter: response.twitter,
+            client_email: clientData?.email || ''
           })
         }
         setCommissionsData(commissions);
@@ -187,19 +182,19 @@ export default function CommissionsSeller() {
           <>
             {activeTab === 'active' && (
               <div>
-                <CommissionGrid activeTab={activeTab} commissionsData={commissionsData} />
+                <CommissionGrid activeTab={activeTab} commissionsData={commissionsData} onRefresh={onRefresh} />
               </div>
             )}
 
             {activeTab === 'completed' && (
               <div>
-                <CommissionGrid activeTab={activeTab} commissionsData={commissionsData} />
+                <CommissionGrid activeTab={activeTab} commissionsData={commissionsData} onRefresh={onRefresh} />
               </div>
             )}
 
             {activeTab === 'all' && (
               <div>
-                <CommissionGrid activeTab={activeTab} commissionsData={commissionsData} />
+                <CommissionGrid activeTab={activeTab} commissionsData={commissionsData} onRefresh={onRefresh} />
               </div>
             )}
           </>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { supabaseServer } from '../../../../../utils/supabaseServer';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2023-08-16',
@@ -120,8 +121,107 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
 
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
   console.log('Checkout session completed:', session.id);
-  // Process the completed checkout
-  // Update commission status, send confirmation emails, etc.
+  
+  // Access metadata safely
+  const responseId = session.metadata?.responseId;
+  const artistId = session.metadata?.artistId;
+   // Get payment amount (in cents, convert to dollars)
+   const paymentAmount = session.amount_total ? session.amount_total / 100 : 0;
+   const currency = session.currency?.toUpperCase() || 'USD';
+  
+  if (!responseId) {
+    console.error('No responseId found in session metadata');
+    return;
+  }
+  if(!artistId) {
+    console.error('No artistId found in session metadata');
+    return;
+  }
+  
+  // Use supabaseServer to bypass RLS
+  const {data, error} = await supabaseServer.from("responses").update({
+    status: "WIP",
+    payment: "Paid",
+    confirmed: new Date().toISOString(),
+  }).eq("id", responseId);
+  
+  if (error) {
+    console.error('Error updating response:', error);
+  } else {
+    console.log('Response updated successfully');
+  }
+  
+  // Get artist email from database using service role
+  if (artistId) {
+    console.log('Artist ID found:', artistId);
+    const { data: artistData, error: artistError } = await supabaseServer
+      .from('emails')
+      .select('*')
+      .eq('user_id', artistId)
+      .single();
+
+    const {data: clientData, error: clientError} = await supabaseServer
+      .from('emails')
+      .select('*')
+      .eq('response_id', responseId)
+      .single();
+    
+    console.log('Artist data:', artistData);
+    console.log('Artist error:', artistError);
+    console.log('Client data:', clientData);
+    console.log('Client error:', clientError);
+    
+    if (artistData && artistData.email && clientData && clientData.email) {
+      try {
+        const emailResponse = await fetch(`http://localhost:3000/api/mail`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            to: artistData.email,
+            subject: 'New Commission Payment Received',
+            text: `Payment confirmed from ${clientData.email}`,
+                         html: `
+               <div style="background-color: #f3f4f6; padding: 0.5rem; font-family: 'Lexend', sans-serif;">
+                 <div style="background-color: white; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); padding: 1rem; max-width: 28rem; margin: 0 auto;">
+                   <div style="text-align: center; margin-bottom: 0.75rem;">
+                     <h1 style="font-size: 1.125rem; font-weight: 700; color: #1f2937; margin: 0; font-family: 'Lexend', sans-serif;">Payment Received</h1>
+                     <p style="color: #4b5563; margin: 0.25rem 0 0 0; font-size: 0.75rem; font-family: 'Lexend', sans-serif;">Commission for ${clientData.email}</p>
+                   </div>
+
+                   <div style="background-color: #f9fafb; padding: 0.5rem; border-radius: 0.375rem; margin-bottom: 0.75rem;">
+                     <p style="font-size: 0.75rem; color: #1f2937; margin: 0; font-family: 'Lexend', sans-serif;">
+                       The payment for your commission of $${paymentAmount} ${currency} has been confirmed. Submit your work in your <a href="http://localhost:3000/dash" style="color: #2563eb; text-decoration: underline;">dashboard</a>.
+                     </p>
+                   </div>
+
+                   <div style="text-align: center;">
+                     <p style="font-size: 0.625rem; color: #6b7280; margin: 0; font-family: 'Lexend', sans-serif;">
+                       Secure payment powered by Stripe
+                     </p>
+                   </div>
+                 </div>
+               </div>
+             `,
+          })
+        });
+        
+        if (emailResponse.ok) {
+          console.log('Email notification sent successfully');
+        } else {
+          console.error('Failed to send email notification');
+        }
+      } catch (error) {
+        console.error('Error sending email notification:', error);
+      }
+    } else {
+      console.log('No artist email found - artistData:', artistData);
+    }
+  }
+  
+  // You can access other metadata fields like this:
+  console.log('Session metadata:', session.metadata);
 }
 
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {

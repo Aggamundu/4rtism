@@ -6,6 +6,22 @@ export async function POST(req: NextRequest) {
   try {
     const { amount, description, metadata, stripeAccount } = await req.json();
     console.log("stripeAccount", stripeAccount)
+    
+    // Check if the connected account has card_payments enabled
+    try {
+      const account = await stripe.accounts.retrieve(stripeAccount);
+      if (!account.capabilities?.card_payments || account.capabilities.card_payments !== 'active') {
+        return NextResponse.json({ 
+          error: "Connected account does not have card payments enabled. Please complete the Stripe onboarding process." 
+        }, { status: 400 });
+      }
+    } catch (accountError) {
+      console.error('Error checking account capabilities:', accountError);
+      return NextResponse.json({ 
+        error: "Unable to verify connected account capabilities" 
+      }, { status: 400 });
+    }
+    
     const product = await stripe.products.create({
       name: "Commission Payment",
       description: "Payment for a commission",

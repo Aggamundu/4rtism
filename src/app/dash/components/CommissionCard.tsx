@@ -1,5 +1,6 @@
-import StatusPayment from "./StatusPayment";
+import { formatDateTime } from "../../../utils/dateFormatter";
 import { CommissionRequest } from "../../types/Types";
+import StatusPayment from "./StatusPayment";
 
 interface CommissionRequestCardProps {
   commission: CommissionRequest;
@@ -7,7 +8,7 @@ interface CommissionRequestCardProps {
 }
 
 export default function CommissionCard({ commission, onCardClick }: CommissionRequestCardProps) {
-  const { status, payment, commission_title, submitted, confirmed, client } = commission;
+  const { status, payment, client_email, submitted, confirmed } = commission;
 
   return (
     <div
@@ -21,16 +22,15 @@ export default function CommissionCard({ commission, onCardClick }: CommissionRe
         <StatusPayment name={payment} />
       </div>
       <div className="flex-1 text-center">
-        <div>{submitted}</div>
-        <div className="text-custom-lightgray">3:24 PM</div>
+        <div>{formatDateTime(submitted)?.date || 'N/A'}</div>
+        <div className="text-custom-lightgray">{formatDateTime(submitted)?.time || ''}</div>
       </div>
       <div className="flex-1 text-center">
-        <div>{confirmed ? confirmed : "N/A"}</div>
-        <div className="text-custom-lightgray">3:24 PM</div>
+        <div>{formatDateTime(confirmed)?.date || 'N/A'}</div>
+        <div className="text-custom-lightgray">{formatDateTime(confirmed)?.time || ''}</div>
       </div>
       <div className="flex-1 text-center">
-        <div>{client}</div>
-        <div>{commission_title}</div>
+        <div>{client_email}</div>
       </div>
     </div>
   )

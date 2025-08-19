@@ -10,9 +10,9 @@ export async function POST(request: NextRequest) {
   const msg = {
     to: to, // Change to your recipient
     from: 'noreply@em6674.4rtism.com', // Change to your verified sender
-    subject: subject,
-    text: text,
-    html: html,
+    subject: subject || "",
+    text: text || "",
+    html: html || "",
   }
   sgMail
   .send(msg)

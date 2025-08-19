@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Parse request body
-    const { amount, description, commissionId } = await request.json();
+    const { amount, description, responseId, stripeAccount, metadata } = await request.json();
 
     // Validate required fields
     if (!amount || amount <= 0) {
@@ -24,26 +24,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: description || 'Art Commission',
+    if (!stripeAccount) {
+      return NextResponse.json(
+        { error: 'Stripe account is required' },
+        { status: 400 }
+      );
+    }
+
+          const session = await stripe.checkout.sessions.create({
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: description || 'Art Commission',
+              },
+              unit_amount: Math.round(amount * 100), // Convert to cents
             },
-            unit_amount: Math.round(amount * 100), // Convert to cents
-          },
-          quantity: 1,
-        }
-      ],
-      mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard?payment=cancelled`,
-      metadata: {
-        commissionId: commissionId || 'unknown',
-      },
-    });
+            quantity: 1,
+          }
+        ],
+        mode: 'payment',
+        success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/success`,
+        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard?payment=cancelled`,
+        metadata: {
+          responseId: responseId || 'unknown',
+          ...metadata,
+        },
+      }, {
+        stripeAccount: stripeAccount,
+      });
     
     return NextResponse.json({ sessionId: session.id, url: session.url });
   } catch (error) {
