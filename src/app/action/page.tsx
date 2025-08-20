@@ -1,0 +1,198 @@
+'use client'
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+
+export default function ActionPage() {
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
+  const action = searchParams.get('action');
+
+  const [isExpired, setIsExpired] = useState(false);
+  const [isApproval, setIsApproval] = useState(false);
+  const [isRejected, setIsRejected] = useState(false);
+  const [validToken, setValidToken] = useState(false);
+  const [rating, setRating] = useState(5);
+  const [message, setMessage] = useState('');
+  const [response, setResponse] = useState<any>(null);
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  console.log(token);
+
+  const validateToken = async () => {
+    try {
+      const response = await fetch(`/api/get-responses?token=${token}`, {
+        method: "GET",
+      });
+
+      const result = await response.json();
+
+      // Check if the response contains an error
+      if (result.error) {
+        console.error("Token validation error:", result.error);
+      } else {
+        // Success case - the data is returned directly
+        setResponse(result);
+        setValidToken(true);
+        checkExpiration(result);
+        checkStatus(result);
+        checkRejectionCount(result);
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  }
+  const checkExpiration = (response: any) => {
+    const expiresAt = new Date(response.expiresAt);
+    const today = new Date();
+    setIsExpired(expiresAt < today);
+  }
+
+  const checkStatus = (response: any) => {
+    // Check if the response has a status field, or check responses.status
+    const status = response.status || response.responses?.status;
+    console.log(status);
+    setIsApproval(status === "Approval");
+    setIsCompleted(status === "Completed");
+  }
+
+  const checkRejectionCount = (response: any) => {
+    const rejectionCount = response.rejection_count || response.responses?.rejection_count || 0;
+    setIsRejected(rejectionCount >= 2);
+  }
+
+  useEffect(() => {
+    validateToken();
+  }, []);
+
+  return (
+    <div>
+      {isExpired && (
+        <div className="flex flex-col items-center justify-center p-6 gap-4">
+          <h2 className="text-xl font-semibold text-red-600">Token Expired</h2>
+          <p className="text-gray-600">This link has expired and is no longer valid.</p>
+        </div>
+      )}
+        {!isApproval && !isCompleted && (
+          <div className="flex flex-col items-center justify-center p-6 gap-4">
+            <h2 className="text-xl font-semibold text-green-600">Thank you for your response!</h2>
+            <p className="text-gray-600">Your response has been recorded successfully.</p>
+          </div>
+        )}
+      {!validToken && (
+        <div className="flex flex-col items-center justify-center p-6 gap-4">
+          <h2 className="text-xl font-semibold text-red-600">Invalid token</h2>
+          <p className="text-gray-600">This link is invalid</p>
+        </div>
+      )}
+      {isCompleted && (
+        <div className="flex flex-col items-center justify-center p-6 gap-4">
+          <h2 className="text-xl font-semibold text-green-600">Thank you for your response!</h2>
+          <p className="text-gray-600">Your commission has been completed successfully.</p>
+        </div>
+      )}
+      {validToken && !isExpired && isApproval && !isRejected && searchParams.get('action') === 'reject' && (
+        <div className="flex flex-col items-center justify-center p-6 gap-4">
+          <h2 className="text-xl font-semibold">Reject Work</h2>
+          <p className="text-gray-600">Please provide feedback for the artist</p>
+          <textarea
+            className="w-full max-w-lg p-3 border rounded-lg text-black focus:outline-none focus: border-blue-500"
+            rows={4}
+            placeholder="Enter your feedback here..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <p className="text-gray-600">You can reject up to 2 times. You have {2 - response?.responses?.rejection_count} rejections left.</p>
+          <button
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            onClick={async () => {
+              try {
+                const fetchResponse = await fetch('/api/get-responses', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    token: searchParams.get('token'),
+                    message: message,
+                    action: 'reject',
+                    rejections: response?.responses?.rejection_count
+                  }),
+                });
+
+                if (fetchResponse.ok) {
+                  window.location.reload();
+                  toast.success('Work rejected successfully')
+                } else {
+                  toast.error('Failed to reject work');
+                }
+              } catch (error) {
+                console.error('Error rejecting work:', error);
+                toast.error('Failed to reject work');
+              }
+            }}
+          >
+            Send Rejection
+          </button>
+        </div>
+      )}
+      {((validToken && !isExpired && isApproval && searchParams.get('action') === 'accept') || (isRejected)) && !isCompleted && (
+        <div className="flex flex-col items-center justify-center p-6 gap-4">
+          <h2 className="text-xl font-semibold">Complete Commission</h2>
+          <p className="text-gray-600">Please provide a rating for the artist</p>
+          <div className="flex gap-2">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                onClick={() => setRating(star)}
+                className="text-2xl"
+              >
+                <span className={star <= rating ? "text-custom-yellow" : "text-custom-lightgray"}>
+                  ★
+                </span>
+              </button>
+            ))}
+          </div>
+          <textarea
+            className="w-full max-w-lg p-3 border rounded-lg text-black focus:outline-none focus: border-blue-500"
+            rows={4}
+            placeholder="Enter your review here..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <button
+            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+            onClick={async () => {
+              try {
+                const fetchResponse = await fetch('/api/get-responses', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    token: searchParams.get('token'),
+                    message: message,
+                    action: 'accept',
+                    rating: rating
+                  }),
+                });
+
+                if (fetchResponse.ok) {
+                  toast.success('Commission completed successfully');
+                  setIsCompleted(true);
+                } else {
+                  toast.error('Failed to complete commission');
+                }
+              } catch (error) {
+                console.error('Error completing commission:', error);
+                toast.error('Failed to complete commission');
+              }
+            }}
+          >
+            Complete Commission
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}

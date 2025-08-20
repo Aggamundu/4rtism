@@ -8,6 +8,7 @@ import UploadServiceImages from "../services-components/UploadServiceImages";
 import ImageDisplay from "./ImageDisplay";
 import ServiceDisplay from "./ServiceDisplay";
 import TextDisplay from "./TextDisplay";
+
 interface AcceptOverlayProps {
   isOpen: boolean;
   onClose: () => void;
@@ -21,6 +22,7 @@ export default function WIPOverlay({ isOpen, onClose, commission, onRefresh }: A
   const [message, setMessage] = useState<string>("");
   const [artistName, setArtistName] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [token, setToken] = useState<string>("");
   const { user } = useAuth();
 
   if (!isOpen || !commission) return null;
@@ -91,9 +93,9 @@ export default function WIPOverlay({ isOpen, onClose, commission, onRefresh }: A
     const { data: { user } } = await supabaseClient.auth.getUser();
     const downloadLinksAndUrls: {
       downloadLink: string;
-      url: string;
       fileName: string;
     }[] = [];
+    const submissionUrls: String[] = [];
 
     for (const file of files) {
       const filePath = `${user?.id}/${uuidv4()}_${file.name}`;
@@ -110,23 +112,34 @@ export default function WIPOverlay({ isOpen, onClose, commission, onRefresh }: A
 
       downloadLinksAndUrls.push({
         downloadLink: signedUrlData?.signedUrl || '',
-        url: signedUrlData?.signedUrl || '',
         fileName: file.name
       });
+      submissionUrls.push(signedUrlData?.signedUrl || '');
     }
-    console.log(downloadLinksAndUrls);
-    return downloadLinksAndUrls; // Return array of download links
+    const { data, error } = await supabaseClient.from("responses").update({
+      submission_urls: submissionUrls
+    }).eq("id", commission.response_id);
+    if (error) {
+      console.error('Error updating response:', error);
+      throw error;
+    }
+    console.log('Response updated:', data);
+
+    console.log('Generated download links:', downloadLinksAndUrls.map(link => ({
+      fileName: link.fileName,
+      downloadLink: link.downloadLink.substring(0, 100) + '...',
+    })));
+    return downloadLinksAndUrls;
   }
 
-  const sendEmail = async (downloadLinksAndUrls: { downloadLink: string; url: string; fileName: string }[]) => {
+  const sendEmail = async (downloadLinksAndUrls: { downloadLink: string; fileName: string }[], token: string) => {
     const emailHTML = `
         <div style="background-color: #f3f4f6; padding: 0.75rem; font-family: 'Lexend', sans-serif;">
           <div style="background-color: white; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); padding: 1.25rem; max-width: 28rem; margin: 0 auto;">
             <div style="text-align: center; margin-bottom: 1.25rem;">
               <h1 style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin: 0; font-family: 'Lexend', sans-serif;">Work Submitted</h1>
-                              <p style="color: #4b5563; margin: 0.25rem 0 0 0; font-size: 0.875rem; font-family: 'Lexend', sans-serif;">${artistName} has submitted work for "${commission?.commission_title}"</p>
-                <p style="color: #4b5563; margin: 0.25rem 0 0 0; font-size: 0.875rem; font-family: 'Lexend', sans-serif;">Links expire in 60 days. Please save your files within this time frame</p>              
-
+              <p style="color: #4b5563; margin: 0.25rem 0 0 0; font-size: 0.875rem; font-family: 'Lexend', sans-serif;">${artistName} has submitted work for "${commission?.commission_title}"</p>
+              <p style="color: #4b5563; margin: 0.25rem 0 0 0; font-size: 0.875rem; font-family: 'Lexend', sans-serif;">Links expire in 60 days. Please save your files within this time frame</p>
             </div>
 
             ${message ? `
@@ -140,19 +153,35 @@ export default function WIPOverlay({ isOpen, onClose, commission, onRefresh }: A
             </div>
             ` : ''}
 
-
-
             <!-- Download Links Section -->
             <div style="margin-bottom: 1.25rem;">
               <h2 style="font-size: 1rem; font-weight: 600; color: #1f2937; margin-bottom: 0.75rem; font-family: 'Lexend', sans-serif;">View/Download Files</h2>
-              ${downloadLinksAndUrls.map((file, index) => `
+              ${downloadLinksAndUrls.map((file, index) => {
+      console.log(`Generating link ${index + 1}:`, file.downloadLink);
+      return `
                 <a 
                   href="${file.downloadLink}"
                   style="display: block; padding: 0.5rem; background-color: #f3f4f6; border-radius: 0.375rem; color: #2563eb; text-decoration: none; margin-bottom: 0.5rem; font-family: 'Lexend', sans-serif;"
                 >
-                  Image ${index + 1}
+                  Download File ${index + 1}
                 </a>
-              `).join('')}
+              `;
+    }).join('')}
+            </div>
+            <div style="margin-bottom: 1.25rem; text-align: center;">
+              <h2 style="font-size: 1rem; font-weight: 600; color: #1f2937; margin-bottom: 0.75rem; font-family: 'Lexend', sans-serif;">Approve or Reject</h2>
+              <a 
+                href="http://localhost:3000/action?token=${token}&action=accept"
+                style="display: block; padding: 0.5rem; background-color: #f3f4f6; border-radius: 0.375rem; color: #2563eb; text-decoration: none; margin-bottom: 0.5rem; font-family: 'Lexend', sans-serif;"
+              >
+                Click here to accept
+              </a>
+              <a 
+                href="http://localhost:3000/action?token=${token}&action=reject"
+                style="display: block; padding: 0.5rem; background-color: #f3f4f6; border-radius: 0.375rem; color: #2563eb; text-decoration: none; margin-bottom: 0.5rem; font-family: 'Lexend', sans-serif;"
+              >
+                Click here to reject
+              </a>
             </div>
 
             <div style="margin-top: 0.75rem; text-align: center;">
@@ -176,22 +205,53 @@ export default function WIPOverlay({ isOpen, onClose, commission, onRefresh }: A
       method: 'POST',
       body: JSON.stringify({
         to: clientEmail,
-        subject: `Work Submitted - ${commission?.commission_title}`,
+        subject: `${artistName} has submitted work for "${commission?.commission_title}"`,
         text: emailText,
         html: emailHTML
       }),
     });
     const data = await response.json();
-    console.log(data);
+    console.log('Email API response:', data);
+  }
+
+  const saveToken = async () => {
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7); // 7 days from now
+    const crypto = require('crypto');
+    const token = crypto.randomBytes(32).toString('hex');
+    const { data, error } = await supabaseClient.from("tokens").insert({
+      response_id: commission.response_id,
+      token: token,
+      expiresAt: expiresAt
+    });
+    if (error) {
+      console.error(error);
+    }
+    console.log('Token saved:', token);
+    setToken(token);
+    return token; // Return the token
+  }
+
+  const changeStatus = async () => {
+    const { data, error } = await supabaseClient.from("responses").update({
+      status: "Approval"
+    }).eq("id", commission.response_id);
+    if (error) {
+      console.error(error);
+    }
+    console.log('Status changed:', data);
   }
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
       const downloadLinksAndUrls = await uploadFilesToStorage(selectedFiles);
-      await sendEmail(downloadLinksAndUrls);
+      const token = await saveToken();
+      await sendEmail(downloadLinksAndUrls, token);
       toast.success("Work submitted successfully");
-      // onClose();
+      onClose();
+      await changeStatus();
+      onRefresh?.();
     } catch (error) {
       console.error('Error submitting work:', error);
       toast.error("Failed to submit work. Please try again.");

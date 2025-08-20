@@ -15,7 +15,7 @@ export default function CommissionGrid({ activeTab, commissionsData, onRefresh }
   const [isReviewOverlayOpen, setIsReviewOverlayOpen] = useState(false);
   const [isWIPOverlayOpen, setIsWIPOverlayOpen] = useState(false);
   const [isApprovalOverlayOpen, setIsApprovalOverlayOpen] = useState(false);
-
+  const [isCompletedOverlayOpen, setIsCompletedOverlayOpen] = useState(false);
   useEffect(() => {
     if (activeTab === "active") {
       setCommissions(commissionsData.filter((commission) => commission.status === "Request" || commission.status === "Pending" || commission.status === "WIP" || commission.status === "Approval"));
@@ -42,7 +42,7 @@ export default function CommissionGrid({ activeTab, commissionsData, onRefresh }
         setIsApprovalOverlayOpen(true);
         break;
       case "Completed":
-        setIsApprovalOverlayOpen(true);
+        setIsCompletedOverlayOpen(true);
         break;
       default:
         console.log("default", commission.status);
@@ -55,6 +55,7 @@ export default function CommissionGrid({ activeTab, commissionsData, onRefresh }
     setIsReviewOverlayOpen(false);
     setIsWIPOverlayOpen(false);
     setIsApprovalOverlayOpen(false);
+    setIsCompletedOverlayOpen(false);
     setSelectedCommission(undefined);
   };
 
@@ -99,6 +100,15 @@ export default function CommissionGrid({ activeTab, commissionsData, onRefresh }
           isOpen={isApprovalOverlayOpen}
           onClose={handleCloseOverlay}
           commission={selectedCommission}
+          title="Pending Approval"
+        />
+      )}
+      {isCompletedOverlayOpen && (
+        <ApprovalOverlay
+          isOpen={isCompletedOverlayOpen}
+          onClose={handleCloseOverlay}
+          commission={selectedCommission}
+          title="Completed Commission"
         />
       )}
     </div>
