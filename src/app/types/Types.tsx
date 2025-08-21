@@ -79,7 +79,6 @@ export interface Picture {
 }
 
 export interface Review {
-  userImage: string;
   userName: string;
   reviewText: string;
   rating: number;

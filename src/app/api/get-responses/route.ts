@@ -18,7 +18,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const {action, token, message ,rejections, rating} = body;
+    const {action, token, message ,rejections, rating, username} = body;
     if(action === "reject") {
       const { data: tokenData } = await supabaseServer.from("tokens").select("response_id").eq("token", token).single();
       if(!tokenData) {
@@ -115,6 +115,7 @@ export async function POST(request: Request) {
                        <div style="background-color: white; border-radius: 0.25rem; padding: 0.75rem; margin-top: 0.5rem; font-style: italic;">
                          ${message}
                        </div>
+                        <a href="http://localhost:3000/dash" style="color: #2563eb; text-decoration: underline;">Resubmit work in your dashboard</a>
                      </div>
   
                      <div style="text-align: center;">
@@ -179,6 +180,7 @@ export async function POST(request: Request) {
           reviewText: message,
           rating: rating,
           artist_id: profileId,
+          user_name: username
         });
       if(error) {
         console.error('Error inserting review:', error);

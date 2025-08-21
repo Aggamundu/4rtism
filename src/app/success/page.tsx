@@ -8,10 +8,10 @@ export default function SuccessPage() {
         <p className="text-custom-lightgray">
           For questions, contact me at{" "}
           <a 
-            // href="mailto:support@artcommissions.com"
-            // className="text-custom-lightgray hover:text-custom-accent"
+            href="mailto:4artism@gmail.com"
+            className="text-custom-lightgray hover:text-custom-accent"
           >
-            support@artcommissions.com
+            4artism@gmail.com
           </a>
         </p>
       </div>

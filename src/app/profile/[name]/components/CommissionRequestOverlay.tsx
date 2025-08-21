@@ -54,6 +54,15 @@ export default function CommissionRequestOverlay({
     setDeletedImageUrls([])
   }, [commission])
 
+
+
+  const sendArtistEmail = async () => {
+    fetch(`/api/artist-info`, {
+      method: 'POST',
+      body: JSON.stringify({ commissionId: commission?.id, email: formData.email })
+    })
+  }
+
   const checkButtonDisabled = () => {
     // Check if any required questions are missing answers
     const hasMissingRequiredQuestions = questions?.some(q => {
@@ -126,11 +135,6 @@ export default function CommissionRequestOverlay({
       response_id: responseId,
       email: email
     });
-    if (data) {
-      console.log("Email saved", data);
-    } else {
-      console.log("Error saving email", error);
-    }
   }
 
   const createResponse = async (image_urls: string[]) => {
@@ -212,7 +216,7 @@ export default function CommissionRequestOverlay({
       ...formData,
       image_urls: uploadedUrls
     };
-
+    await sendArtistEmail();
     const response = await createResponse(updatedFormData.image_urls);
     if (response) {
       toast.success("Request sent successfully :)");
@@ -480,6 +484,9 @@ export default function CommissionRequestOverlay({
                   <Question key={index} question={question} saveAnswer={saveAnswer} saveCheckboxAnswer={saveCheckboxAnswer} />
                 ))}
               </div>
+              <div className="flex flex-row gap-[1%] mr-[10%] mb-[1%]">
+                <div className="text-custom-lightgray text-sm italic">If your request is accepted, you'll be emailed a payment link from noreply@em6674.4rtism.com. Check your spam folder if you don't see it.</div>
+              </div>
               <div className="flex justify-end mr-[10%]">
                 <button
                   className={`px-4 py-2 rounded-full transition-all duration-200 ${getButtonClasses()}`}
@@ -489,7 +496,6 @@ export default function CommissionRequestOverlay({
                   Request Commission
                 </button>
               </div>
-
             </div>
           </div>
         </div>

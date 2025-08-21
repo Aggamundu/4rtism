@@ -22,6 +22,7 @@ module.exports = withMT({
           pink1: '#D90368',
           pink2: '#FF047B',
           pink3: '#AA0252',
+          pink4: '#FF5C77',
           orange: '#FB8B24',
           jade: '#04A777',
           green: '#62d446',

@@ -1,4 +1,4 @@
-export default function ReviewCard({ userImage, userName, reviewText, rating, date }: { userImage: string, userName: string, reviewText: string, rating: number, date: string }) {
+export default function ReviewCard({userName, reviewText, rating, date }: { userName: string, reviewText: string, rating: number, date: string }) {
 
   const formatRelativeTime = (dateString: string) => {
     const now = new Date();
@@ -45,9 +45,8 @@ export default function ReviewCard({ userImage, userName, reviewText, rating, da
   };
 
   return (
-    <div className="flex flex-col rounded-card bg-custom-gray shadow-lg px-[2%] px-custom pt-[1%] pb-[2%] sm:w-[70%] w-full mb-[1rem]">
+    <div className="flex flex-col rounded-card bg-custom-gray shadow-lg px-[3%] pt-[1%] pb-[2%] sm:w-[70%] w-full mb-[1rem]">
       <div className="flex flex-row gap-x-2 items-center">
-        <img src={userImage} alt="User" className="w-[24px] h-[24px] rounded-full" />
         <p className="text-base text-white font-bold">{userName}</p>
         <p className="text-base text-custom-lightgray font-bold">{formatRelativeTime(date)}</p>
         <div className="flex items-center gap-x-1 my-2">

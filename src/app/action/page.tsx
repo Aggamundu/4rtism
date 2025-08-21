@@ -16,7 +16,7 @@ export default function ActionPage() {
   const [message, setMessage] = useState('');
   const [response, setResponse] = useState<any>(null);
   const [isCompleted, setIsCompleted] = useState(false);
-
+  const [username, setUsername] = useState('');
   console.log(token);
 
   const validateToken = async () => {
@@ -73,12 +73,12 @@ export default function ActionPage() {
           <p className="text-gray-600">This link has expired and is no longer valid.</p>
         </div>
       )}
-        {!isApproval && !isCompleted && (
-          <div className="flex flex-col items-center justify-center p-6 gap-4">
-            <h2 className="text-xl font-semibold text-green-600">Thank you for your response!</h2>
-            <p className="text-gray-600">Your response has been recorded successfully.</p>
-          </div>
-        )}
+      {!isApproval && !isCompleted && (
+        <div className="flex flex-col items-center justify-center p-6 gap-4">
+          <h2 className="text-xl font-semibold text-green-600">Thank you for your response!</h2>
+          <p className="text-gray-600">Your response has been recorded successfully.</p>
+        </div>
+      )}
       {!validToken && (
         <div className="flex flex-col items-center justify-center p-6 gap-4">
           <h2 className="text-xl font-semibold text-red-600">Invalid token</h2>
@@ -136,7 +136,14 @@ export default function ActionPage() {
           </button>
         </div>
       )}
-      {((validToken && !isExpired && isApproval && searchParams.get('action') === 'accept') || (isRejected)) && !isCompleted && (
+      {isRejected && validToken && !isExpired && isApproval && searchParams.get('action') === 'reject' && (
+        <div className="flex flex-col items-center justify-center p-6 gap-4">
+          <h2 className="text-xl font-semibold">Max rejections reached</h2>
+          <p className="text-gray-600">Please choose to accept the work or contact your artist if you have any issues.</p>
+          
+        </div>
+      )}
+      {((validToken && !isCompleted && !isExpired && isApproval && searchParams.get('action') === 'accept')) && (
         <div className="flex flex-col items-center justify-center p-6 gap-4">
           <h2 className="text-xl font-semibold">Complete Commission</h2>
           <p className="text-gray-600">Please provide a rating for the artist</p>
@@ -153,6 +160,13 @@ export default function ActionPage() {
               </button>
             ))}
           </div>
+          <input
+            type="text"
+            className="w-full max-w-lg p-3 border rounded-lg text-black focus:outline-none focus:border-blue-500"
+            placeholder="Enter your name..."
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
           <textarea
             className="w-full max-w-lg p-3 border rounded-lg text-black focus:outline-none focus: border-blue-500"
             rows={4}
@@ -161,7 +175,11 @@ export default function ActionPage() {
             onChange={(e) => setMessage(e.target.value)}
           />
           <button
-            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+            className={`px-4 py-2 rounded-lg transition-colors ${username.trim() === ''
+              ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+              : 'bg-green-500 text-white hover:bg-green-600'
+              }`}
+            disabled={username.trim() === ''}
             onClick={async () => {
               try {
                 const fetchResponse = await fetch('/api/get-responses', {
@@ -173,7 +191,8 @@ export default function ActionPage() {
                     token: searchParams.get('token'),
                     message: message,
                     action: 'accept',
-                    rating: rating
+                    rating: rating,
+                    username: username
                   }),
                 });
 

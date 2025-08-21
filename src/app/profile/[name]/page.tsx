@@ -1,4 +1,5 @@
 'use client';
+import Header from "@/components/Header";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../../../../utils/supabaseClient";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -24,6 +25,8 @@ export default function ProfilePage({ params }: ProfilePageProps) {
   const [commissions, setCommissions] = useState<Commission[]>([]);
   const [pictures, setPictures] = useState<Picture[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+
+
   const getProfile = async (userName: string) => {
     // Fetch profile data
     const { data, error } = await supabaseClient
@@ -139,15 +142,14 @@ export default function ProfilePage({ params }: ProfilePageProps) {
   const getReviews = async (profileId: string, profileData: any) => {
     const { data, error } = await supabaseClient
       .from('reviews')
-      .select('*, profiles(pfp_url, user_name)')
+      .select('*')
       .eq('artist_id', profileId);
 
     if (error) {
       console.error(error);
     } else {
       const reviews = data.map((review: any) => ({
-        userImage: review.profiles.pfp_url,
-        userName: review.profiles.user_name,
+        userName: review.user_name || "Anonymous",
         reviewText: review.reviewText,
         rating: review.rating,
         date: review.created_at
@@ -184,6 +186,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
   return (
     <div>
+      <Header />
       <Banner imageSrc={profile?.banner_url || null} />
 
       <About {...aboutProps} showSettings={user?.id === profileId} onUpdateProfile={handleProfileUpdate} />
