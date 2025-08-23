@@ -1,5 +1,6 @@
 "use client"
 import { useAuth } from "@/contexts/AuthContext";
+import Header from "@/components/Header";
 import CommissionCardGrid from "./components/CommissionCardGrid";
 import WelcomeSection from "./components/WelcomeSection";
 
@@ -62,7 +63,8 @@ export default function Home() {
 
 
   return (
-    <div className="relative">
+    <div className="relative pt-14">
+      <Header />
       <WelcomeSection />
       {/* Categories */}
       <div className="flex flex-row text-sm">

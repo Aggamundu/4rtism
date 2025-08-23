@@ -9,6 +9,15 @@ export default function Header() {
   const { user, loading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [username, setUsername] = useState('');
+
+  const getName = async () => {
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .select('user_name ')
+      .eq('id', user?.id);
+    setUsername(data?.[0]?.user_name);
+  };
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -25,6 +34,10 @@ export default function Header() {
     };
   }, [isMenuOpen]);
 
+  useEffect(() => {
+    getName();
+  }, [user]);
+
   const handleLogout = async () => {
     try {
       await supabaseClient.auth.signOut();
@@ -40,7 +53,7 @@ export default function Header() {
 
   if (loading) {
     return (
-      <header className="bg-gray-900/50 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50 h-14">
+      <header className="bg-gray-900/50 backdrop-blur-md border-b border-gray-800 fixed top-0 left-0 right-0 z-40 h-14 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14">
             <div className="flex items-center">
@@ -54,7 +67,7 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-gray-900/50 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50 h-14">
+    <header className="bg-gray-900/50 backdrop-blur-md border-b border-gray-800 fixed top-0 left-0 right-0 z-40 h-14 w-full">
       <div className="w-full mx-auto px-custom">
         <div className="flex justify-between items-center h-14">
           {/* Logo/Brand */}
@@ -137,10 +150,10 @@ export default function Header() {
 
                   {/* Dropdown Menu */}
                   {isMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-50" ref={dropdownRef} id="profile-menu">
+                    <div className="absolute right-0 w-48 bg-gray-800 rounded-sm shadow-lg z-50 mt-1" ref={dropdownRef} id="profile-menu">
                       <Link
-                        href="/profile"
-                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
+                        href={`/profile/${username}`}
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:rounded-t-sm hover:text-white transition-colors duration-200"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         Profile
@@ -152,7 +165,7 @@ export default function Header() {
                       >
                         Dashboard
                       </Link>
-                      <hr className="border-gray-700 my-1" />
+                      <hr className="border-gray-700" />
                       <button
                         onClick={handleLogout}
                         className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300 transition-colors duration-200"

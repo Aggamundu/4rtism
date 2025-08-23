@@ -4,7 +4,7 @@ import CommissionsSeller from './components/CommissionsSeller';
 import Portfolio from './portfolio-components/Portfolio';
 import Services from './services-components/Services';
 import Stripe from './stripe-components/Stripe';
-
+import Header from '../../components/Header';
 export default function DashPage() {
   const [activeNav, setActiveNav] = useState('commissions');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -32,7 +32,8 @@ export default function DashPage() {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row">
+    <div className="flex flex-col sm:flex-row pt-14">
+      <Header />
       {/* Mobile Navigation */}
       <div className="sm:hidden w-full bg-custom-darkgray p-4">
         <div className="relative">

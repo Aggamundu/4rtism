@@ -185,14 +185,14 @@ export default function ProfilePage({ params }: ProfilePageProps) {
   };
 
   return (
-    <div>
+    <div className="pt-14">
       <Header />
-      <Banner imageSrc={profile?.banner_url || null} />
+        <Banner imageSrc={profile?.banner_url || null} />
+        <About {...aboutProps} showSettings={user?.id === profileId} onUpdateProfile={handleProfileUpdate} />
+        <div className="relative top-[-3.5rem]">
+          <ProfileTabs commissions={commissions} pictures={pictures} reviews={reviews} displayName={profile?.display_name || ''} />
+        </div>
 
-      <About {...aboutProps} showSettings={user?.id === profileId} onUpdateProfile={handleProfileUpdate} />
-      <div className="relative top-[-3.5rem]">
-        <ProfileTabs commissions={commissions} pictures={pictures} reviews={reviews} displayName={profile?.display_name || ''} />
-      </div>
     </div>
   );
 }

@@ -10,12 +10,14 @@ input[type=number]::-webkit-outer-spin-button {
 
 html,
 body {
-  background-color: #1e1e1e!important;
+  background-color: #1e1e1e !important;
   color: #ffffff;
   font-family: 'Lexend', sans-serif;
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
+  /* padding-top: 1.75rem; */
+  /* 56px to account for fixed header */
 }
 
 body {

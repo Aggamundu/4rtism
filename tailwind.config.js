@@ -30,10 +30,11 @@ module.exports = withMT({
           brown: '#955315',
           beige: '#e1c08c',
           darkAccent: '#494599',
-          blue: '#569CD6',
+          blue: '#2096f3',
           lightblue: '#4EC2FF',
           accent: '#569cd6',
-          darkblue: '#494599'
+          darkblue: '#494599',
+          red: "#ad0015"
 
         }
       },

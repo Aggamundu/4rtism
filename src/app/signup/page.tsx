@@ -1,22 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabaseClient } from '../../../utils/supabaseClient'
 
-export default function AuthPage() {
+export default function SignupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
+  const [userId, setUserId] = useState('')
   const [error, setError] = useState('')
-
-  const checkHasOnboarded = async (id: string) => {
-    const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', id)
-    if (error) {
-      console.error(error)
-    }
-    return data?.[0]?.has_onboarded || false
-  }
 
   // Google Sign In
   const handleGoogleSignIn = async () => {
@@ -40,7 +33,35 @@ export default function AuthPage() {
     }
   }
 
+  const checkHasOnboarded = async (id: string) => {
+    const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', id)
+    if (error) {
+      console.error(error)
+    }
+    return data?.[0]?.has_onboarded || false
+  }
 
+ //Logs in a user
+ const handleLogin = async () => {
+  setLoading(true)
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password })
+  setLoading(false)
+  if (error) {
+    setError(error.message)
+  } else {
+    // Get user ID from the authenticated user
+    const userId = data.user?.id
+    console.log('User ID:', userId)
+
+    // Redirect to home page
+    const hasOnboarded = await checkHasOnboarded(userId)
+    if (hasOnboarded) {
+      window.location.href = `${window.location.origin}/home`
+    } else {
+      window.location.href = `${window.location.origin}/onboarding`
+    }
+  }
+}
 
   //Signs up a new user
   const handleSignUp = async () => {
@@ -48,29 +69,7 @@ export default function AuthPage() {
     const { data, error } = await supabaseClient.auth.signUp({ email, password })
     setLoading(false)
     if (error) setError(error.message)
-    else alert('Check your email for confirmation!')
-  }
-
-  //Logs in a user
-  const handleLogin = async () => {
-    setLoading(true)
-    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password })
-    setLoading(false)
-    if (error) {
-      setError(error.message)
-    } else {
-      // Get user ID from the authenticated user
-      const userId = data.user?.id
-      console.log('User ID:', userId)
-
-      // Redirect to home page
-      const hasOnboarded = await checkHasOnboarded(userId)
-      if (hasOnboarded) {
-        window.location.href = `${window.location.origin}/home`
-      } else {
-        window.location.href = `${window.location.origin}/onboarding`
-      }
-    }
+    handleLogin()
   }
 
   //Displays the UI
@@ -79,7 +78,7 @@ export default function AuthPage() {
       <div className="w-full max-w-md space-y-4">
         {/* Header */}
         <div className="text-center">
-          <p className="font-semibold text-lg text-custom-white">Login</p>
+          <p className="font-semibold text-lg text-custom-white">Sign up</p>
         </div>
 
         {/* Google Sign In Button */}
@@ -109,47 +108,42 @@ export default function AuthPage() {
         </div>
         {error && <p className="text-red-500 text-sm">{error}</p>}
         {/* Email/Password Form */}
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="mb-3 w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"
-        />
-        <div>
           <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="mb-3 w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"
           />
-          <div className="">
-            <a href="/forgot-password" className="text-sm text-custom-lightgray hover:text-custom-blue transition-colors">
-              Forgot your password?
-            </a>
+          <div>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-1 "
+            />
           </div>
-        </div>
-        <div>
-          <div className="flex">
-            <button
-              onClick={handleLogin}
-              disabled={loading}
-              className="flex-1 bg-custom-blue hover:bg-custom-blue/90 text-custom-white px-4 py-3 rounded-lg transition-colors disabled:opacity-50"
-            >
-              {loading ? 'Logging in...' : 'Login'}
-            </button>
+          <div>
+            <div className="flex">
+              <button
+                onClick={handleSignUp}
+                disabled={loading}
+                className="flex-1 bg-custom-blue hover:bg-custom-blue/90 text-custom-white px-4 py-3 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {loading ? 'Signing up...' : 'Sign Up'}
+              </button>
+              
+            </div>
+            <div className="flex flex-row">
+              <p className="text-sm text-custom-lightgray mr-1">Have an account?</p>
+            <a href="/login" className="text-sm text-white hover:text-custom-blue transition-colors font-semibold">
+                Login
+              </a>
+            </div>
+
 
           </div>
-          <div className="flex flex-row">
-            <p className="text-sm text-custom-lightgray mr-1">Don't have an account?</p>
-            <a href="/signup" className="text-sm text-white hover:text-custom-blue transition-colors font-semibold">
-              Sign up
-            </a>
-          </div>
-
-
-        </div>
 
 
         {/* Test Button */}

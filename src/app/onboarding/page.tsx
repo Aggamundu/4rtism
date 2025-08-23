@@ -1,107 +1,71 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { supabaseClient } from '../../../utils/supabaseClient'
+import { useEffect, useState } from 'react'
+import { useAuth } from '../../contexts/AuthContext'
 
 export default function OnboardingPage() {
-  const [selectedRole, setSelectedRole] = useState<'client' | 'artist' | null>(null)
+  const [username, setUsername] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const { user } = useAuth()
   const router = useRouter()
+  useEffect(() => {
+    setLoading(false)
+  }, [])
 
-  const handleSubmit = () => {
-    if (!selectedRole) {
-      alert('Please select a role')
-      return
+  const hasOnboarded = async () => {
+    const {data, error} = await supabaseClient.from('profiles').update({ has_onboarded: true }).eq('id', user.id)
+    if (error) {
+      console.error(error)
+      setError("Error updating onboarding status")
     }
-
-    if (selectedRole === 'artist') {
-      router.push('/artist-onboarding')
-      return
-    }
-
-    console.log('Selected role:', selectedRole)
   }
 
+  const updateUsername = async () => {
+    const { data, error } = await supabaseClient.from('profiles').update({ user_name: username }).eq('id', user.id)
+    if (error) {
+      console.error(error)
+      setError("Username already exists")
+    } else {
+      router.push('/home')
+    }
+  }
+
+  const disable = () => {
+    if (username.length < 1 || loading) {
+      return true
+    }
+    return false
+  }
+
+  const handleContinue = () => {
+    updateUsername()
+    hasOnboarded()
+  }
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="max-w-sm w-full">
-        <h1 className="text-2xl font-bold mb-6 text-center">Choose Your Role</h1>
-        <div className="flex gap-4 mb-6 justify-center">
-          <label
-            className={`w-40 py-3 px-4 border-2 rounded-lg transition-all text-sm cursor-pointer relative ${selectedRole === 'client'
-              ? 'border-red-500 bg-red-50 shadow-md'
-              : 'border-gray-200 hover:border-gray-300'
-              }`}
-          >
-            {selectedRole === 'client' && (
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </div>
-            )}
-            <input
-              type="checkbox"
-              className="sr-only"
-              checked={selectedRole === 'client'}
-              onChange={(e) => {
-                if (e.target.checked) {
-                  setSelectedRole('client')
-                } else if (selectedRole === 'client') {
-                  setSelectedRole(null)
-                }
-              }}
-            />
-            <h3 className="font-semibold">Client</h3>
-            <p className="text-gray-600 text-xs mt-1">
-              I want to find and book artists
-            </p>
-          </label>
-
-          <label
-            className={`w-40 py-3 px-4 border-2 rounded-lg transition-all text-sm cursor-pointer relative ${selectedRole === 'artist'
-              ? 'border-blue-500 bg-blue-50 shadow-md'
-              : 'border-gray-200 hover:border-gray-300'
-              }`}
-          >
-            {selectedRole === 'artist' && (
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </div>
-            )}
-            <input
-              type="checkbox"
-              className="sr-only"
-              checked={selectedRole === 'artist'}
-              onChange={(e) => {
-                if (e.target.checked) {
-                  setSelectedRole('artist')
-                } else if (selectedRole === 'artist') {
-                  setSelectedRole(null)
-                }
-              }}
-            />
-            <h3 className="font-semibold">Artist</h3>
-            <p className="text-gray-600 text-xs mt-1">
-              I want to offer my services
-            </p>
-          </label>
+        <div className="flex flex-col gap-4 mb-6 justify-center">
+          <div className="h-6">
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+          </div>
+          <p className="text-lg font-bold">Choose your username</p>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="mb-3 w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"
+          />
+           <button
+                onClick={handleContinue}
+                disabled={disable()}
+                className="flex-1 bg-custom-blue hover:bg-custom-blue/90 text-custom-white px-4 py-3 rounded-lg transition-colors disabled:opacity-50"
+              >
+                Continue
+              </button>
         </div>
-
-        <div className="flex justify-center">
-          <button
-            onClick={handleSubmit}
-            disabled={!selectedRole}
-            className={`w-48 py-2 px-4 rounded-lg transition-all ${selectedRole
-              ? 'bg-blue-500 text-white hover:bg-blue-600'
-              : 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              }`}
-          >
-            Continue
-          </button>
-        </div>
-      </div>
     </div>
   )
 }
