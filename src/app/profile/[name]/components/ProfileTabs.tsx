@@ -11,10 +11,7 @@ export default function ProfileTabs({ commissions, pictures, reviews, displayNam
   const [activeTab, setActiveTab] = useState<'commission' | 'portfolio' | 'reviews'>('commission');
   const [selectedCommission, setSelectedCommission] = useState<Commission | null>(null);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
-  const handleCommissionClick = (commission: Commission) => {
-    setSelectedCommission(commission);
-    setIsOverlayOpen(true);
-  }
+
 
   return (
     <div className="w-full mt-0 relative sm:top-[-2.5rem] top-[-1rem]">
@@ -55,7 +52,7 @@ export default function ProfileTabs({ commissions, pictures, reviews, displayNam
       <div className="mt-[1rem]">
         {activeTab === 'commission' && (
           <div>
-            <CommissionCardGrid commissions={commissions} showProfileInfo={false} onCardClick={handleCommissionClick} />
+            <CommissionCardGrid commissions={commissions} showProfileInfo={false}/>
           </div>
         )}
         {activeTab === 'portfolio' && (

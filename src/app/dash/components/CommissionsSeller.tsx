@@ -72,6 +72,12 @@ export default function CommissionsSeller() {
   const fetchResponses = async () => {
     setIsLoading(true);
     try {
+      if (!user?.id) {
+        console.log('No user found');
+        setIsLoading(false);
+        return;
+      }
+
       const { data, error } = await supabaseClient.from('responses').select('*, commissions!inner(title)').eq('commissions.profile_id', user?.id);
       if (data) {
         const commissions: CommissionRequest[] = [];
@@ -112,7 +118,9 @@ export default function CommissionsSeller() {
   }
 
   useEffect(() => {
-    fetchResponses();
+    if (user?.id) {
+      fetchResponses();
+    }
   }, [user?.id]);
 
 

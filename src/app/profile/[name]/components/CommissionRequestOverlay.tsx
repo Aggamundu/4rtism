@@ -12,12 +12,12 @@ export default function CommissionRequestOverlay({
   isOpen,
   onClose,
   commission,
-  displayName
+    
 }: {
   isOpen: boolean,
   onClose: () => void,
   commission: Commission | null,
-  displayName: string
+
 }) {
   if (!commission) return null;
 
@@ -398,10 +398,9 @@ export default function CommissionRequestOverlay({
                 </div>
               </div>
               <div className="flex flex-col gap-y-[.5rem] ">
-                <div className="flex flex-row gap-[1%] mb-[.5rem]">
+                <div className="flex flex-row gap-[1%] mb-[.5rem] items-center">
                   <img src={pfp_url} alt="pfp" className="w-[3.2rem] h-[3.2rem] rounded-full border-[1px] border-custom-lightgray" />
                   <div>
-                    <p className="">{displayName}</p>
                     <p className="">@{artist}</p>
                   </div>
                 </div>

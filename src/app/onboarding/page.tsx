@@ -13,7 +13,17 @@ export default function OnboardingPage() {
   const router = useRouter()
   useEffect(() => {
     setLoading(false)
-  }, [])
+    checkHasOnboarded()
+  }, [user])
+
+  const checkHasOnboarded = async () => {
+    const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single()
+    if (data?.has_onboarded) {
+      router.push('/home')
+    } else {
+      setLoading(false)
+    }
+  }
 
   const hasOnboarded = async () => {
     const {data, error} = await supabaseClient.from('profiles').update({ has_onboarded: true }).eq('id', user.id)
@@ -50,7 +60,10 @@ export default function OnboardingPage() {
           <div className="h-6">
             {error && <p className="text-red-500 text-sm">{error}</p>}
           </div>
-          <p className="text-lg font-bold">Choose your username</p>
+          <div>
+            <p className="text-lg font-bold">Choose your username</p>
+            <p className="text-sm text-custom-lightgray">You cannot change this later</p>
+          </div>
           <input
             type="text"
             placeholder="Username"

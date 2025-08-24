@@ -90,7 +90,7 @@ export default function DashPage() {
               onClick={() => setActiveNav('stripe')}
               className={`w-[100%] text-left ${activeNav === 'stripe' ? 'text-custom-beige' : ''}`}
             >
-              Stripe Dashboard
+              Stripe
             </button>
             <button
               onClick={() => setActiveNav('portfolio')}

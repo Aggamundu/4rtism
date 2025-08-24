@@ -7,14 +7,13 @@ interface CommissionCardGridProps {
   commissions: Commission[];
   className?: string;
   showProfileInfo?: boolean;
-  onCardClick: (commission: Commission) => void;
 }
 
 export default function CommissionCardGrid({
   commissions,
   className = "",
   showProfileInfo = true,
-  onCardClick
+  
 }: CommissionCardGridProps) {
   const [selectedCommission, setSelectedCommission] = useState<Commission | null>(null);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
@@ -48,7 +47,6 @@ export default function CommissionCardGrid({
           isOpen={isOverlayOpen}
           onClose={handleCloseOverlay}
           commission={selectedCommission}
-          displayName={selectedCommission?.artist || ""}
         />
       )}
       </div>

@@ -7,6 +7,7 @@ import TextArea from "../components/TextArea";
 import CreateForm from "./CreateForm";
 import TextInput from "./TextInput";
 import UploadServiceImages from "./UploadServiceImages";
+import Category from "./Category";
 import { toast } from "react-hot-toast";
 
 interface Service {
@@ -41,7 +42,7 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: 
   const [deletedImageUrls, setDeletedImageUrls] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [category, setCategory] = useState<string>("Chibi");
   // Validation states
   const [priceError, setPriceError] = useState<string>("");
   const [deliveryTimeError, setDeliveryTimeError] = useState<string>("");
@@ -107,6 +108,7 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: 
         image_urls: service.image_urls || []
       });
       setQuestions(service.questions || []);
+      setCategory(service.category || "Chibi");
     }
   }, [service]);
 
@@ -336,6 +338,7 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: 
         price: formData.price,
         delivery_days: formData.delivery_days,
         image_urls: finalImageUrls, // Use the final image URLs here
+        category: category,
       }).eq('id', service?.id);
 
       //Delete all questions
@@ -440,6 +443,7 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: 
               </div>
             )}
           </div>
+          <Category value={category} onChange={setCategory} />
           <CreateForm onQuestionChange={handleQuestionChange} value={questions} />
         </div>
         <div className="flex flex-row justify-center items-center gap-x-4 pb-[1%]">

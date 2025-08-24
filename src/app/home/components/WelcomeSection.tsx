@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import kai from "../../../../public/images/kai.png";
 import kai2 from "../../../../public/images/kai2.png";
 import kai3 from "../../../../public/images/kai3.png";
+import FeaturedCard from "./FeaturedCard";
 
 export default function WelcomeSection() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -39,7 +40,8 @@ export default function WelcomeSection() {
   };
 
   return (
-    <div className="relative mb-[2%]">
+    <div className="relative mb-[2%] px-custom">
+      <p className="text-base pt-2 pb-2">Featured Art</p>
       {/* <h1 className="text-xl px-8">4 Artists & 4utists</h1> */}
       <div className="relative">
         {canScrollLeft && (
@@ -52,46 +54,13 @@ export default function WelcomeSection() {
         )}
         <div
           ref={scrollContainerRef}
-          className="flex flex-row gap-x-2 overflow-x-auto scrollbar-hide px-8"
+          className="flex flex-row gap-x-2 overflow-x-auto scrollbar-hide"
         >
-          <div className="relative flex flex-col items-center justify-center overflow-hidden w-[100%] sm:w-[40%] flex-shrink-0">
-            <img src={kai.src} alt="Artists keep 100%" className="h-full w-full object-cover object-center rounded-[30px] brightness-50" />
-            <div className="absolute inset-0 flex flex-col justify-center text-white p-[8%]">
-              <h1 className="text-lg font-bold">Artists keep 100%</h1>
-              <p className="text-base">Clients pay 5% in fees - the lowest out of any art commission site</p>
-            </div>
-            <div className="absolute bottom-1 right-4 text-white bg-custom-lightgray bg-opacity-40 rounded-full pl-2 pr-2">
-              <a href="/@kaito" className="text-sm hover:underline">
-                @kaito
-              </a>
-            </div>
-          </div>
+          <FeaturedCard image={kai.src} artist="kaito" />
 
-          <div className="relative flex flex-col items-center justify-center overflow-hidden w-[100%] sm:w-[40%] flex-shrink-0">
-            <img src={kai2.src} alt="No Generative AI" className="h-full w-full object-cover object-center rounded-[30px] brightness-50" />
-            <div className="absolute inset-0 flex flex-col justify-center text-white p-[8%]">
-              <h1 className="text-lg font-bold">No Generative AI</h1>
-              <p className="text-base">You will be permanently banned if you are found using generative AI</p>
-            </div>
-            <div className="absolute bottom-1 right-4 text-white bg-custom-lightgray bg-opacity-40 rounded-full pl-2 pr-2">
-              <a href="/@kaito" className="text-sm hover:underline">
-                @kaito
-              </a>
-            </div>
-          </div>
+          <FeaturedCard image={kai2.src} artist="kaito" />
 
-          <div className="relative flex flex-col items-center justify-center overflow-hidden w-[100%] sm:w-[40%] flex-shrink-0">
-            <img src={kai3.src} alt="Quality Over Quantity" className="h-full w-full object-cover object-center rounded-[30px] brightness-50" />
-            <div className="absolute inset-0 flex flex-col justify-center text-white p-[8%]">
-              <h1 className="text-lg font-bold">Quality Over Quantity</h1>
-              <p className="text-base">All commissions start at $30 to incentivize better pay for art</p>
-            </div>
-            <div className="absolute bottom-1 right-4 text-white bg-custom-lightgray bg-opacity-40 rounded-full pl-2 pr-2">
-              <a href="/@kaito" className="text-sm hover:underline">
-                @kaito
-              </a>
-            </div>
-          </div>
+          <FeaturedCard image={kai3.src} artist="kaito" />
         </div>
         {canScrollRight && (
           <button

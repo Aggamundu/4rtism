@@ -14,7 +14,7 @@ export default function CommissionCard({
   onCardClick
 }: CommissionCardProps) {
 
-  const { title, price, artist, image_urls, pfp_url, rating } = commission;
+  const { title, price, artist, image_urls, pfp_url} = commission;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [backgroundColor, setBackgroundColor] = useState("#1f2937"); // Default gray-800
 
@@ -215,18 +215,20 @@ export default function CommissionCard({
         )}
       </div>
       <div className="p-0 ">
+        <div className ="flex flex-row justify-between">
         <h1 className="text-white font-medium mb-0">{title}</h1>
+        {showProfileInfo && <span className="text-custom-lightgray text-sm ml-auto mr-2">${price}</span>}
+        </div>
+
         {showProfileInfo && (
           <div className="flex items-center">
             <img src={pfp_url} alt={artist} className="w-5 h-5 rounded-full mr-2" />
             <span className="text-custom-lightgray text-sm">@{artist}</span>
-            <span className="text-custom-lightgray text-sm ml-auto mr-2">~${price}</span>
-            <span className="text-white text-sm">★ {rating}</span>
           </div>
         )}
         {!showProfileInfo && (
           <div className="flex items-center justify-start">
-            <span className="text-custom-lightgray text-sm">~${price}</span>
+            <span className="text-custom-lightgray text-sm">${price}</span>
           </div>
         )}
       </div>

@@ -7,6 +7,7 @@ import CreateForm from "./CreateForm";
 import TextInput from "./TextInput";
 import UploadServiceImages from "./UploadServiceImages";
 import { toast } from "react-hot-toast";
+import Category from "./Category";
 
 interface Service {
   id: string;
@@ -32,12 +33,13 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: Servic
     description: "",
     price: "",
     deliveryTime: "",
-    images: [] as string[]
+    images: [] as string[],
   });
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [artistName, setArtistName] = useState<string>("");
   const [questions, setQuestions] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [category, setCategory] = useState<string>("Chibi");
 
   // Validation states
   const [priceError, setPriceError] = useState<string>("");
@@ -81,12 +83,13 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: Servic
       description: "",
       price: "",
       deliveryTime: "",
-      images: [] as string[]
+      images: [] as string[],
     });
     setSelectedFiles([]);
     setQuestions([]);
     setPriceError("");
     setDeliveryTimeError("");
+    setCategory("Chibi"); // Reset to default instead of empty string
   };
 
   const createOptions = async (question: any, questionId: string) => {
@@ -98,7 +101,7 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: Servic
 
       const { data, error } = await supabaseClient.from('question_options').insert({
         question_id: questionId,
-        option_text: option,
+        option_text: option.option_text,
         order: question.options.indexOf(option)
       });
 
@@ -106,7 +109,7 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: Servic
         console.error('Error creating option:', error);
         console.log('option data:', {
           question_id: questionId,
-          option_text: option,
+          option_text: option.option_text,
           order: question.options.indexOf(option)
         });
         throw error;
@@ -157,8 +160,10 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: Servic
 
   // Get artist name from profile
   useEffect(() => {
-    getArtistName();
-  }, []);
+    if (user?.id) {
+      getArtistName();
+    }
+  }, [user?.id, category]);
 
   // Upload multiple images to Supabase Storage
   const uploadImagesToStorage = async (files: File[]): Promise<string[]> => {
@@ -236,6 +241,8 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: Servic
         images: uploadedUrls
       };
 
+      console.log('Category being saved:', category); // Debug log
+      
       // Create the commission/service with the updated data
       const { data: commissionData, error } = await supabaseClient.from('commissions').insert({
         title: updatedFormData.title,
@@ -245,6 +252,7 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: Servic
         image_urls: updatedFormData.images,
         profile_id: user?.id,
         artist: artistName,
+        category: category,
       }).select();
 
       if (error) {
@@ -339,7 +347,9 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: Servic
               </div>
             )}
           </div>
+          <Category value={category} onChange={setCategory} />
           <CreateForm onQuestionChange={handleQuestionChange} />
+
         </div>
         <div className="flex flex-row justify-center items-center gap-x-4 pb-[1%]">
           <button
