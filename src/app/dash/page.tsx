@@ -1,14 +1,18 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CommissionsSeller from './components/CommissionsSeller';
 import Portfolio from './portfolio-components/Portfolio';
 import Services from './services-components/Services';
 import Stripe from './stripe-components/Stripe';
 import Header from '../../components/Header';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
+
 export default function DashPage() {
   const [activeNav, setActiveNav] = useState('commissions');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  const { user } = useAuth();
+  const router = useRouter();
   const navOptions = [
     { value: 'commissions', label: 'Commissions' },
     { value: 'services', label: 'Services' },
@@ -30,6 +34,11 @@ export default function DashPage() {
         return <CommissionsSeller />;
     }
   };
+  useEffect(() => {
+    if (!user) {
+      router.push('/home');
+    }
+  }, [user]);
 
   return (
     <div className="flex flex-col sm:flex-row pt-14">
@@ -68,11 +77,8 @@ export default function DashPage() {
       </div>
 
       {/* Desktop Sidebar */}
-      <div className="hidden sm:block w-[20%] h-screen text-white text-base px-custom">
+      <div className="hidden sm:block w-[15%] h-screen text-white text-base items-center">
         <div className="relative top-[15%]">
-          <div className="text-custom-lightgray mb-4">
-            Seller
-          </div>
           <nav className="space-y-4 flex flex-col items-center pl-[10%]">
             <button
               onClick={() => setActiveNav('commissions')}
@@ -103,7 +109,7 @@ export default function DashPage() {
       </div>
 
       {/* Main Content */}
-      <div className="w-full sm:w-[80%] h-screen">
+      <div className="w-full sm:w-[85%] h-screen">
         {renderComponent()}
       </div>
     </div>

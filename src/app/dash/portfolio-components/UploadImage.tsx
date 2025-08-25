@@ -26,7 +26,7 @@ export default function UploadImage({ onImageUpload }: UploadImageProps) {
 
   return (
     <div className="w-full h-full">
-      <div className="flex flex-col px-custom py-[1%] items-center">
+      <div className="flex flex-col px-custom items-center">
         {!uploadedImage ? (
           <div
             className={`flex items-center justify-center w-full aspect-square border-2 border-dashed rounded-lg p-4 transition-all duration-200 ${isDragOver
@@ -87,7 +87,7 @@ export default function UploadImage({ onImageUpload }: UploadImageProps) {
         )}
       </div>
       <div className="flex justify-center">
-        <div className="flex items-center justify-between w-[98%] bg-white rounded-lg px-4 py-2 mb-4">
+        <div className="flex items-center justify-between w-[95%] bg-white rounded-lg px-4 py-2 mb-4">
           <span className="text-base text-custom-lightgray font-medium">My Portfolio</span>
           <svg className="w-5 h-5 text-gray-500 hover:text-gray-700 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />

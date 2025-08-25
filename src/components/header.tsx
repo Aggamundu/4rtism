@@ -6,11 +6,16 @@ import { useEffect, useRef, useState } from 'react';
 import { supabaseClient } from '../../utils/supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function Header() {
+interface HeaderProps {
+  onRefresh?: () => void;
+}
+
+export default function Header({ onRefresh }: HeaderProps) {
   const { user, loading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [username, setUsername] = useState('');
+  const [profilePicture, setProfilePicture] = useState('');
   const [search, setSearch] = useState('');
   const router = useRouter();
 
@@ -21,12 +26,13 @@ export default function Header() {
     }
   };
 
-  const getName = async () => {
+  const getNameAndProfilePicture = async () => {
     const { data, error } = await supabaseClient
       .from('profiles')
-      .select('user_name ')
+      .select('user_name, pfp_url')
       .eq('id', user?.id);
     setUsername(data?.[0]?.user_name);
+    setProfilePicture(data?.[0]?.pfp_url);
   };
 
   // Handle click outside to close dropdown
@@ -45,8 +51,25 @@ export default function Header() {
   }, [isMenuOpen]);
 
   useEffect(() => {
-    getName();
+    getNameAndProfilePicture();
   }, [user]);
+
+  // Listen for profile updates and refresh
+  useEffect(() => {
+    if (onRefresh) {
+      // Create a custom event listener for profile updates
+      const handleProfileUpdate = () => {
+        getNameAndProfilePicture();
+      };
+
+      // Listen for custom profile update events
+      window.addEventListener('profile-updated', handleProfileUpdate);
+
+      return () => {
+        window.removeEventListener('profile-updated', handleProfileUpdate);
+      };
+    }
+  }, [onRefresh]);
 
   const handleLogout = async () => {
     try {
@@ -155,9 +178,9 @@ export default function Header() {
                     aria-controls="profile-menu"
                   >
                     <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
-                      {user.user_metadata?.avatar_url ? (
+                      {profilePicture ? (
                         <img
-                          src={user.user_metadata.avatar_url}
+                          src={profilePicture}
                           alt="Profile"
                           className="w-8 h-8 rounded-full object-cover"
                         />

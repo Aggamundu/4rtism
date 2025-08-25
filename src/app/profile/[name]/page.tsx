@@ -7,6 +7,7 @@ import { Commission, Option, Picture, Question, Review } from "../../types/Types
 import About from "./components/About";
 import Banner from "./components/Banner";
 import ProfileTabs from "./components/ProfileTabs";
+import { useRouter } from "next/navigation";
 
 interface ProfilePageProps {
   params: Promise<{
@@ -18,6 +19,7 @@ interface ProfilePageProps {
 export default function ProfilePage({ params }: ProfilePageProps) {
   const [name, setName] = useState<string>('');
   const { user } = useAuth();
+  const router = useRouter();
   //Data of artist from the page
   const [profile, setProfile] = useState<any>(null);
   //UUID of profile page
@@ -36,7 +38,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
       .single();
 
     if (error) {
-      console.error(error);
+      router.push('/home');
     } else {
       setProfile(data);
       setProfileId(data.id);
@@ -186,7 +188,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
   return (
     <div className="pt-14">
-      <Header />
+      <Header onRefresh={() => getProfile(name)} />
         <Banner imageSrc={profile?.banner_url || null} />
         <About {...aboutProps} showSettings={user?.id === profileId} onUpdateProfile={handleProfileUpdate} />
         <div className="relative top-[-3.5rem]">

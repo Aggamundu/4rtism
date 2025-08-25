@@ -60,17 +60,22 @@ export default function CommissionGrid({ activeTab, commissionsData, onRefresh }
   };
 
   return (
-    <div className="flex flex-col justify-center gap-y-4">
-      <div className="flex flex-row justify-evenly bg-white text-sm text-black font-bold rounded-card items-center py-[1%] px-4">
-        <div className="flex-1 text-center">Status</div>
-        <div className="flex-1 text-center">Payment</div>
-        <div className="flex-1 text-center">Submitted</div>
-        <div className="flex-1 text-center">Confirmed</div>
-        <div className="flex-1 text-center">Client</div>
+    <div className="flex flex-col justify-center">
+      {/* Horizontal scroll container */}
+      <div className="overflow-x-auto">
+        <div className="min-w-[700px] flex flex-col gap-y-4"> {/* Minimum width to ensure content doesn't get too cramped */}
+          <div className="flex flex-row justify-evenly bg-white text-sm text-black font-bold rounded-card items-center py-[1%] px-4">
+            <div className="flex-1 text-center min-w-[100px]">Status</div>
+            <div className="flex-1 text-center min-w-[100px]">Payment</div>
+            <div className="flex-1 text-center min-w-[120px]">Submitted</div>
+            <div className="flex-1 text-center min-w-[120px]">Confirmed</div>
+            <div className="flex-1 text-center min-w-[220px]">Client</div>
+          </div>
+          {commissions.map((commission, index) => (
+            <CommissionCard key={index} commission={commission} onCardClick={handleCardClick} />
+          ))}
+        </div>
       </div>
-      {commissions.map((commission, index) => (
-        <CommissionCard key={index} commission={commission} onCardClick={handleCardClick} />
-      ))}
 
       {isAcceptOverlayOpen && selectedCommission && (
         <AcceptOverlay
@@ -89,11 +94,11 @@ export default function CommissionGrid({ activeTab, commissionsData, onRefresh }
       )}
       {isWIPOverlayOpen && (
         <WIPOverlay
-        isOpen={isWIPOverlayOpen}
-        onClose={handleCloseOverlay}
-        commission={selectedCommission}
-        onRefresh={onRefresh}
-      />
+          isOpen={isWIPOverlayOpen}
+          onClose={handleCloseOverlay}
+          commission={selectedCommission}
+          onRefresh={onRefresh}
+        />
       )}
       {isApprovalOverlayOpen && (
         <ApprovalOverlay

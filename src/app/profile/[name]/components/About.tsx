@@ -104,6 +104,9 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
         });
       }
 
+      // Dispatch custom event to notify header to refresh
+      window.dispatchEvent(new CustomEvent('profile-updated'));
+
       setShowEditOverlay(false);
     } catch (error) {
       console.error('Error updating profile:', error);
