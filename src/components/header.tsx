@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { supabaseClient } from '../../utils/supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
@@ -10,6 +11,15 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [username, setUsername] = useState('');
+  const [search, setSearch] = useState('');
+  const router = useRouter();
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (search.trim() !== '') {
+      router.push(`/search?query=${encodeURIComponent(search)}`);
+    }
+  };
 
   const getName = async () => {
     const { data, error } = await supabaseClient
@@ -90,6 +100,13 @@ export default function Header() {
                     type="text"
                     placeholder="Search"
                     className="w-full bg-[#121212] text-white h-10 px-3 pl-10 rounded-full border border-[#303030] focus:border-blue-500 focus:outline-none text-sm"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleSearch(e as any);
+                      }
+                    }}
                   />
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,6 +123,13 @@ export default function Header() {
                   type="text"
                   placeholder="Search"
                   className="w-full bg-[#121212] text-white h-9 pl-10 pr-3 rounded-full border border-[#303030] focus:border-blue-500 focus:outline-none"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch(e as any);
+                    }
+                  }}
                 />
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

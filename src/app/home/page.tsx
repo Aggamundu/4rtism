@@ -10,14 +10,26 @@ export default function Home() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [selectedSort, setSelectedSort] = useState("Price");
-  const [selectedCategory, setSelectedCategory] = useState("Categories");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
   const sortDropdownRef = useRef<HTMLDivElement>(null);
   const [commissions, setCommissions] = useState<Commission[]>([]);
   const [selectedCommissions, setSelectedCommissions] = useState<Commission[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleShuffle = () => {
+    const shuffledCommissions = [...selectedCommissions].sort(() => Math.random() - 0.5);
+    setSelectedCommissions(shuffledCommissions);
+  }
+
   const handleCategoryClick = (category: string) => {
+    if (category === "All Categories") {
+      setSelectedCategory("All Categories");
+      setIsCategoryOpen(false);
+      setSelectedCommissions(commissions);
+      getCommissionsByCategory("All Categories");
+      return;
+    }
     setSelectedCategory(category);
     setIsCategoryOpen(false);
     getCommissionsByCategory(category);
@@ -116,21 +128,27 @@ export default function Home() {
     setIsLoading(true);
     let filteredCommissions: Commission[] = [];
 
+    // Always filter from the base commissions list, not the already filtered selectedCommissions
+    const baseCommissions = selectedCategory === "All Categories" ? commissions : selectedCommissions;
+
     switch (price) {
+      case "All Prices":
+        filteredCommissions = baseCommissions;
+        break;
       case "Up to $20":
-        filteredCommissions = commissions.filter((commission) => commission.price <= 20);
+        filteredCommissions = baseCommissions.filter((commission) => commission.price <= 20);
         break;
       case "$20 - $30":
-        filteredCommissions = commissions.filter((commission) => commission.price <= 30 && commission.price >= 20);
+        filteredCommissions = baseCommissions.filter((commission) => commission.price <= 30 && commission.price >= 20);
         break;
       case "$30 - $40":
-        filteredCommissions = commissions.filter((commission) => commission.price <= 40 && commission.price >= 30);
+        filteredCommissions = baseCommissions.filter((commission) => commission.price <= 40 && commission.price >= 30);
         break;
       case "$40 - $50":
-        filteredCommissions = commissions.filter((commission) => commission.price <= 50 && commission.price >= 40);
+        filteredCommissions = baseCommissions.filter((commission) => commission.price <= 50 && commission.price >= 40);
         break;
       case "$50 & above":
-        filteredCommissions = commissions.filter((commission) => commission.price >= 50);
+        filteredCommissions = baseCommissions.filter((commission) => commission.price >= 50);
         break;
     }
 
@@ -140,6 +158,39 @@ export default function Home() {
 
   const getCommissionsByCategory = async (category: string) => {
     setIsLoading(true);
+    if (category === "All Categories") {
+      const { data, error } = await supabaseClient.from('commissions').select('*');
+      if (error) {
+        console.error(error)
+        return [];
+      }
+      const commissionsData: Commission[] = [];
+      for (const commission of data) {
+        const profileData = await getProfileData(commission.profile_id);
+        const questions = await getQuestions(commission.id);
+        const commissionData = {
+          id: commission.id,
+          title: commission.title,
+          description: commission.description,
+          price: commission.price,
+          artist: commission.artist,
+          image_urls: commission.image_urls,
+          pfp_url: profileData?.pfp_url,
+          rating: commission.rating,
+          delivery_days: commission.delivery_days,
+          questions: questions
+        } as Commission;
+        commissionsData.push(commissionData);
+      }
+      // Randomize the order of commissions
+      const shuffledCommissions = [...commissionsData].sort(() => Math.random() - 0.5);
+      setSelectedCommissions(shuffledCommissions);
+      setCommissions(shuffledCommissions);
+      getCommissionsByPrice(selectedSort);
+      setIsLoading(false);
+      return;
+    }
+    
     const { data, error } = await supabaseClient
       .from('commissions')
       .select('*')
@@ -169,8 +220,11 @@ export default function Home() {
       commissionsData.push(commissionData);
     }
 
-    setSelectedCommissions(commissionsData);
-    setCommissions(commissionsData);
+    // Randomize the order of commissions
+    const shuffledCommissions = [...commissionsData].sort(() => Math.random() - 0.5);
+    setSelectedCommissions(shuffledCommissions);
+    setCommissions(shuffledCommissions);
+    getCommissionsByPrice(selectedSort);
     setIsLoading(false);
   }
 
@@ -199,8 +253,10 @@ export default function Home() {
         console.log('Commission Data:', commissionData)
         commissionsData.push(commissionData)
       }
-      setSelectedCommissions(commissionsData)
-      setCommissions(commissionsData)
+      // Randomize the order of commissions
+      const shuffledCommissions = [...commissionsData].sort(() => Math.random() - 0.5);
+      setSelectedCommissions(shuffledCommissions)
+      setCommissions(shuffledCommissions)
       setIsLoading(false);
     }
   }
@@ -224,6 +280,9 @@ export default function Home() {
           </button>
           {isCategoryOpen && (
             <div className="absolute z-50 bg-custom-gray text-xs rounded-sm shadow-lg w-[25%] sm:w-[15%]" ref={categoryDropdownRef}>
+              <div onClick={() => handleCategoryClick("All Categories")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-t-sm hover:text-white transition-colors duration-200 cursor-pointer ">
+                All Categories
+              </div>
               <div onClick={() => handleCategoryClick("Chibi")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-t-sm hover:text-white transition-colors duration-200 cursor-pointer ">
                 Chibi
               </div>
@@ -259,6 +318,9 @@ export default function Home() {
           </button>
           {isSortOpen && (
             <div className="absolute bg-custom-gray text-xs rounded-sm shadow-lg z-50 w-[25%] sm:w-[15%]" ref={sortDropdownRef}>
+              <div onClick={() => handleSortClick("All Prices")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
+                All Prices
+              </div>
               <div onClick={() => handleSortClick("Up to $20")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
                 Up to $20
               </div>
@@ -277,7 +339,13 @@ export default function Home() {
             </div>
           )}
         </div>
+        <div className="flex items-center justify-center">
+          <button className="px-2 border-white border-[1px] rounded-lg py-2" onClick={() => handleShuffle()}>
+            <img src="/shuffle.svg" alt="Shuffle" className="w-[21px] h-[21px]" style={{ filter: 'brightness(0) saturate(100%) invert(100%)' }} />
+          </button>
+        </div>
       </div>
+
       {isLoading ? (
         <div className="flex justify-center items-center min-h-[50vh]">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
