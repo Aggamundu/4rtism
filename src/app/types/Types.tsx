@@ -73,9 +73,6 @@ export interface Option {
   question_id: number;
 }
 
-export interface Picture {
-  url: string;
-}
 
 export interface Review {
   userName: string;

@@ -120,7 +120,8 @@ export default function ProfilePage({ params }: ProfilePageProps) {
       })));
       console.log(data);
       setCommissions(commissions);
-      setPictures(profileData.image_urls.map((url: string) => ({ url })));
+      console.log(profileData.portfolio_urls);
+      setPictures(profileData.portfolio_urls);
     }
   }
 

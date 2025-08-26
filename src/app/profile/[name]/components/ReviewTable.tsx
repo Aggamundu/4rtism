@@ -8,7 +8,7 @@ interface ReviewTableProps {
 export default function ReviewTable({ reviews }: ReviewTableProps) {
 
   return (
-    <div className="px-custom py-custom">
+    <div className="px-custom py-6">
       {reviews.map((review, index) => (
         <ReviewCard key={index} userName={review.userName} reviewText={review.reviewText} rating={review.rating} date={review.date} />
       ))}

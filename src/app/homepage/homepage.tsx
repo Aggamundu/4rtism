@@ -2,23 +2,25 @@
 
 import { useEffect, useState } from "react";
 import HomepageCard from "../../PictureCard/pictureCard.js";
-import { Picture } from "../types/Types.jsx";
 import "./homepage.css";
 
-export default function Homepage({ pictures }: { pictures: Picture[] }) {
+export default function Homepage({ pictures }: { pictures: string[] }) {
   const [pictureCards, setPictureCards] = useState<React.ReactElement[]>([]);
 
 
-  const loadHardCodedPictures = () => {
-    setPictureCards(pictures.map((data, index) =>
-    (
-      <HomepageCard key={index} pic={data.url} />
-    ))
-    );
+  const loadPictures = () => {
+    console.log("pictures", pictures);
+    if (pictures) {
+      setPictureCards(pictures.map((data, index) =>
+        (
+          <HomepageCard key={index} pic={data} />
+        )
+      ))
+    }
   };
 
   useEffect(() => {
-    loadHardCodedPictures();
+    loadPictures();
   }, []);
 
   return (

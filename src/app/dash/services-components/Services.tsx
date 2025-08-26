@@ -12,6 +12,7 @@ export default function Services() {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [services, setServices] = useState<Service[]>([]);
   const { user } = useAuth();
 
@@ -25,6 +26,7 @@ export default function Services() {
   }
 
   const fetchCommissions = async () => {
+    setIsLoading(true);
     const { data, error } = await supabaseClient.from('commissions').select('*').eq('profile_id', user?.id);
     if (error) {
       console.error('Error fetching commissions:', error);
@@ -56,6 +58,7 @@ export default function Services() {
       }
     }
     setServices(servicesWithQuestions);
+    setIsLoading(false);
   }
   useEffect(() => {
     fetchCommissions();
@@ -115,14 +118,20 @@ export default function Services() {
         </button>
       </div>
       <div className="flex flex-col gap-y-4">
-        {services.map((service) => (
-          <ServiceCard
-            key={service.id}
+        {isLoading ? (
+          <div className="flex justify-center items-center min-h-[50vh]">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-custom-pink4"></div>
+          </div>
+        ) : (
+          services.map((service) => (
+            <ServiceCard
+              key={service.id}
             service={service}
             onCardClick={handleCardClick}
             deleteService={handleDeleteService}
           />
-        ))}
+        ))
+        )}
       </div>
       <ServiceOverlay
         isOpen={isOverlayOpen}
