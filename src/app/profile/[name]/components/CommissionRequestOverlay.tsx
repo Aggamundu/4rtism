@@ -341,7 +341,7 @@ export default function CommissionRequestOverlay({
 
   return (
     <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${isOpen ? '' : 'hidden'}`} onClick={onClose}>
-      <div className="bg-custom-darkgray rounded-card max-h-[100vh] overflow-y-auto w-full p-[3%] relative scrollbar-thin scrollbar-thumb-custom-gray scrollbar-track-transparent hover:scrollbar-thumb-custom-lightgray" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-custom-darkgray rounded-card max-h-[100vh] overflow-y-auto w-full pt-[3%] pl-[1%] relative scrollbar-thin scrollbar-thumb-custom-gray scrollbar-track-transparent hover:scrollbar-thumb-custom-lightgray" onClick={(e) => e.stopPropagation()}>
         <div className="fixed top-0 right-0 left-0 bg-custom-darkgray p-[1%] z-50 flex justify-end items-center border-b border-custom-gray">
           <button
             onClick={onClose}
@@ -399,7 +399,7 @@ export default function CommissionRequestOverlay({
               </div>
               <div className="flex flex-col gap-y-[.5rem] ">
                 <div className="flex flex-row gap-[1%] mb-[.5rem] items-center">
-                  <img src={pfp_url} alt="pfp" className="w-[3.2rem] h-[3.2rem] rounded-full border-[1px] border-custom-lightgray" />
+                  <img src={pfp_url} alt="pfp" className="w-[3.2rem] h-[3.2rem] rounded-full border-[1px] border-custom-lightgray object-cover" />
                   <div>
                     <p className="">@{artist}</p>
                   </div>

@@ -222,7 +222,7 @@ export default function CommissionCard({
 
         {showProfileInfo && (
           <div className="flex items-center">
-            <img src={pfp_url} alt={artist} className="w-5 h-5 rounded-full mr-2" />
+            <img src={pfp_url} alt={artist} className="w-5 h-5 rounded-full mr-2 object-cover" />
             <span className="text-custom-lightgray text-sm">@{artist}</span>
           </div>
         )}

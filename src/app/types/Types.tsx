@@ -74,8 +74,7 @@ export interface Option {
 }
 
 export interface Picture {
-  pic: string;
-  title: string;
+  url: string;
 }
 
 export interface Review {

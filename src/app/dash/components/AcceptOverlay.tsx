@@ -127,7 +127,7 @@ Secure payment powered by Stripe
       method: 'POST',
       body: JSON.stringify({
         to: clientEmail,
-        subject: commission.commission_title,
+        subject: "4rtism Artist Payment Request from " + artistName,
         text: text,
         html: emailHTML,
       }),
@@ -157,6 +157,8 @@ Secure payment powered by Stripe
       if (data.url) {
         setPaymentLink(data.url);
         await sendEmail(data.url);
+        await updateResponse(commission.response_id, "Pending");
+        toast.success("Invoice sent");
       } else if (data.error) {
         toast.error(data.error);
       }
@@ -169,11 +171,9 @@ Secure payment powered by Stripe
   const handlePaymentLink = async () => {
     setShowInvoiceOverlay(false);
     setInvoicePrice("");
-    await updateResponse(commission.response_id, "Pending");
-    toast.success("Invoice sent");
     onClose();
-    onRefresh?.();
     await createCheckoutSession();
+    onRefresh?.();
   }
 
   const renderAnswer = (answer: AnswerDisplay, index: number) => {

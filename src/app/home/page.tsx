@@ -5,6 +5,8 @@ import { supabaseClient } from "../../../utils/supabaseClient";
 import { Commission, Option, Question } from "../types/Types";
 import CommissionCardGrid from "./components/CommissionCardGrid";
 import WelcomeSection from "./components/WelcomeSection";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -15,7 +17,8 @@ export default function Home() {
   const sortDropdownRef = useRef<HTMLDivElement>(null);
   const [selectedCommissions, setSelectedCommissions] = useState<Commission[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  const { user, loading } = useAuth()
+  const router = useRouter()
   const handleShuffle = () => {
     const shuffledCommissions = [...selectedCommissions].sort(() => Math.random() - 0.5);
     setSelectedCommissions(shuffledCommissions);
@@ -193,6 +196,19 @@ export default function Home() {
   useEffect(() => {
     fetchCommissions();
   }, []);
+  
+  const checkHasOnboarded = async () => {
+    const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single()
+    if (!data?.has_onboarded) {
+      router.push('/onboarding')
+    }
+  }
+
+  useEffect(() => {
+    if (!loading && user) {
+      checkHasOnboarded()
+    }
+  }, [user, loading])
 
 
   return (

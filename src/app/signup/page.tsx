@@ -41,6 +41,8 @@ export default function SignupPage() {
     return data?.[0]?.has_onboarded || false
   }
 
+
+
  //Logs in a user
  const handleLogin = async () => {
   setLoading(true)
@@ -59,6 +61,7 @@ export default function SignupPage() {
       window.location.href = `${window.location.origin}/home`
     } else {
       window.location.href = `${window.location.origin}/onboarding`
+      
     }
   }
 }

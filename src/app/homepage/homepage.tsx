@@ -12,7 +12,7 @@ export default function Homepage({ pictures }: { pictures: Picture[] }) {
   const loadHardCodedPictures = () => {
     setPictureCards(pictures.map((data, index) =>
     (
-      <HomepageCard key={index} pic={data.pic} title={data.title} />
+      <HomepageCard key={index} pic={data.url} />
     ))
     );
   };

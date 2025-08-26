@@ -44,7 +44,6 @@ export default function ProfilePage({ params }: ProfilePageProps) {
       setProfileId(data.id);
       // Call getCommissions after profile is fetched
       getCommissions(data.id, data);
-      getPictures(data.id);
       getReviews(data.id, data);
     }
   }
@@ -121,23 +120,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
       })));
       console.log(data);
       setCommissions(commissions);
-    }
-  }
-
-  const getPictures = async (profileId: string) => {
-    const { data, error } = await supabaseClient
-      .from('portfolios')
-      .select('image_url, title')
-      .eq('user_id', profileId);
-
-    if (error) {
-      console.error(error);
-    } else {
-      const pictures = data.map((picture: any) => ({
-        pic: picture.image_url,
-        title: picture.title
-      }));
-      setPictures(pictures);
+      setPictures(profileData.image_urls.map((url: string) => ({ url })));
     }
   }
 

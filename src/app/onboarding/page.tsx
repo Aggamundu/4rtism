@@ -7,21 +7,33 @@ import { useAuth } from '../../contexts/AuthContext'
 
 export default function OnboardingPage() {
   const [username, setUsername] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [pageLoading, setPageLoading] = useState(true)
   const [error, setError] = useState('')
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const router = useRouter()
   useEffect(() => {
-    setLoading(false)
-    checkHasOnboarded()
-  }, [user])
+    console.log(user)
+    if (!loading && !user) {
+      router.push('/home')
+    } else if (!loading && user) {  
+      setPageLoading(false)
+      checkHasOnboarded()
+    }
+  }, [user, loading])
+
+  const addEmailToUser = async (id: string, email: string) => {
+    const { data, error } = await supabaseClient.from('emails').insert({ email: email, user_id: id })
+    if (error) {
+      console.error(error)
+    }
+  }
 
   const checkHasOnboarded = async () => {
     const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single()
     if (data?.has_onboarded) {
       router.push('/home')
     } else {
-      setLoading(false)
+      setPageLoading(false)
     }
   }
 
@@ -44,7 +56,7 @@ export default function OnboardingPage() {
   }
 
   const disable = () => {
-    if (username.length < 1 || loading) {
+    if (username.length < 1 || pageLoading) {
       return true
     }
     return false
@@ -53,7 +65,23 @@ export default function OnboardingPage() {
   const handleContinue = () => {
     updateUsername()
     hasOnboarded()
+    addEmailToUser(user.id, user.email)
   }
+
+  // Show loading state while auth is being determined
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
+
+  // Redirect if not authenticated
+  if (!user) {
+    return null; // This will trigger the useEffect to redirect
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
         <div className="flex flex-col gap-4 mb-6 justify-center">

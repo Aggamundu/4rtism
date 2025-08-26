@@ -7,11 +7,12 @@ import Stripe from './stripe-components/Stripe';
 import Header from '../../components/Header';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import { supabaseClient } from '../../../utils/supabaseClient';
 
 export default function DashPage() {
   const [activeNav, setActiveNav] = useState('commissions');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
   const navOptions = [
     { value: 'commissions', label: 'Commissions' },
@@ -19,6 +20,13 @@ export default function DashPage() {
     { value: 'stripe', label: 'Stripe Dashboard' },
     { value: 'portfolio', label: 'Portfolio' }
   ];
+  
+  const checkHasOnboarded = async () => {
+    const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single()
+    if (!data?.has_onboarded) {
+      router.push('/onboarding')
+    }
+  }
 
   const renderComponent = () => {
     switch (activeNav) {
@@ -35,10 +43,27 @@ export default function DashPage() {
     }
   };
   useEffect(() => {
-    if (!user) {
-      router.push('/home');
+    if (!loading && user) {
+      checkHasOnboarded()
     }
-  }, [user]);
+  }, [user, loading])
+  // Show loading state while auth is being determined
+  if (loading) {
+    return (
+      <div className="flex flex-col sm:flex-row pt-14">
+        <Header />
+        <div className="w-full h-screen flex items-center justify-center">
+          <div className="text-white">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect if not authenticated
+  if (!user) {
+    router.push('/home');
+    return null;
+  }
 
   return (
     <div className="flex flex-col sm:flex-row pt-14">
