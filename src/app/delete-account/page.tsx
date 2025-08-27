@@ -69,7 +69,7 @@ export default function DeleteAccount() {
     setIsLoading(false);
   }
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center px-custom">
       <Header />
       {isLoading ? (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

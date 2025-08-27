@@ -170,6 +170,7 @@ export default function Header({ onRefresh }: HeaderProps) {
               <div className="flex items-center space-x-4">
 
                 <div className="relative">
+                  
                   <button
                     onClick={handleProfileClick}
                     className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors duration-200"
@@ -211,6 +212,13 @@ export default function Header({ onRefresh }: HeaderProps) {
                         onClick={() => setIsMenuOpen(false)}
                       >
                         Dashboard
+                      </Link>
+                      <Link
+                        href="/help"
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        About
                       </Link>
                       <hr className="border-gray-700" />
                       <button

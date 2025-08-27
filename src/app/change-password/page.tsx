@@ -49,7 +49,7 @@ export default function ChangePasswordPage() {
     }
   }
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center px-custom">
       <Header />
       <div className="w-full max-w-md space-y-4">
       <div className="text-center">

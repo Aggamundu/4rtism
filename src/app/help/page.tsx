@@ -42,7 +42,7 @@ export default function Help() {
     <div className="flex min-h-screen pt-14">
       <Header />
       {/* Sidebar with sections */}
-      <nav className="w-64 bg-custom-darkgray p-6 hidden md:block">
+      <nav className="w-64 bg-custom-darkgray px-custom hidden md:block pt-6">
         <div className="fixed">
           <ul className="space-y-3">
             <li>
@@ -68,9 +68,9 @@ export default function Help() {
       </nav>
 
       {/* Main content */}
-      <main className="flex-1 p-6 md:p-10">
-        <div className="prose max-w-none">
-
+      <main className="flex-1 px-custom">
+        <div className="prose max-w-none pt-2">
+          <h1 className="text-xl font-bold mb-4">About</h1>
           <section id="created" className="mb-12">
             <h2 className="text-lg font-semibold mb-4">Why was 4rtism created?</h2>
             <p className="text-gray-400 mb-3">I was inspired to make 4rtism after someone tried to scam my gf, <a className="text-custom-pink4 hover:underline" href="https://www.instagram.com/kaito_xux/" target="_blank">@kaito</a>, via fake paypal email for an art commission.</p>

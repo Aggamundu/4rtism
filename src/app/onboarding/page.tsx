@@ -31,7 +31,7 @@ export default function OnboardingPage() {
   const checkHasOnboarded = async () => {
     const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single()
     if (data?.has_onboarded) {
-      router.push('/home')
+      router.push('/help')
     } else {
       setPageLoading(false)
     }

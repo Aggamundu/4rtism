@@ -177,7 +177,15 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
     <>
       <div className="flex w-full flex-col items-start justify-left gap-x-6 px-custom sm:px-custom mt-[.5rem] flex-wrap">
         <div className="flex flex-row items-center gap-x-4 ">
+          {imageSrc ? (
           <img src={imageSrc} alt="Profile" className="sm:w-[10rem] sm:h-[10rem] w-[8rem] h-[8rem] rounded-full border-2 border-custom-darkgray object-cover relative sm:top-[-6rem] top-[-4.5rem]" />
+          ) : (
+            <div className="bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center sm:w-[10rem] sm:h-[10rem] w-[8rem] h-[8rem] rounded-full border-2 border-custom-darkgray object-cover relative sm:top-[-6rem] top-[-4.5rem]">
+              <span className="text-white font-semibold text-lg">
+                {userName?.charAt(0).toUpperCase() || 'U'}
+              </span>
+            </div>
+          )}
           {showSettings && (
             <button
               onClick={handleSettingsClick}
@@ -362,11 +370,20 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
               <div className="flex flex-col items-center mb-8">
                 <label className="block text-custom-lightgray text-sm mb-3">Profile Picture</label>
                 <div className="relative">
-                  <img
+                  {editImageSrc ? (
+                    <img
                     src={editImageSrc}
                     alt="Profile"
                     className="w-24 h-24 rounded-full object-cover"
                   />
+                  ) : (
+                    <div className="bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center w-24 h-24 rounded-full border-2 border-custom-darkgray object-cover">
+                      <span className="text-white font-semibold text-lg">
+                        {userName?.charAt(0).toUpperCase() || 'U'}
+                      </span>
+                    </div>
+                  )}
+
                   <label className="absolute bottom-0 right-0 bg-custom-accent text-white rounded-full p-2 cursor-pointer hover:bg-opacity-80 transition-colors">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
