@@ -1,12 +1,12 @@
 "use client"
 import Header from "@/components/Header";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { supabaseClient } from "../../../utils/supabaseClient";
 import { Commission, Option, Question } from "../types/Types";
 import CommissionCardGrid from "./components/CommissionCardGrid";
 import WelcomeSection from "./components/WelcomeSection";
-import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -196,7 +196,7 @@ export default function Home() {
   useEffect(() => {
     fetchCommissions();
   }, []);
-  
+
   const checkHasOnboarded = async () => {
     const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single()
     if (!data?.has_onboarded) {
@@ -259,44 +259,44 @@ export default function Home() {
 
         {/* Sort by */}
         <div className="flex flex-row sm:mt-0 mt-2 gap-2 sm:gap-0">
-        <div className="gap-2 items-center sm:px-4">
-          <button onClick={() => {
-            setIsSortOpen(!isSortOpen);
-            setIsCategoryOpen(false);
-          }} className="hover:bg-white/10 min-w-[145px] bg-custom-darkgray border-white border-[1px] px-4 text-white py-2 rounded-lg hover:bg-opacity-80 transition-all flex items-center justify-between">
-            <span className="truncate">{selectedSort}</span>
-            <svg className={`w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-200 ${isSortOpen ? 'rotate-180' : 'rotate-0'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-          {isSortOpen && (
-            <div className="absolute bg-custom-gray text-xs rounded-sm shadow-lg z-50 w-[40%] sm:w-[15%]" ref={sortDropdownRef}>
-              <div onClick={() => handleFilter(selectedCategory, "All Prices")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                All Prices
+          <div className="gap-2 items-center sm:px-4">
+            <button onClick={() => {
+              setIsSortOpen(!isSortOpen);
+              setIsCategoryOpen(false);
+            }} className="hover:bg-white/10 min-w-[145px] bg-custom-darkgray border-white border-[1px] px-4 text-white py-2 rounded-lg hover:bg-opacity-80 transition-all flex items-center justify-between">
+              <span className="truncate">{selectedSort}</span>
+              <svg className={`w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-200 ${isSortOpen ? 'rotate-180' : 'rotate-0'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {isSortOpen && (
+              <div className="absolute bg-custom-gray text-xs rounded-sm shadow-lg z-50 w-[40%] sm:w-[15%]" ref={sortDropdownRef}>
+                <div onClick={() => handleFilter(selectedCategory, "All Prices")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
+                  All Prices
+                </div>
+                <div onClick={() => handleFilter(selectedCategory, "Up to $20")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
+                  Up to $20
+                </div>
+                <div onClick={() => handleFilter(selectedCategory, "$20 - $30")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
+                  $20 - $30
+                </div>
+                <div onClick={() => handleFilter(selectedCategory, "$30 - $40")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
+                  $30 - $40
+                </div>
+                <div onClick={() => handleFilter(selectedCategory, "$40 - $50")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
+                  $40 - $50
+                </div>
+                <div onClick={() => handleFilter(selectedCategory, "$50 & above")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
+                  $50 & above
+                </div>
               </div>
-              <div onClick={() => handleFilter(selectedCategory, "Up to $20")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                Up to $20
-              </div>
-              <div onClick={() => handleFilter(selectedCategory, "$20 - $30")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                $20 - $30
-              </div>
-              <div onClick={() => handleFilter(selectedCategory, "$30 - $40")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                $30 - $40
-              </div>
-              <div onClick={() => handleFilter(selectedCategory, "$40 - $50")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                $40 - $50
-              </div>
-              <div onClick={() => handleFilter(selectedCategory, "$50 & above")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                $50 & above
-              </div>
-            </div>
-          )}
-        </div>
-        <div className="flex items-center justify-center">
-          <button className="px-2 border-white border-[1px] rounded-lg py-2 hover:bg-white/10 transition-all active:scale-95" onClick={() => handleShuffle()}>
-            <img src="/shuffle.svg" alt="Shuffle" className="w-[21px] h-[21px]" style={{ filter: 'brightness(0) saturate(100%) invert(100%)' }} />
-          </button>
-        </div>
+            )}
+          </div>
+          <div className="flex items-center justify-center">
+            <button className="px-2 border-white border-[1px] rounded-lg py-2 hover:bg-white/10 transition-all active:scale-95" onClick={() => handleShuffle()}>
+              <img src="/shuffle.svg" alt="Shuffle" className="w-[21px] h-[21px]" style={{ filter: 'brightness(0) saturate(100%) invert(100%)' }} />
+            </button>
+          </div>
         </div>
 
       </div>

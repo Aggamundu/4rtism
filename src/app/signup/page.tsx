@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabaseClient } from '../../../utils/supabaseClient'
+import Header from '../../components/Header'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -78,6 +79,7 @@ export default function SignupPage() {
   //Displays the UI
   return (
     <div className="min-h-screen flex items-center justify-center">
+      <Header />
       <div className="w-full max-w-md space-y-4">
         {/* Header */}
         <div className="text-center">

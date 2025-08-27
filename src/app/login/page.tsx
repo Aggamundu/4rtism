@@ -2,13 +2,14 @@
 
 import { useState } from 'react'
 import { supabaseClient } from '../../../utils/supabaseClient'
-
+import Header from '../../components/Header'
 export default function AuthPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState('')
+
 
   const checkHasOnboarded = async (id: string) => {
     const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', id)
@@ -75,7 +76,9 @@ export default function AuthPage() {
 
   //Displays the UI
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="">
+      <Header />
+      <div className="min-h-screen flex items-center justify-center">
       <div className="w-full max-w-md space-y-4">
         {/* Header */}
         <div className="text-center">
@@ -162,5 +165,7 @@ export default function AuthPage() {
         </button> */}
       </div>
     </div>
+    </div>
+
   )
 }

@@ -213,6 +213,13 @@ export default function Header({ onRefresh }: HeaderProps) {
                         Dashboard
                       </Link>
                       <hr className="border-gray-700" />
+                      <Link
+                        href="/forgot-password"
+                        className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300 transition-colors duration-200"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Change Password
+                      </Link>
                       <button
                         onClick={handleLogout}
                         className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300 transition-colors duration-200"
@@ -241,7 +248,7 @@ export default function Header({ onRefresh }: HeaderProps) {
                     Login
                   </Link>
                   <Link
-                    href="/create-account"
+                    href="/signup"
                     className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-blue-600 transition-all duration-200 font-medium"
                   >
                     Sign Up

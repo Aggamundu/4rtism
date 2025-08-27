@@ -1,7 +1,7 @@
 export default function SuccessPage() {
   return (
     <div className="min-h-screen bg-custom-darkgray flex items-center justify-center p-4">
-      <div className="bg-custom-gray rounded-lg shadow-md p-6 max-w-sm w-full text-center">
+      <div className="bg-custom-darkgray border-[1px] border-white rounded-lg shadow-md p-6 max-w-sm w-full text-center">
         <h1 className="text-lg font-semibold text-white mb-3">
           Thank you for your purchase!
         </h1>
@@ -9,7 +9,7 @@ export default function SuccessPage() {
           For questions, contact me at{" "}
           <a 
             href="mailto:4artism@gmail.com"
-            className="text-custom-lightgray hover:text-custom-accent"
+            className="text-custom-lightgray hover:text-custom-accent/90"
           >
             4artism@gmail.com
           </a>

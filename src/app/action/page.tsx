@@ -17,10 +17,12 @@ export default function ActionPage() {
   const [response, setResponse] = useState<any>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [username, setUsername] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   console.log(token);
 
   const validateToken = async () => {
     try {
+      setIsLoading(true);
       const response = await fetch(`/api/get-responses?token=${token}`, {
         method: "GET",
       });
@@ -40,6 +42,8 @@ export default function ActionPage() {
       }
     } catch (error) {
       console.error("Fetch error:", error);
+    } finally {
+      setIsLoading(false);
     }
   }
   const checkExpiration = (response: any) => {
@@ -67,36 +71,41 @@ export default function ActionPage() {
 
   return (
     <div>
+      {isLoading && (
+        <div className="flex flex-col min-h-[100vh] items-center justify-center p-6 gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+        </div>
+      )}
       {isExpired && (
-        <div className="flex flex-col items-center justify-center p-6 gap-4">
-          <h2 className="text-xl font-semibold text-red-600">Token Expired</h2>
+        <div className="flex flex-col min-h-[100vh] items-center justify-center p-6 gap-4">
+          <h2 className="text-lg font-semibold text-red-600">Token Expired</h2>
           <p className="text-gray-600">This link has expired and is no longer valid.</p>
         </div>
       )}
-      {!isApproval && !isCompleted && (
-        <div className="flex flex-col items-center justify-center p-6 gap-4">
-          <h2 className="text-xl font-semibold text-green-600">Thank you for your response!</h2>
+      {!isApproval && !isCompleted && !isLoading && (
+        <div className="flex flex-col min-h-[100vh] items-center justify-center p-6 gap-4">
+          <h2 className="text-lg font-semibold text-green-600">Thank you for your response!</h2>
           <p className="text-gray-600">Your response has been recorded successfully.</p>
         </div>
       )}
-      {!validToken && (
-        <div className="flex flex-col items-center justify-center p-6 gap-4">
-          <h2 className="text-xl font-semibold text-red-600">Invalid token</h2>
+      {!validToken && !isLoading && (
+        <div className="flex flex-col min-h-[100vh] items-center justify-center p-6 gap-4">
+          <h2 className="text-lg font-semibold text-red-600">Invalid token</h2>
           <p className="text-gray-600">This link is invalid</p>
         </div>
       )}
       {isCompleted && (
-        <div className="flex flex-col items-center justify-center p-6 gap-4">
-          <h2 className="text-xl font-semibold text-green-600">Thank you for your response!</h2>
+        <div className="flex flex-col min-h-[100vh] items-center justify-center p-6 gap-4">
+          <h2 className="text-lg font-semibold text-green-600">Thank you for your response!</h2>
           <p className="text-gray-600">Your commission has been completed successfully.</p>
         </div>
       )}
       {validToken && !isExpired && isApproval && !isRejected && searchParams.get('action') === 'reject' && (
-        <div className="flex flex-col items-center justify-center p-6 gap-4">
-          <h2 className="text-xl font-semibold">Reject Work</h2>
+        <div className="flex flex-col min-h-[100vh] items-center justify-center p-6 gap-4">
+          <h2 className="text-lg font-semibold">Reject Work</h2>
           <p className="text-gray-600">Please provide feedback for the artist</p>
           <textarea
-            className="w-full max-w-lg p-3 border rounded-lg text-black focus:outline-none focus: border-blue-500"
+            className="w-full max-w-lg p-3 border-2 border-white bg-custom-darkgray rounded-lg text-white focus:bg-white/10 focus:outline-none"
             rows={4}
             placeholder="Enter your feedback here..."
             value={message}
@@ -107,6 +116,7 @@ export default function ActionPage() {
             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
             onClick={async () => {
               try {
+                setIsLoading(true);
                 const fetchResponse = await fetch('/api/get-responses', {
                   method: 'POST',
                   headers: {
@@ -122,13 +132,13 @@ export default function ActionPage() {
 
                 if (fetchResponse.ok) {
                   window.location.reload();
-                  toast.success('Work rejected successfully')
                 } else {
-                  toast.error('Failed to reject work');
+                  toast.error('Failed to reject work. Please try again.');
                 }
               } catch (error) {
-                console.error('Error rejecting work:', error);
-                toast.error('Failed to reject work');
+                toast.error('Failed to reject work. Please try again.');
+              } finally {
+                setIsLoading(false);
               }
             }}
           >
@@ -137,22 +147,22 @@ export default function ActionPage() {
         </div>
       )}
       {isRejected && validToken && !isExpired && isApproval && searchParams.get('action') === 'reject' && (
-        <div className="flex flex-col items-center justify-center p-6 gap-4">
-          <h2 className="text-xl font-semibold">Max rejections reached</h2>
+        <div className="flex flex-col min-h-[100vh] items-center justify-center p-6 gap-4">
+          <h2 className="text-lg font-semibold">Max rejections reached</h2>
           <p className="text-gray-600">Please choose to accept the work or contact your artist if you have any issues.</p>
           
         </div>
       )}
       {((validToken && !isCompleted && !isExpired && isApproval && searchParams.get('action') === 'accept')) && (
-        <div className="flex flex-col items-center justify-center p-6 gap-4">
-          <h2 className="text-xl font-semibold">Complete Commission</h2>
+        <div className="flex flex-col min-h-[100vh] items-center justify-center p-6 gap-4">
+          <h2 className="text-lg font-semibold">Complete Commission</h2>
           <p className="text-gray-600">Please provide a rating for the artist</p>
           <div className="flex gap-2">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
                 key={star}
                 onClick={() => setRating(star)}
-                className="text-2xl"
+                className="text-lg"
               >
                 <span className={star <= rating ? "text-custom-yellow" : "text-custom-lightgray"}>
                   ★
@@ -162,13 +172,13 @@ export default function ActionPage() {
           </div>
           <input
             type="text"
-            className="w-full max-w-lg p-3 border rounded-lg text-black focus:outline-none focus:border-blue-500"
+            className="w-full max-w-lg p-3 border-2 border-white bg-custom-darkgray rounded-lg text-white focus:bg-white/10 focus:outline-none"
             placeholder="Enter your name..."
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
           <textarea
-            className="w-full max-w-lg p-3 border rounded-lg text-black focus:outline-none focus: border-blue-500"
+            className="w-full max-w-lg p-3 border-2 border-white bg-custom-darkgray rounded-lg text-white focus:bg-white/10 focus:outline-none"
             rows={4}
             placeholder="Enter your review here..."
             value={message}
@@ -177,11 +187,12 @@ export default function ActionPage() {
           <button
             className={`px-4 py-2 rounded-lg transition-colors ${username.trim() === ''
               ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-              : 'bg-green-500 text-white hover:bg-green-600'
+              : 'bg-custom-accent text-white hover:bg-custom-accent/90'
               }`}
             disabled={username.trim() === ''}
             onClick={async () => {
               try {
+                setIsLoading(true);
                 const fetchResponse = await fetch('/api/get-responses', {
                   method: 'POST',
                   headers: {
@@ -197,14 +208,14 @@ export default function ActionPage() {
                 });
 
                 if (fetchResponse.ok) {
-                  toast.success('Commission completed successfully');
                   setIsCompleted(true);
                 } else {
-                  toast.error('Failed to complete commission');
+                  toast.error('Failed to complete commission. Please try again.');
                 }
               } catch (error) {
-                console.error('Error completing commission:', error);
-                toast.error('Failed to complete commission');
+                toast.error('Failed to complete commission. Please try again.');
+              } finally {
+                setIsLoading(false);
               }
             }}
           >

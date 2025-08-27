@@ -41,7 +41,6 @@ export default function WelcomeSection() {
 
   return (
     <div className="relative mb-[2%] px-custom">
-      <p className="text-base pt-2 pb-2">Featured Art</p>
       {/* <h1 className="text-xl px-8">4 Artists & 4utists</h1> */}
       <div className="relative">
         {canScrollLeft && (
