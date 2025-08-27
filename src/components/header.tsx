@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { supabaseClient } from '../../utils/supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -16,8 +17,24 @@ export default function Header({ onRefresh }: HeaderProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [username, setUsername] = useState('');
   const [profilePicture, setProfilePicture] = useState('');
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [feedback, setFeedback] = useState('');
   const [search, setSearch] = useState('');
   const router = useRouter();
+  const feedbackRef = useRef<HTMLDivElement>(null);
+
+  const handleSendFeedback = async () => {
+    const { data, error } = await supabaseClient
+      .from('feedback')
+      .insert({feedback: feedback });
+    if (error) {
+      toast.error('Error sending feedback');
+    } else {
+      toast.success('Feedback sent successfully');
+      setIsFeedbackOpen(false);
+      setFeedback('');
+    }
+  };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -42,13 +59,17 @@ export default function Header({ onRefresh }: HeaderProps) {
       if (isMenuOpen && dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false);
       }
+      // Close feedback if open and click is outside the feedback container
+      if (isFeedbackOpen && feedbackRef.current && !feedbackRef.current.contains(event.target as Node)) {
+        setIsFeedbackOpen(false);
+      }
     }
 
     document.addEventListener('click', handleClickOutside);
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [isMenuOpen]);
+  }, [isMenuOpen, isFeedbackOpen]);
 
   useEffect(() => {
     getNameAndProfilePicture();
@@ -82,6 +103,7 @@ export default function Header({ onRefresh }: HeaderProps) {
 
   const handleProfileClick = (e: React.MouseEvent) => {
     setIsMenuOpen(!isMenuOpen);
+    setIsFeedbackOpen(false);
   };
 
   if (loading) {
@@ -167,10 +189,29 @@ export default function Header({ onRefresh }: HeaderProps) {
           <div className="flex items-center space-x-4">
             {user ? (
               /* Authenticated User */
-              <div className="flex items-center space-x-4">
-
+              <div className="flex flex-row items-center space-x-4">
+                <div className="relative" ref={feedbackRef}>
+                  <button
+                    onClick={() => { setIsFeedbackOpen(!isFeedbackOpen); setIsMenuOpen(false); }}
+                    className="hidden sm:block text-xs text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200">
+                    Feedback
+                  </button>
+                  {isFeedbackOpen && (
+                    <div className="absolute right-0 w-[225px] bg-custom-gray rounded-lg shadow-lg z-50 p-[10%] mt-1">
+                      <textarea
+                        placeholder="Suggestions, bugs, secrets, messages for me, etc."
+                        className="w-full h-24 bg-custom-gray text-white rounded-lg p-2 border-[1px] border-white focus:outline-none text-xs"
+                        value={feedback}
+                        onChange={(e) => setFeedback(e.target.value)}
+                      />
+                      <button onClick={handleSendFeedback} className="text-xs text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200 float-right">
+                        Send
+                      </button>
+                    </div>
+                  )}
+                </div>
                 <div className="relative">
-                  
+
                   <button
                     onClick={handleProfileClick}
                     className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors duration-200"
@@ -247,7 +288,27 @@ export default function Header({ onRefresh }: HeaderProps) {
               </div>
             ) : (
               /* Unauthenticated User */
-              <div className="flex items-center">
+              <div className="flex flex-row items-center space-x-4">
+                 <div className="relative" ref={feedbackRef}>
+                  <button
+                    onClick={() => { setIsFeedbackOpen(!isFeedbackOpen); setIsMenuOpen(false); }}
+                    className="hidden sm:block text-xs text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200">
+                    Feedback
+                  </button>
+                  {isFeedbackOpen && (
+                    <div className="absolute right-0 w-[225px] bg-custom-gray rounded-lg shadow-lg z-50 p-[10%] mt-1">
+                      <textarea
+                        placeholder="Suggestions, bugs, secrets, messages for me, etc."
+                        className="w-full h-24 bg-custom-gray text-white rounded-lg p-2 border-[1px] border-white focus:outline-none text-xs"
+                        value={feedback}
+                        onChange={(e) => setFeedback(e.target.value)}
+                      />
+                      <button onClick={handleSendFeedback} className="text-xs text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200 float-right">
+                        Send
+                      </button>
+                    </div>
+                  )}
+                </div>
                 {/* Compact mobile icon */}
                 <Link href="/login" className="md:hidden p-2 rounded-full hover:bg-gray-800 text-gray-300">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -258,15 +319,9 @@ export default function Header({ onRefresh }: HeaderProps) {
                 <div className="hidden md:flex items-center space-x-4">
                   <Link
                     href="/login"
-                    className="text-gray-300 hover:text-white transition-colors duration-200"
+                    className="text-white text-xs hover:text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200"
                   >
                     Login
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-blue-600 transition-all duration-200 font-medium"
-                  >
-                    Sign Up
                   </Link>
                 </div>
               </div>
