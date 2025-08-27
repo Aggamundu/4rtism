@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import Header from '@/components/Header'
+import { useState } from 'react'
 import { supabaseClient } from '../../../utils/supabaseClient'
-import Header from '../../components/Header'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -44,28 +44,28 @@ export default function SignupPage() {
 
 
 
- //Logs in a user
- const handleLogin = async () => {
-  setLoading(true)
-  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password })
-  setLoading(false)
-  if (error) {
-    setError(error.message)
-  } else {
-    // Get user ID from the authenticated user
-    const userId = data.user?.id
-    console.log('User ID:', userId)
-
-    // Redirect to home page
-    const hasOnboarded = await checkHasOnboarded(userId)
-    if (hasOnboarded) {
-      window.location.href = `${window.location.origin}/home`
+  //Logs in a user
+  const handleLogin = async () => {
+    setLoading(true)
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password })
+    setLoading(false)
+    if (error) {
+      setError(error.message)
     } else {
-      window.location.href = `${window.location.origin}/onboarding`
-      
+      // Get user ID from the authenticated user
+      const userId = data.user?.id
+      console.log('User ID:', userId)
+
+      // Redirect to home page
+      const hasOnboarded = await checkHasOnboarded(userId)
+      if (hasOnboarded) {
+        window.location.href = `${window.location.origin}/home`
+      } else {
+        window.location.href = `${window.location.origin}/onboarding`
+
+      }
     }
   }
-}
 
   //Signs up a new user
   const handleSignUp = async () => {
@@ -113,42 +113,42 @@ export default function SignupPage() {
         </div>
         {error && <p className="text-red-500 text-sm">{error}</p>}
         {/* Email/Password Form */}
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="mb-3 w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"
+        />
+        <div>
           <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mb-3 w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-1 "
           />
-          <div>
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-1 "
-            />
+        </div>
+        <div>
+          <div className="flex">
+            <button
+              onClick={handleSignUp}
+              disabled={loading}
+              className="flex-1 bg-custom-blue hover:bg-custom-blue/90 text-custom-white px-4 py-3 rounded-lg transition-colors disabled:opacity-50"
+            >
+              {loading ? 'Signing up...' : 'Sign Up'}
+            </button>
+
           </div>
-          <div>
-            <div className="flex">
-              <button
-                onClick={handleSignUp}
-                disabled={loading}
-                className="flex-1 bg-custom-blue hover:bg-custom-blue/90 text-custom-white px-4 py-3 rounded-lg transition-colors disabled:opacity-50"
-              >
-                {loading ? 'Signing up...' : 'Sign Up'}
-              </button>
-              
-            </div>
-            <div className="flex flex-row">
-              <p className="text-sm text-custom-lightgray mr-1">Have an account?</p>
+          <div className="flex flex-row">
+            <p className="text-sm text-custom-lightgray mr-1">Have an account?</p>
             <a href="/login" className="text-sm text-white hover:text-custom-blue transition-colors font-semibold">
-                Login
-              </a>
-            </div>
-
-
+              Login
+            </a>
           </div>
+
+
+        </div>
 
 
         {/* Test Button */}

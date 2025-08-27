@@ -1,8 +1,8 @@
 'use client'
+import Header from '@/components/Header'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { supabaseClient } from '../../../utils/supabaseClient'
-import Header from '../../components/Header'
 
 export default function ChangePasswordPage() {
   const [email, setEmail] = useState('')

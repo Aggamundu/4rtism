@@ -1,13 +1,13 @@
 'use client';
+import Header from '@/components/Header';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { supabaseClient } from '../../../utils/supabaseClient';
 import CommissionsSeller from './components/CommissionsSeller';
 import Portfolio from './portfolio-components/Portfolio';
 import Services from './services-components/Services';
 import Stripe from './stripe-components/Stripe';
-import Header from '../../components/Header';
-import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
-import { supabaseClient } from '../../../utils/supabaseClient';
 
 export default function DashPage() {
   const [activeNav, setActiveNav] = useState('commissions');
@@ -20,7 +20,7 @@ export default function DashPage() {
     { value: 'stripe', label: 'Stripe Dashboard' },
     { value: 'portfolio', label: 'Portfolio' }
   ];
-  
+
   const checkHasOnboarded = async () => {
     const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single()
     if (!data?.has_onboarded) {

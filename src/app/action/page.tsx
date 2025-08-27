@@ -100,7 +100,7 @@ export default function ActionPage() {
           <p className="text-gray-600">Your commission has been completed successfully.</p>
         </div>
       )}
-      {validToken && !isExpired && isApproval && !isRejected && searchParams.get('action') === 'reject' && (
+      {validToken && !isExpired && isApproval && !isRejected && action === 'reject' && (
         <div className="flex flex-col min-h-[100vh] items-center justify-center p-6 gap-4">
           <h2 className="text-lg font-semibold">Reject Work</h2>
           <p className="text-gray-600">Please provide feedback for the artist</p>
@@ -146,14 +146,14 @@ export default function ActionPage() {
           </button>
         </div>
       )}
-      {isRejected && validToken && !isExpired && isApproval && searchParams.get('action') === 'reject' && (
+      {isRejected && validToken && !isExpired && isApproval && action === 'reject' && (
         <div className="flex flex-col min-h-[100vh] items-center justify-center p-6 gap-4">
           <h2 className="text-lg font-semibold">Max rejections reached</h2>
           <p className="text-gray-600">Please choose to accept the work or contact your artist if you have any issues.</p>
           
         </div>
       )}
-      {((validToken && !isCompleted && !isExpired && isApproval && searchParams.get('action') === 'accept')) && (
+      {((validToken && !isCompleted && !isExpired && isApproval && action === 'accept')) && (
         <div className="flex flex-col min-h-[100vh] items-center justify-center p-6 gap-4">
           <h2 className="text-lg font-semibold">Complete Commission</h2>
           <p className="text-gray-600">Please provide a rating for the artist</p>

@@ -1,9 +1,9 @@
 "use client"
+import Header from "@/components/Header";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { supabaseClient } from "../../../utils/supabaseClient";
-import Header from "../../components/Header";
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function DeleteAccount() {

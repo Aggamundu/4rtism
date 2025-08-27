@@ -24,7 +24,6 @@ export default function CommissionRequestOverlay({
   const { image_urls, price, title, description, delivery_days, pfp_url, artist, questions } = commission;
   const [backgroundColor, setBackgroundColor] = useState("#1f2937");
   const [deletedImageUrls, setDeletedImageUrls] = useState<string[]>([]);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { user } = useAuth();

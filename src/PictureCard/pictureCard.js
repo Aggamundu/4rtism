@@ -1,10 +1,10 @@
 import "./pictureCard.css";
-
+import { Image } from "next/image";
 export default function PictureCard({ pic }) {
 
     return (
         <div className="card-container">
-            <img className="card-img rounded-card" src={ pic } />
+            <Image className="card-img rounded-card" src={ pic } />
         </div>
     )
 }

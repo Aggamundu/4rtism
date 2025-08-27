@@ -1,10 +1,10 @@
 'use client'
+import Header from '@/components/Header'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { toast } from 'react-hot-toast'
 import { supabaseClient } from '../../../utils/supabaseClient'
 import { useAuth } from '../../contexts/AuthContext'
-import { useRouter } from 'next/navigation'
-import Header from '../../components/Header'
-import { toast } from 'react-hot-toast'
 
 export default function ChangePasswordPage() {
 
@@ -52,30 +52,30 @@ export default function ChangePasswordPage() {
     <div className="min-h-screen flex items-center justify-center px-custom">
       <Header />
       <div className="w-full max-w-md space-y-4">
-      <div className="text-center">
+        <div className="text-center">
           Enter your new password
-      </div>
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"
-      />  
-      <input
-        type="password"
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        className="w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"
-      />  
-      <button
-        onClick={handleChangePassword}
-        disabled={(password !== confirmPassword) || password.length < 6}
-        className="w-full flex items-center justify-center gap-3 bg-white text-gray-900 font-semibold py-3 px-4 rounded-lg hover:bg-white/90 transition-colors disabled:opacity-50 active:scale-95 transition-all duration-200"
-      >
-        Change Password
-      </button>
+        </div>
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"
+        />
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className="w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"
+        />
+        <button
+          onClick={handleChangePassword}
+          disabled={(password !== confirmPassword) || password.length < 6}
+          className="w-full flex items-center justify-center gap-3 bg-white text-gray-900 font-semibold py-3 px-4 rounded-lg hover:bg-white/90 transition-colors disabled:opacity-50 active:scale-95 transition-all duration-200"
+        >
+          Change Password
+        </button>
       </div>
     </div>
   )
