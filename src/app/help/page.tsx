@@ -61,6 +61,9 @@ export default function Help() {
               <a href="#account" className="text-gray-600 hover:text-gray-400 cursor-pointer">Do clients need an account?</a>
             </li>
             <li>
+              <a href="#deletion" className="text-gray-600 hover:text-gray-400 cursor-pointer">Account deletion</a>
+            </li>
+            <li>
               <a href="#contact" className="text-gray-600 hover:text-gray-400 cursor-pointer">Contact Support</a>
             </li>
           </ul>
@@ -102,6 +105,11 @@ export default function Help() {
           <section id="account" className="mb-12">
             <h2 className="text-lg font-semibold mb-4">Do clients need to create an account to send commission requests?</h2>
             <p className="text-gray-400 mb-3">No, however, they will need to enter their email address to receive a link to pay for their commission and to receive work submissions.</p>
+          </section>
+
+          <section id="deletion" className="mb-12">
+            <h2 className="text-lg font-semibold mb-4">Does deleting my 4rtismaccount delete my Stripe account?</h2>
+            <p className="text-gray-400 mb-3">No, you can still access your Stripe account after deleting your 4rtism account.</p>
           </section>
 
           <section id="contact" className="mb-12">

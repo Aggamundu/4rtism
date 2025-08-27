@@ -80,7 +80,7 @@ export default function DeleteAccount() {
       ) : (
         <div className="w-full max-w-md space-y-4">
           <div className="text-center">
-            Enter your username to delete your account
+            Enter your username to confirm deletion of your account
           </div>
           <input
             type="text"
