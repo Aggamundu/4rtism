@@ -108,7 +108,7 @@ export default function Help() {
           </section>
 
           <section id="deletion" className="mb-12">
-            <h2 className="text-lg font-semibold mb-4">Does deleting my 4rtismaccount delete my Stripe account?</h2>
+            <h2 className="text-lg font-semibold mb-4">Does deleting my 4rtism account delete my Stripe account?</h2>
             <p className="text-gray-400 mb-3">No, you can still access your Stripe account after deleting your 4rtism account.</p>
           </section>
 
