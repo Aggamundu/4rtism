@@ -149,7 +149,7 @@ export default function Services() {
           <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
             <h3 className="text-lg font-semibold mb-4">Delete Service</h3>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to delete this service? This action cannot be undone.
+              This action cannot be undone. Deleting this service will also delete all associated commission requests.
             </p>
             <div className="flex justify-end gap-4">
               <button
