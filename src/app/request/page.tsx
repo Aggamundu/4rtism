@@ -90,13 +90,13 @@ export default function Request() {
       <div className="w-full max-w-md space-y-4">
         <input
           type="text"
-          placeholder="Title"
+          placeholder="Portrait of my cat"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="mb-3 w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"
         />
         <textarea
-          placeholder="Description"
+          placeholder="I want a portrait of my cat"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="mb-3 w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"

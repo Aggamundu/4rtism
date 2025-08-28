@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import PencilIcon from "@/icons/PencilIcon";
 import TrashIcon from "@/icons/Trash";
-import Image from "next/image";
 
 type ImageInputProps = {
   setImage: (file: File | null) => void;
@@ -101,7 +100,7 @@ export default function ImageInput(props: ImageInputProps) {
         >
           <TrashIcon className="w-4 h-4 text-gray-700" />
         </button>
-          <Image
+          <img
             src={imagePreview}
             className="absolute inset-0 w-full h-full object-cover rounded-lg border-2"
             style={{ zIndex: 1 }}

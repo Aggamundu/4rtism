@@ -84,7 +84,7 @@ export default function Portfolio() {
       await deleteImagesFromStorage(deletedImageUrls);
       setDeletedImageUrls([]); // Clear the deleted image URLs list
     }
-    let finalImageUrls = [...imageUrls];
+    let finalImageUrls = [...(imageUrls || [])];
 
     // Upload new files and add their URLs
     if (selectedFiles.length > 0) {
@@ -132,8 +132,8 @@ export default function Portfolio() {
         <div className="flex justify-center items-center min-h-[50vh]">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-custom-pink4"></div>
         </div>
-        ) : (
-          <UploadImage
+      ) : (
+        <UploadImage
           key={resetKey} // Add key to force re-render
           resetKey={resetKey}
           onFilesChange={(files) => setSelectedFiles(files)}
@@ -144,7 +144,7 @@ export default function Portfolio() {
             }
           }}
           initialImages={imageUrls} />
-        )}
+      )}
 
     </div>
   );

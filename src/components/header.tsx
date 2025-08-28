@@ -187,7 +187,7 @@ export default function Header({ onRefresh }: HeaderProps) {
             </div>
             <button 
             onClick={() => router.push('/request')}
-            className="border-[1px] bg-white text-black border-custom-lightgray hover:text-white hover:bg-black hover:border-white rounded-full px-2 py-1 transition-colors duration-200 flex-[2]">
+            className="border-[1px] bg-white text-black border-custom-lightgray hover:text-white hover:bg-custom-blue hover:border-white rounded-full px-2 py-1 transition-colors duration-200 flex-[2]">
               Post
             </button>
           </div>

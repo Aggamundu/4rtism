@@ -12,9 +12,9 @@ export default function Homepage({ pictures }: { pictures: string[] }) {
     console.log("pictures", pictures);
     if (pictures) {
       setPictureCards(pictures.map((data, index) =>
-        (
-          <HomepageCard key={index} pic={data} />
-        )
+      (
+        <HomepageCard key={index} pic={data} />
+      )
       ))
     }
   };
