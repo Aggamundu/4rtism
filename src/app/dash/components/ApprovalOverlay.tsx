@@ -16,6 +16,11 @@ interface AcceptOverlayProps {
 
 export default function ApprovalOverlay({ isOpen, onClose, commission, title }: AcceptOverlayProps) {
   const [submissionUrls, setSubmissionUrls] = useState<string[]>([]);
+  
+  useEffect(() => {
+    getSubmissionUrls();
+  }, []);
+
   if (!isOpen || !commission) return null;
 
   const getSubmissionUrls = async () => {
@@ -63,9 +68,6 @@ export default function ApprovalOverlay({ isOpen, onClose, commission, title }: 
     }
   }
 
-  useEffect(() => {
-    getSubmissionUrls();
-  }, []);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

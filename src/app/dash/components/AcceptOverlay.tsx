@@ -15,8 +15,6 @@ interface AcceptOverlayProps {
 }
 
 export default function AcceptOverlay({ isOpen, onClose, commission, onRefresh }: AcceptOverlayProps) {
-  if (!isOpen || !commission) return null;
-
   const [showRejectConfirmation, setShowRejectConfirmation] = useState(false);
   const [showInvoiceOverlay, setShowInvoiceOverlay] = useState(false);
   const [invoicePrice, setInvoicePrice] = useState("");
@@ -26,6 +24,19 @@ export default function AcceptOverlay({ isOpen, onClose, commission, onRefresh }
   const [artistName, setArtistName] = useState("");
   const [paymentLink, setPaymentLink] = useState("");
   const { user } = useAuth();
+
+  useEffect(() => {
+    setArtistEmail(user.email);
+    if (commission) {
+    getClientEmail(commission.response_id);
+    getArtistName(user.id);
+    }
+  }, [user, commission]);
+
+  if (!isOpen || !commission) return null;
+
+
+
 
   const updateResponse = async (responseId: number, status: string) => {
     const { data, error } = await supabaseClient.from("responses").update({ status: status }).eq("id", responseId);
@@ -211,12 +222,6 @@ Secure payment powered by Stripe
         )
     }
   }
-
-  useEffect(() => {
-    setArtistEmail(user.email);
-    getClientEmail(commission.response_id);
-    getArtistName(user.id);
-  }, [user, commission]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

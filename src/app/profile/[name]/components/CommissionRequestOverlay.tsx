@@ -16,10 +16,10 @@ export default function CommissionRequestOverlay({
 }: {
   isOpen: boolean,
   onClose: () => void,
-  commission: Commission | null,
+  commission: Commission,
 
 }) {
-  if (!commission) return null;
+
 
   const { image_urls, price, title, description, delivery_days, pfp_url, artist, questions } = commission;
   const [backgroundColor, setBackgroundColor] = useState("#1f2937");
@@ -53,6 +53,26 @@ export default function CommissionRequestOverlay({
     setDeletedImageUrls([])
   }, [commission])
 
+    // Extract edge color when component mounts or image changes
+    useEffect(() => {
+      if (image_urls && image_urls.length > 0) {
+        extractEdgeColor(image_urls[0]); // Using the second image as in your code
+      }
+    }, [image_urls]);
+  
+    // Prevent body scrolling when overlay is open
+    useEffect(() => {
+      if (isOpen) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = 'unset';
+      }
+  
+      // Cleanup function to restore scrolling when component unmounts
+      return () => {
+        document.body.style.overflow = 'unset';
+      };
+    }, [isOpen]);
 
 
   const sendArtistEmail = async () => {
@@ -317,26 +337,7 @@ export default function CommissionRequestOverlay({
     img.src = imageUrl;
   };
 
-  // Extract edge color when component mounts or image changes
-  useEffect(() => {
-    if (image_urls && image_urls.length > 0) {
-      extractEdgeColor(image_urls[0]); // Using the second image as in your code
-    }
-  }, [image_urls]);
 
-  // Prevent body scrolling when overlay is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    // Cleanup function to restore scrolling when component unmounts
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen]);
 
   return (
     <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${isOpen ? '' : 'hidden'}`} onClick={onClose}>

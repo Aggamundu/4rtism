@@ -1,9 +1,9 @@
-'use client'
+"use client";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-export default function ActionPage() {
+function ActionPageContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const action = searchParams.get('action');
@@ -150,7 +150,7 @@ export default function ActionPage() {
         <div className="flex flex-col min-h-[100vh] items-center justify-center p-6 gap-4">
           <h2 className="text-lg font-semibold">Max rejections reached</h2>
           <p className="text-gray-600">Please choose to accept the work or contact your artist if you have any issues.</p>
-          
+
         </div>
       )}
       {((validToken && !isCompleted && !isExpired && isApproval && action === 'accept')) && (
@@ -224,5 +224,17 @@ export default function ActionPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ActionPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col min-h-[100vh] items-center justify-center p-6 gap-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+      </div>
+    }>
+      <ActionPageContent />
+    </Suspense>
   );
 }

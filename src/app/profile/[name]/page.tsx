@@ -1,13 +1,13 @@
 'use client';
 import Header from "@/components/Header";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../../../../utils/supabaseClient";
 import { useAuth } from "../../../contexts/AuthContext";
-import { Commission, Option, Picture, Question, Review } from "../../types/Types";
+import { Commission, Option, Question, Review } from "../../types/Types";
 import About from "./components/About";
 import Banner from "./components/Banner";
 import ProfileTabs from "./components/ProfileTabs";
-import { useRouter } from "next/navigation";
 
 interface ProfilePageProps {
   params: Promise<{
@@ -25,7 +25,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
   //UUID of profile page
   const [profileId, setProfileId] = useState<string>('');
   const [commissions, setCommissions] = useState<Commission[]>([]);
-  const [pictures, setPictures] = useState<Picture[]>([]);
+  const [pictures, setPictures] = useState<string[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
 
 
@@ -173,11 +173,11 @@ export default function ProfilePage({ params }: ProfilePageProps) {
   return (
     <div className="pt-14">
       <Header onRefresh={() => getProfile(name)} />
-        <Banner imageSrc={profile?.banner_url || null} />
-        <About {...aboutProps} showSettings={user?.id === profileId} onUpdateProfile={handleProfileUpdate} />
-        <div className="relative top-[-3.5rem]">
-          <ProfileTabs commissions={commissions} pictures={pictures} reviews={reviews} displayName={profile?.display_name || ''} />
-        </div>
+      <Banner imageSrc={profile?.banner_url || null} />
+      <About {...aboutProps} showSettings={user?.id === profileId} onUpdateProfile={handleProfileUpdate} />
+      <div className="relative top-[-3.5rem]">
+        <ProfileTabs commissions={commissions} pictures={pictures} reviews={reviews} displayName={profile?.display_name || ''} />
+      </div>
 
     </div>
   );

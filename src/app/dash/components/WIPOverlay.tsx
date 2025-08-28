@@ -25,6 +25,13 @@ export default function WIPOverlay({ isOpen, onClose, commission, onRefresh }: A
   const [token, setToken] = useState<string>("");
   const { user } = useAuth();
 
+  useEffect(() => {
+    if (commission) {
+      getClientEmail(commission.response_id);
+      getArtistName(user.id);
+    }
+  }, [commission, user]);
+
   if (!isOpen || !commission) return null;
 
   const getButtonClasses = () => {
@@ -259,11 +266,6 @@ export default function WIPOverlay({ isOpen, onClose, commission, onRefresh }: A
       setIsSubmitting(false);
     }
   }
-
-  useEffect(() => {
-    getClientEmail(commission.response_id);
-    getArtistName(user.id);
-  }, [commission]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

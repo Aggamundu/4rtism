@@ -1,13 +1,12 @@
 "use client";
-
 import Header from "@/components/Header";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { supabaseClient } from "../../../utils/supabaseClient";
 import CommissionCardGrid from "../home/components/CommissionCardGrid";
 import { Commission, Option, Question } from "../types/Types";
 
-export default function SearchPage() {
+function SearchPageContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query");
   const [results, setResults] = useState<Commission[]>([]);
@@ -130,4 +129,19 @@ export default function SearchPage() {
       )}
     </div>
   </div>;
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen pt-14">
+        <Header />
+        <div className="flex justify-center items-center min-h-[50vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+        </div>
+      </div>
+    }>
+      <SearchPageContent />
+    </Suspense>
+  );
 }
