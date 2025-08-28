@@ -43,7 +43,7 @@ module.exports = withMT({
         'banner': '10px',
       },
       padding: {
-        'custom': '5%',
+        'custom': '2%',
       },
     },
     fontSize: {

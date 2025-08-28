@@ -113,7 +113,7 @@ const hasInitialized = useRef(false);
 
 
   return (
-    <div className="flex flex-col w-full sm:max-w-[90%] bg-custom-darkgray rounded-card py-[1%]">
+    <div className="flex flex-col w-full bg-custom-darkgray rounded-card py-[1%]">
       <label className="text-white text-sm">Reference Images</label>
 
       <div className="flex flex-col py-[1%] items-center">
@@ -164,7 +164,6 @@ const hasInitialized = useRef(false);
         {/* Display uploaded images */}
         {uploadedImages.length > 0 && (
           <div className="mt-[1%]">
-            <h3 className="text-white text-sm">Uploaded Images:</h3>
             <div className="grid grid-cols-3 gap-2 border-[1px] border-dashed border-custom-gray rounded-card p-custom">
               {uploadedImages.map((image, index) => (
                 <div key={index} className="relative aspect-square">

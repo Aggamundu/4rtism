@@ -1,12 +1,12 @@
 "use client"
+import CommissionColumn from "@/components/CommissionColumn";
 import Header from "@/components/Header";
+import RequestCard from "@/components/RequestCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { supabaseClient } from "../../utils/supabaseClient";
-import CommissionCardGrid from "./home/components/CommissionCardGrid";
-import WelcomeSection from "./home/components/WelcomeSection";
-import { Commission, Option, Question } from "./types/Types";
+import { Commission, Option, Question, Request } from "./types/Types";
 
 export default function Home() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -17,8 +17,41 @@ export default function Home() {
   const sortDropdownRef = useRef<HTMLDivElement>(null);
   const [selectedCommissions, setSelectedCommissions] = useState<Commission[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedRequests, setSelectedRequests] = useState<Request[]>([]);
   const { user, loading } = useAuth()
   const router = useRouter()
+  useEffect(() => {
+    fetchRequests()
+    fetchCommissions()
+  }, [])
+
+  // Handle click outside to close dropdowns
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      // Close category dropdown if click is outside
+      if (isCategoryOpen && categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target as Node)) {
+        setIsCategoryOpen(false);
+      }
+      // Close sort dropdown if click is outside  
+      if (isSortOpen && sortDropdownRef.current && !sortDropdownRef.current.contains(event.target as Node)) {
+        setIsSortOpen(false);
+      }
+    }
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isCategoryOpen, isSortOpen]);
+
+  const fetchRequests = async () => {
+    const { data, error } = await supabaseClient.from('requests').select('*');
+    if (error) {
+      console.error(error)
+    } else {
+      setSelectedRequests(data as Request[])
+    }
+  }
   const handleShuffle = () => {
     const shuffledCommissions = [...selectedCommissions].sort(() => Math.random() - 0.5);
     setSelectedCommissions(shuffledCommissions);
@@ -175,27 +208,7 @@ export default function Home() {
       setIsLoading(false);
     }
   }
-  // Handle click outside to close dropdowns
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      // Close category dropdown if click is outside
-      if (isCategoryOpen && categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target as Node)) {
-        setIsCategoryOpen(false);
-      }
-      // Close sort dropdown if click is outside  
-      if (isSortOpen && sortDropdownRef.current && !sortDropdownRef.current.contains(event.target as Node)) {
-        setIsSortOpen(false);
-      }
-    }
 
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [isCategoryOpen, isSortOpen]);
-  useEffect(() => {
-    fetchCommissions();
-  }, []);
 
   const checkHasOnboarded = async () => {
     const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single()
@@ -214,100 +227,17 @@ export default function Home() {
   return (
     <div className="relative pt-14 min-h-screen">
       <Header />
-      <WelcomeSection />
-      {/* Categories */}
-      <div className="flex flex-col sm:flex-row text-sm px-custom mb-[2%]">
-        <div className="">
-          <button onClick={() => {
-            setIsCategoryOpen(!isCategoryOpen);
-            setIsSortOpen(false);
-          }} className="hover:bg-white/10 bg-custom-darkgray text-white py-2 rounded-lg hover:bg-opacity-80 transition-all flex items-center min-w-[165px] justify-between px-4 border-white border-[1px]">
-            <span className="truncate">{selectedCategory}</span>
-            <svg className={`w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-200 ${isCategoryOpen ? 'rotate-180' : 'rotate-0'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-          {isCategoryOpen && (
-            <div className="absolute z-50 bg-custom-gray text-xs rounded-sm shadow-lg w-[40%] sm:w-[15%]" ref={categoryDropdownRef}>
-              <div onClick={() => handleFilter("All Categories", selectedSort)} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-t-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                All Categories
-              </div>
-              <div onClick={() => handleFilter("Chibi", selectedSort)} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-t-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                Chibi
-              </div>
-              <div onClick={() => handleFilter("Graphic Design", selectedSort)} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                Graphic Design
-              </div>
-              <div onClick={() => handleFilter("Cartoon", selectedSort)} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                Cartoon
-              </div>
-              <div onClick={() => handleFilter("Anime", selectedSort)} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                Anime
-              </div>
-              <div onClick={() => handleFilter("Semi-Realistic", selectedSort)} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                Semi-Realistic
-              </div>
-              <div onClick={() => handleFilter("Hyper-Realistic", selectedSort)} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                Hyper-Realistic
-              </div>
-              <div onClick={() => handleFilter("Other", selectedSort)} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                Other
-              </div>
-            </div>
-          )}
+      <div className="flex flex-row">
+        <div className="flex flex-col items-center w-[90%] px-custom">
+          {selectedRequests.map((request) => (
+            <RequestCard key={request.id} request={request} />
+          ))}
         </div>
-
-        {/* Sort by */}
-        <div className="flex flex-row sm:mt-0 mt-2 gap-2 sm:gap-0">
-          <div className="gap-2 items-center sm:px-4">
-            <button onClick={() => {
-              setIsSortOpen(!isSortOpen);
-              setIsCategoryOpen(false);
-            }} className="hover:bg-white/10 min-w-[145px] bg-custom-darkgray border-white border-[1px] px-4 text-white py-2 rounded-lg hover:bg-opacity-80 transition-all flex items-center justify-between">
-              <span className="truncate">{selectedSort}</span>
-              <svg className={`w-4 h-4 ml-2 flex-shrink-0 transition-transform duration-200 ${isSortOpen ? 'rotate-180' : 'rotate-0'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            {isSortOpen && (
-              <div className="absolute bg-custom-gray text-xs rounded-sm shadow-lg z-50 w-[40%] sm:w-[15%]" ref={sortDropdownRef}>
-                <div onClick={() => handleFilter(selectedCategory, "All Prices")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                  All Prices
-                </div>
-                <div onClick={() => handleFilter(selectedCategory, "Up to $20")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                  Up to $20
-                </div>
-                <div onClick={() => handleFilter(selectedCategory, "$20 - $30")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                  $20 - $30
-                </div>
-                <div onClick={() => handleFilter(selectedCategory, "$30 - $40")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                  $30 - $40
-                </div>
-                <div onClick={() => handleFilter(selectedCategory, "$40 - $50")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                  $40 - $50
-                </div>
-                <div onClick={() => handleFilter(selectedCategory, "$50 & above")} className="block px-4 py-2 text-base text-gray-300 hover:bg-gray-700 hover:rounded-sm hover:text-white transition-colors duration-200 cursor-pointer ">
-                  $50 & above
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="flex items-center justify-center">
-            <button className="px-2 border-white border-[1px] rounded-lg py-2 hover:bg-white/10 transition-all active:scale-95" onClick={() => handleShuffle()}>
-              <img src="/shuffle.svg" alt="Shuffle" className="w-[21px] h-[21px]" style={{ filter: 'brightness(0) saturate(100%) invert(100%)' }} />
-            </button>
-          </div>
-        </div>
-
+        <CommissionColumn commissions={selectedCommissions} showProfileInfo={true} />
       </div>
+      {/* Categories */}
 
-      {isLoading ? (
-        <div className="flex justify-center items-center min-h-[50vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
-        </div>
-      ) : (
-        <CommissionCardGrid commissions={selectedCommissions} />
-      )}
+
     </div>
   );
 }

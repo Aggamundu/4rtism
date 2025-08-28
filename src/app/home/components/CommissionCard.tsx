@@ -6,16 +6,45 @@ interface CommissionCardProps {
   commission: Commission;
   showProfileInfo?: boolean;
   onCardClick: (commission: Commission) => void;
+  size?: 'small' | 'medium' | 'large';
 }
 
 export default function CommissionCard({
   commission,
   showProfileInfo = true,
-  onCardClick
+  onCardClick,
+  size = 'medium'
 }: CommissionCardProps) {
 
-  const { title, price, artist, image_urls, pfp_url} = commission;
+  const { title, price, artist, image_urls, pfp_url } = commission;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Size-based styling
+  const sizeClasses = {
+    small: {
+      image: 'h-32',
+      title: 'text-sm',
+      price: 'text-xs',
+      artist: 'text-xs',
+      pfp: 'w-4 h-4'
+    },
+    medium: {
+      image: 'h-48',
+      title: 'text-base',
+      price: 'text-sm',
+      artist: 'text-sm',
+      pfp: 'w-5 h-5'
+    },
+    large: {
+      image: 'h-64',
+      title: 'text-lg',
+      price: 'text-base',
+      artist: 'text-base',
+      pfp: 'w-6 h-6'
+    }
+  };
+
+  const currentSize = sizeClasses[size];
   const [backgroundColor, setBackgroundColor] = useState("#1f2937"); // Default gray-800
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -144,11 +173,11 @@ export default function CommissionCard({
           <img
             src={images[currentImageIndex]}
             alt={title}
-            className="w-full h-48 object-contain rounded-[15px] transition-all duration-300 ease-in-out"
+            className={`w-full ${currentSize.image} object-contain rounded-[15px] transition-all duration-300 ease-in-out`}
             style={{ backgroundColor }}
           />
         ) : (
-          <div className="w-full h-48 bg-gray-600 rounded-[15px] flex items-center justify-center">
+          <div className={`w-full ${currentSize.image} bg-gray-600 rounded-[15px] flex items-center justify-center`}>
             <span className="text-gray-400">No image</span>
           </div>
         )}
@@ -215,20 +244,20 @@ export default function CommissionCard({
         )}
       </div>
       <div className="p-0 ">
-        <div className ="flex flex-row justify-between">
-        <h1 className="text-white font-medium mb-0">{title}</h1>
-        {showProfileInfo && <span className="text-custom-lightgray text-sm ml-auto mr-2">${price}</span>}
+        <div className="flex flex-row justify-between">
+          <h1 className={`text-white font-medium mb-0 ${currentSize.title}`}>{title}</h1>
+          {showProfileInfo && <span className={`text-custom-lightgray ml-auto mr-2 ${currentSize.price}`}>${price}</span>}
         </div>
 
         {showProfileInfo && (
           <div className="flex items-center">
-            <img src={pfp_url} alt={artist} className="w-5 h-5 rounded-full mr-2 object-cover" />
-            <span className="text-custom-lightgray text-sm">@{artist}</span>
+            <img src={pfp_url} alt={artist} className={`${currentSize.pfp} rounded-full mr-2 object-cover`} />
+            <span className={`text-custom-lightgray ${currentSize.artist}`}>@{artist}</span>
           </div>
         )}
         {!showProfileInfo && (
           <div className="flex items-center justify-start">
-            <span className="text-custom-lightgray text-sm">${price}</span>
+            <span className={`text-custom-lightgray ${currentSize.price}`}>${price}</span>
           </div>
         )}
       </div>

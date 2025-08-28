@@ -26,7 +26,7 @@ export default function Header({ onRefresh }: HeaderProps) {
   const handleSendFeedback = async () => {
     const { data, error } = await supabaseClient
       .from('feedback')
-      .insert({feedback: feedback });
+      .insert({ feedback: feedback });
     if (error) {
       toast.error('Error sending feedback');
     } else {
@@ -35,6 +35,8 @@ export default function Header({ onRefresh }: HeaderProps) {
       setFeedback('');
     }
   };
+  
+
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -136,9 +138,9 @@ export default function Header({ onRefresh }: HeaderProps) {
           </div>
 
           {/* Search Bar */}
-          <div className="flex-1 mx-2">
+          <div className="flex-1 mx-2 flex flex-row gap-2">
             {/* Desktop search */}
-            <div className="hidden md:flex items-center w-full max-w-xl mx-auto">
+            <div className="hidden md:flex items-center flex-1">
               <div className="flex w-full">
                 <div className="relative flex-1">
                   <input
@@ -162,7 +164,7 @@ export default function Header({ onRefresh }: HeaderProps) {
               </div>
             </div>
             {/* Mobile search */}
-            <div className="md:hidden flex items-center w-full max-w-sm mx-auto">
+            <div className="md:hidden flex items-center flex-1">
               <div className="relative w-full">
                 <input
                   type="text"
@@ -181,8 +183,13 @@ export default function Header({ onRefresh }: HeaderProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
-              </div>
             </div>
+            </div>
+            <button 
+            onClick={() => router.push('/request')}
+            className="border-[1px] bg-white text-black border-custom-lightgray hover:text-white hover:bg-black hover:border-white rounded-full px-2 py-1 transition-colors duration-200 flex-[2]">
+              Post
+            </button>
           </div>
 
           {/* Auth Section */}
@@ -289,7 +296,7 @@ export default function Header({ onRefresh }: HeaderProps) {
             ) : (
               /* Unauthenticated User */
               <div className="flex flex-row items-center space-x-4">
-                 <div className="relative" ref={feedbackRef}>
+                <div className="relative" ref={feedbackRef}>
                   <button
                     onClick={() => { setIsFeedbackOpen(!isFeedbackOpen); setIsMenuOpen(false); }}
                     className="hidden sm:block text-xs text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200">
@@ -331,8 +338,6 @@ export default function Header({ onRefresh }: HeaderProps) {
           {/* No mobile hamburger/menu; profile/login icon shown instead */}
 
         </div>
-
-        {/* No mobile dropdown menu; search stays centered and profile/login icon on the right */}
 
       </div>
     </header>

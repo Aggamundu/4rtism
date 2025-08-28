@@ -459,6 +459,7 @@ export default function CommissionRequestOverlay({
                   </div>
 
                 </div>
+                <div className = "sm:w-[90%]">
                 <UploadImages onFilesChange={(files) => setSelectedFiles(files)}
                   onImagesChange={(images, deletedUrls) => {
                     setFormData(prev => ({ ...prev, image_urls: images }));
@@ -466,6 +467,8 @@ export default function CommissionRequestOverlay({
                       setDeletedImageUrls(prev => [...prev, ...deletedUrls]);
                     }
                   }} initialImages={formData.image_urls} />
+                </div>
+
                 <div className="mb-[1%]">
                   <div className="py-[1%]">
                     <span className="text-white text-sm font-medium">

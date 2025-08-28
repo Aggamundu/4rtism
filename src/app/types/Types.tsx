@@ -17,6 +17,14 @@ export interface Answer {
   selected_option_ids?: number[] | null;
 }
 
+export interface Request {
+  id: string;
+  title: string;
+  description: string;
+  image_urls: string[];
+  user_id: string;
+}
+
 export interface ServiceDisplay {
   title: string;
   price: string;
