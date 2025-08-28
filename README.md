@@ -16,6 +16,8 @@
 3. To provide a cheaper alternative to other art commission websites
 ## Usage
 - The website is currently deployed with Vercel [at this link](https://art-commission-cdcaev0fq-aggamundus-projects.vercel.app)
+
+  *Google sign in, and other routing things may be broken in deployment by the time you read this*
   
 To run the app for development  
 1. Clone this repo
@@ -23,4 +25,21 @@ To run the app for development
 
 Keep in mind that you cannot write to the database due to env variables
 ## Features
-- 
+- Messaging
+- Payment
+- Profile
+- Search
+- Client commission posts
+- Commission requests
+- Commission Services
+- Dashboard
+- Emailing
+- Reviews
+
+## Lessons I learned
+1. Thoughtfully planning what you want to make, and also enjoying your planned design, saves you loads of time.
+  > I wasted around 2.5 weeks redoing the frontend of 4rtism because I didn't like it. If I had just spent a bit more time refining the design in Figma, I could have saved myself alot of time and energy.
+2. You need to lint your code while you develop.
+  > When trying to deploy, I had like 150+ linter errors. If I had `npm run build` and read the errors while I developed, then I would've learned more and simulatenously saved myself future headache
+3. I need to write cleaner code
+  > Going into this project, I had the mindset that "I don't need to write clean code if it works". Well, after making a larger codebase, I've internalized the importance of writing reusable code, and I *solemnly plan* to do so in the future. It not only saves you time, but embarassment from other people looking at your 15 hooks in a single component.
