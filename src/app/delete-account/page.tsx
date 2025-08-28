@@ -62,7 +62,7 @@ export default function DeleteAccount() {
       toast.success("Account deleted successfully", {
         duration: 3000
       });
-      router.push('/home')
+      router.push('/')
     } else {
       setError("Failed to delete account");
     }

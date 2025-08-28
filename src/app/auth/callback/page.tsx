@@ -33,7 +33,7 @@ export default function AuthCallback() {
         const hasOnboarded = await checkHasOnboarded(userId)
 
         if (hasOnboarded) {
-          router.push('/home')
+          router.push('/')
         } else {
           router.push('/onboarding')
         }

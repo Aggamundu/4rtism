@@ -67,7 +67,7 @@ export default function AuthPage() {
       // Redirect to home page
       const hasOnboarded = await checkHasOnboarded(userId)
       if (hasOnboarded) {
-        window.location.href = `${window.location.origin}/home`
+        window.location.href = `${window.location.origin}/`
       } else {
         window.location.href = `${window.location.origin}/onboarding`
       }

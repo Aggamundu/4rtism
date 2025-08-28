@@ -18,7 +18,7 @@ export default function ChangePasswordPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/home')
+      router.push('/')
     }
   }, [user, loading])
 

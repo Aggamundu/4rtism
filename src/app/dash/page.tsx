@@ -61,7 +61,7 @@ export default function DashPage() {
 
   // Redirect if not authenticated
   if (!user) {
-    router.push('/home');
+    router.push('/');
     return null;
   }
 
