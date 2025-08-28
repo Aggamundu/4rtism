@@ -17,24 +17,10 @@ export default function Header({ onRefresh }: HeaderProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [username, setUsername] = useState('');
   const [profilePicture, setProfilePicture] = useState('');
-  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-  const [feedback, setFeedback] = useState('');
   const [search, setSearch] = useState('');
   const router = useRouter();
-  const feedbackRef = useRef<HTMLDivElement>(null);
 
-  const handleSendFeedback = async () => {
-    const { data, error } = await supabaseClient
-      .from('feedback')
-      .insert({ feedback: feedback });
-    if (error) {
-      toast.error('Error sending feedback');
-    } else {
-      toast.success('Feedback sent successfully');
-      setIsFeedbackOpen(false);
-      setFeedback('');
-    }
-  };
+
   
 
 
@@ -61,17 +47,13 @@ export default function Header({ onRefresh }: HeaderProps) {
       if (isMenuOpen && dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false);
       }
-      // Close feedback if open and click is outside the feedback container
-      if (isFeedbackOpen && feedbackRef.current && !feedbackRef.current.contains(event.target as Node)) {
-        setIsFeedbackOpen(false);
-      }
     }
 
     document.addEventListener('click', handleClickOutside);
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [isMenuOpen, isFeedbackOpen]);
+  }, [isMenuOpen]);
 
   useEffect(() => {
     getNameAndProfilePicture();
@@ -105,7 +87,6 @@ export default function Header({ onRefresh }: HeaderProps) {
 
   const handleProfileClick = (e: React.MouseEvent) => {
     setIsMenuOpen(!isMenuOpen);
-    setIsFeedbackOpen(false);
   };
 
   if (loading) {
@@ -197,26 +178,10 @@ export default function Header({ onRefresh }: HeaderProps) {
             {user ? (
               /* Authenticated User */
               <div className="flex flex-row items-center space-x-4">
-                <div className="relative" ref={feedbackRef}>
-                  <button
-                    onClick={() => { setIsFeedbackOpen(!isFeedbackOpen); setIsMenuOpen(false); }}
-                    className="hidden sm:block text-xs text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200">
-                    Feedback
-                  </button>
-                  {isFeedbackOpen && (
-                    <div className="absolute right-0 w-[225px] bg-custom-gray rounded-lg shadow-lg z-50 p-[10%] mt-1">
-                      <textarea
-                        placeholder="Suggestions, bugs, secrets, messages for me, etc."
-                        className="w-full h-24 bg-custom-gray text-white rounded-lg p-2 border-[1px] border-white focus:outline-none text-xs"
-                        value={feedback}
-                        onChange={(e) => setFeedback(e.target.value)}
-                      />
-                      <button onClick={handleSendFeedback} className="text-xs text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200 float-right">
-                        Send
-                      </button>
-                    </div>
-                  )}
-                </div>
+                <button onClick={() => router.push('/messaging')} className = "text-xs text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200">
+                  Messages
+                </button>
+
                 <div className="relative">
 
                   <button
@@ -296,26 +261,6 @@ export default function Header({ onRefresh }: HeaderProps) {
             ) : (
               /* Unauthenticated User */
               <div className="flex flex-row items-center space-x-4">
-                <div className="relative" ref={feedbackRef}>
-                  <button
-                    onClick={() => { setIsFeedbackOpen(!isFeedbackOpen); setIsMenuOpen(false); }}
-                    className="hidden sm:block text-xs text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200">
-                    Feedback
-                  </button>
-                  {isFeedbackOpen && (
-                    <div className="absolute right-0 w-[225px] bg-custom-gray rounded-lg shadow-lg z-50 p-[10%] mt-1">
-                      <textarea
-                        placeholder="Suggestions, bugs, secrets, messages for me, etc."
-                        className="w-full h-24 bg-custom-gray text-white rounded-lg p-2 border-[1px] border-white focus:outline-none text-xs"
-                        value={feedback}
-                        onChange={(e) => setFeedback(e.target.value)}
-                      />
-                      <button onClick={handleSendFeedback} className="text-xs text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200 float-right">
-                        Send
-                      </button>
-                    </div>
-                  )}
-                </div>
                 {/* Compact mobile icon */}
                 <Link href="/login" className="md:hidden p-2 rounded-full hover:bg-gray-800 text-gray-300">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

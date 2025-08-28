@@ -1,8 +1,27 @@
 "use client"
 import Header from "@/components/Header"
-import { useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
+import toast from "react-hot-toast";
+import { supabaseClient } from "../../../utils/supabaseClient";
 
 export default function Help() {
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [feedback, setFeedback] = useState('');
+  const feedbackRef = useRef<HTMLDivElement>(null);
+
+  const handleSendFeedback = async () => {
+    const { data, error } = await supabaseClient
+      .from('feedback')
+      .insert({ feedback: feedback });
+    if (error) {
+      toast.error('Error sending feedback');
+    } else {
+      toast.success('Feedback sent successfully');
+      setIsFeedbackOpen(false);
+      setFeedback('');
+    }
+  };
+  
   useEffect(() => {
     // Handle smooth scrolling with offset for anchor links
     const handleAnchorClick = (e: Event) => {
@@ -46,9 +65,6 @@ export default function Help() {
         <div className="fixed">
           <ul className="space-y-3">
             <li>
-              <a href="#created" className="text-gray-600 hover:text-gray-400 cursor-pointer">About 4rtism</a>
-            </li>
-            <li>
               <a href="#use" className="text-gray-600 hover:text-gray-400 cursor-pointer">Why use 4rtism?</a>
             </li>
             <li>
@@ -73,13 +89,26 @@ export default function Help() {
       {/* Main content */}
       <main className="flex-1 px-custom">
         <div className="prose max-w-none pt-2">
-          <h1 className="text-xl font-bold mb-4">About</h1>
-          <section id="created" className="mb-12">
-            <h2 className="text-lg font-semibold mb-4">Why was 4rtism created?</h2>
-            <p className="text-gray-400 mb-3">I was inspired to make 4rtism after someone tried to scam my gf, <a className="text-custom-pink4 hover:underline" href="https://www.instagram.com/kaito_xux/" target="_blank">@kaito</a>, via fake paypal email for an art commission.</p>
-            <p className="text-gray-400 mb-3">So since this upset her, and I have alot of freetime, I decided to make my own non-profit art commission website for artists to use, to not worry about getting scammed.</p>
-          </section>
-
+        <div className="relative" ref={feedbackRef}>
+        <button
+          onClick={() => { setIsFeedbackOpen(!isFeedbackOpen);}}
+          className="hidden sm:block text-xs text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200">
+          Feedback
+        </button>
+        {isFeedbackOpen && (
+          <div className="absolute right-0 w-[225px] bg-custom-gray rounded-lg shadow-lg z-50 p-[10%] mt-1">
+            <textarea
+              placeholder="Suggestions, bugs, secrets, messages for me, etc."
+              className="w-full h-24 bg-custom-gray text-white rounded-lg p-2 border-[1px] border-white focus:outline-none text-xs"
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+            />
+            <button onClick={handleSendFeedback} className="text-xs text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200 float-right">
+              Send
+            </button>
+          </div>
+        )}
+      </div>
           <section id="use" className="mb-12">
             <h2 className="text-lg font-semibold mb-4">Why should I use 4rtism?</h2>
             <p className="text-gray-400 mb-3">The only fee is the 2.9% + $0.30 transaction fee from Stripe for debit and credit cards.</p>
