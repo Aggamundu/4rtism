@@ -3,6 +3,8 @@ import Header from "@/components/Header";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../../../../utils/supabaseClient";
 import { Request } from "../../types/Types";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "react-hot-toast";
 
 interface RequestDisplayPageProps {
   params: Promise<{
@@ -11,6 +13,7 @@ interface RequestDisplayPageProps {
 }
 export default function RequestDisplayPage({ params }: RequestDisplayPageProps) {
   const [request, setRequest] = useState<Request | null>(null);
+  const { user } = useAuth();
   const [message, setMessage] = useState('');
   useEffect(() => {
     const getParams = async () => {
@@ -21,6 +24,7 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
 
     getParams();
   }, [params]);
+
 
   const getRequest = async (id: number) => {
     const { data, error } = await supabaseClient.from('requests').select('*').eq('id', id).single();
@@ -39,8 +43,19 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
     console.log(requestData.image_urls);
   }
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     console.log(message);
+    const { data, error } = await supabaseClient.from('messages').insert({
+      sender_id: user.id,
+      receiver_id: request?.user_id,
+      content: message.trim(),
+    })
+    if (error) {
+      console.error(error);
+      return;
+    }
+    setMessage('');
+    toast.success('Message sent');
   }
 
   return (
@@ -64,9 +79,9 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
         />
         <button
           onClick={handleSendMessage}
-          className="w-full flex items-center hover:text-white hover:bg-black hover:border-white justify-center gap-3 bg-white text-gray-900 font-semibold py-3 px-4 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
+          className="w-full flex items-center hover:text-white hover:bg-custom-blue hover:border-white justify-center gap-3 bg-white text-gray-900 font-semibold py-3 px-4 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
         >
-          Send
+          Message
         </button>
 
         <div className="mb-3 w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none">
