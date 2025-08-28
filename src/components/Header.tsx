@@ -226,6 +226,13 @@ export default function Header({ onRefresh }: HeaderProps) {
                       >
                         Dashboard
                       </Link>
+                      <Link
+                        href="/help"
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Help
+                      </Link>
                       {/* <Link
                         href="/help"
                         className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
@@ -261,6 +268,9 @@ export default function Header({ onRefresh }: HeaderProps) {
             ) : (
               /* Unauthenticated User */
               <div className="flex flex-row items-center space-x-4">
+                <button onClick={() => router.push('/messaging')} className = "text-xs text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200">
+                  Messages
+                </button>
                 {/* Compact mobile icon */}
                 <Link href="/login" className="md:hidden p-2 rounded-full hover:bg-gray-800 text-gray-300">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

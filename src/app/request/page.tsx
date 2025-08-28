@@ -19,7 +19,10 @@ export default function Request() {
   const { user } = useAuth();
 
   const handlePost = async () => {
-    console.log(title, description);
+    if (!user?.id) {
+      toast.error('Please login to post a request');
+      return;
+    }
     if (title.length < 3) {
       setError("Title must be at least 3 characters long");
     } else if (description.length < 10) {
