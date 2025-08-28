@@ -3,6 +3,7 @@ import Header from '@/components/Header';
 import { useEffect, useRef, useState } from 'react';
 import { supabaseClient } from '../../../utils/supabaseClient';
 import { useAuth } from '../../contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 interface Message {
   id: string;
@@ -18,6 +19,8 @@ interface Conversation {
   lastMessage: string;
   lastMessageTime: string;
   unreadCount: number;
+  pfp_url?: string;
+  user_name?: string;
 }
 
 export default function Messaging() {
@@ -28,7 +31,7 @@ export default function Messaging() {
   const [newMessage, setNewMessage] = useState('');
   const [otherUser, setOtherUser] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
+  const router = useRouter();
   // Send message
   const sendMessage = async () => {
     if (!newMessage.trim() || !selectedConversation || !user?.id) return;
@@ -120,7 +123,29 @@ export default function Messaging() {
       }
     });
 
-    setConversations(Array.from(conversationMap.values()));
+    // Fetch profile data for each conversation
+    const conversationsWithProfiles = await Promise.all(
+      Array.from(conversationMap.values()).map(async (conversation) => {
+        const { data: profileData, error: profileError } = await supabaseClient
+          .from('profiles')
+          .select('pfp_url, user_name')
+          .eq('id', conversation.otherUserId)
+          .single();
+
+        if (profileError) {
+          console.error('Error fetching profile for user:', conversation.otherUserId, profileError);
+          return conversation;
+        }
+
+        return {
+          ...conversation,
+          pfp_url: profileData?.pfp_url,
+          user_name: profileData?.user_name
+        };
+      })
+    );
+
+    setConversations(conversationsWithProfiles);
   }
 
   // Fetch messages for a specific conversation
@@ -145,8 +170,23 @@ export default function Messaging() {
     setSelectedConversation(otherUserId);
     await fetchMessages(otherUserId);
 
-    // Get other user's profile info (you can expand this later)
-    setOtherUser({ id: otherUserId, name: `User ${otherUserId.slice(0, 8)}` });
+    // Get other user's profile info
+    const { data: profileData, error: profileError } = await supabaseClient
+      .from('profiles')
+      .select('pfp_url, user_name')
+      .eq('id', otherUserId)
+      .single();
+
+    if (profileError) {
+      console.error('Error fetching profile for user:', otherUserId, profileError);
+      setOtherUser({ id: otherUserId, user_name: `User ${otherUserId.slice(0, 8)}` });
+    } else {
+      setOtherUser({
+        id: otherUserId,
+        user_name: profileData?.user_name || `User ${otherUserId.slice(0, 8)}`,
+        pfp_url: profileData?.pfp_url
+      });
+    }
   }
 
   // Auto-scroll to bottom
@@ -198,15 +238,23 @@ export default function Messaging() {
                   }`}
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-custom-darkgray rounded-full flex items-center justify-center">
-                    <span className="text-sm font-medium text-white">
-                      {conversation.otherUserId.slice(0, 2).toUpperCase()}
-                    </span>
+                  <div className="w-10 h-10 bg-custom-darkgray rounded-full flex items-center justify-center overflow-hidden">
+                    {conversation.pfp_url ? (
+                      <img
+                        src={conversation.pfp_url}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-sm font-medium text-white">
+                        {conversation.otherUserId.slice(0, 2).toUpperCase()}
+                      </span>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <h4 className="text-sm font-medium text-white truncate">
-                        User {conversation.otherUserId.slice(0, 8)}
+                        {conversation.user_name || `User ${conversation.otherUserId.slice(0, 8)}`}
                       </h4>
                       <span className="text-xs text-white">
                         {formatTime(conversation.lastMessageTime)}
@@ -236,14 +284,22 @@ export default function Messaging() {
           <>
             {/* Chat Header */}
             <div className="p-4 border-b border-custom-gray flex items-center space-x-3 flex-shrink-0">
-              <div className="w-8 h-8 bg-custom-darkgray rounded-full flex items-center justify-center">
-                <span className="text-xs font-medium text-white">
-                  {otherUser?.id?.slice(0, 2).toUpperCase()}
-                </span>
+              <div className="w-8 h-8 bg-custom-darkgray rounded-full flex items-center justify-center overflow-hidden cursor-pointer" onClick={() => router.push(`/profile/${otherUser?.user_name}`)}>
+                {otherUser?.pfp_url ? (
+                  <img
+                    src={otherUser.pfp_url}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-xs font-medium text-white">
+                    {otherUser?.id?.slice(0, 2).toUpperCase()}
+                  </span>
+                )}
               </div>
               <div>
-                <h4 className="text-sm font-medium text-white">
-                  {otherUser?.name || `User ${selectedConversation.slice(0, 8)}`}
+                <h4 className="text-sm font-medium text-white cursor-pointer" onClick={() => router.push(`/profile/${otherUser?.user_name}`)}>
+                  {otherUser?.user_name || `User ${selectedConversation.slice(0, 8)}`}
                 </h4>
               </div>
             </div>
