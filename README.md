@@ -9,6 +9,7 @@
 - [Techstack](#techstack)
 - [Lessons](#lessons)
 - [Future](#future)
+- [Images](#images)
 
 ## Why?
 1. It's difficult for artists to find clients for art commissions. Most artists do it through discord servers or mutuals, but it's hard to find new clientele because there's no singular platform for it.
@@ -61,4 +62,9 @@ Keep in mind that you cannot write to the database due to env variables
 
 ## Images
 - A couple pages are not included. The data is test data.
+![Messages](./public/images/Messages.png)
+![PostRequest](./public/images/PostRequest.png)
+![Profile](./public/images/Profile.png)
+![Services](./public/images/Services.png)
+![Home](./public/images/Home.png)
 
