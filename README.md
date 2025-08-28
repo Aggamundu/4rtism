@@ -58,3 +58,7 @@ Keep in mind that you cannot write to the database due to env variables
 
 ## Future
 - 4rtism is not currently ready for users, but will be very soon!
+
+## Images
+- A couple pages are not included. The data is test data.
+
