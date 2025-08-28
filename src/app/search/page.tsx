@@ -135,7 +135,7 @@ function SearchPageContent() {
     } else if (results.length > 0) {
       return <CommissionCardGrid commissions={results} />
     } else if (requests.length > 0) {
-      return <div className="flex flex-col items-center w-[100%] pr-custom">
+      return <div className="flex flex-col items-center w-[100%] px-custom">
         {requests.map((request) => (
           <RequestCard key={request.id} request={request} />
         ))}

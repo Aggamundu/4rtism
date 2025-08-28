@@ -44,6 +44,10 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
   }
 
   const handleSendMessage = async () => {
+    if (!user?.id) {
+      toast.error('Please login to send a message');
+      return;
+    }
     console.log(message);
     const { data, error } = await supabaseClient.from('messages').insert({
       sender_id: user.id,
@@ -79,7 +83,9 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
         />
         <button
           onClick={handleSendMessage}
-          className="w-full flex items-center hover:text-white hover:bg-custom-blue hover:border-white justify-center gap-3 bg-white text-gray-900 font-semibold py-3 px-4 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
+          className="w-full flex items-center hover:text-white hover:bg-custom-blue hover:border-white justify-center gap-3 bg-white text-gray-900 font-semibold py-3 px-4 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:text-black"
+          disabled={message.trim() === ''}
+
         >
           Message
         </button>
