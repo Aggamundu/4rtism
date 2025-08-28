@@ -1,9 +1,9 @@
 "use client"
 import Header from '@/components/Header';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { supabaseClient } from '../../../utils/supabaseClient';
 import { useAuth } from '../../contexts/AuthContext';
-import { useRouter } from 'next/navigation';
 
 interface Message {
   id: string;
@@ -32,6 +32,17 @@ export default function Messaging() {
   const [otherUser, setOtherUser] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  // Helper to ensure we don't render duplicate message ids
+  const dedupeMessagesById = (msgs: Message[]) => {
+    const seen = new Set<string>();
+    return msgs.filter((m) => {
+      const key = String(m.id);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  };
   // Send message
   const sendMessage = async () => {
     if (!newMessage.trim() || !selectedConversation || !user?.id) return;
@@ -73,7 +84,12 @@ export default function Messaging() {
           if (payload.new.sender_id === user.id || payload.new.receiver_id === user.id) {
             // Add new message to state if it's from the current conversation
             if (selectedConversation && payload.new.sender_id === selectedConversation) {
-              setMessages(prev => [...prev, payload.new as Message]);
+              setMessages(prev => {
+                const incoming = payload.new as Message;
+                const alreadyExists = prev.some(m => String(m.id) === String(incoming.id));
+                if (alreadyExists) return prev;
+                return [...prev, incoming];
+              });
             }
             // Refresh conversations to update last message
             fetchConversations();
@@ -161,7 +177,7 @@ export default function Messaging() {
     if (error) {
       console.error('Error fetching messages:', error);
     } else {
-      setMessages(data || []);
+      setMessages(dedupeMessagesById((data || []) as Message[]));
     }
   }
 
@@ -227,7 +243,6 @@ export default function Messaging() {
           {conversations.length === 0 ? (
             <div className="p-4 text-center text-white">
               <p>No conversations yet</p>
-              <p className="text-sm">Start messaging someone to begin!</p>
             </div>
           ) : (
             conversations.map((conversation) => (
@@ -320,7 +335,7 @@ export default function Messaging() {
                     <div
                       className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${message.sender_id === user?.id
                         ? 'bg-custom-blue text-white'
-                        : 'bg-custom-darkgray text-white'
+                        : 'bg-custom-gray text-white'
                         }`}
                     >
                       <p className="text-sm">{message.content}</p>

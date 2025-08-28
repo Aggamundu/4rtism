@@ -30,6 +30,7 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
   const [editInstagram, setEditInstagram] = useState(instagram || '');
   const [editTwitter, setEditTwitter] = useState(twitter || '');
   const [isLoading, setIsLoading] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
   const maxLength = 0; // Characters to show before "see more"
 
   // Update edit state when props change
@@ -142,14 +143,14 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
     const file = event.target.files?.[0];
     if (file) {
       try {
-        setIsLoading(true);
+        setImageLoading(true);
         const imageUrl = await uploadImageToStorage(file);
         setEditImageSrc(imageUrl);
       } catch (error) {
         console.error('Error uploading profile image:', error);
         // You might want to show an error message to the user
       } finally {
-        setIsLoading(false);
+        setImageLoading(false);
       }
     }
   };
@@ -396,6 +397,11 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
                     />
                   </label>
                 </div>
+                {imageLoading && (
+                  <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="text-white text-sm">Uploading...</div>
+                  </div>
+                )}
               </div>
 
               {/* Form Fields */}

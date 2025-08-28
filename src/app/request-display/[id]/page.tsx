@@ -76,7 +76,7 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
       </button>
       <div className="w-full max-w-md space-y-4">
       <textarea
-          placeholder="I can do this for you"
+          placeholder="I can draw this for you"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           className="w-full p-3 bg-custom-darkgray border-2 border-custom-blue focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"
