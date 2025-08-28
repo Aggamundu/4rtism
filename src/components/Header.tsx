@@ -272,7 +272,7 @@ export default function Header({ onRefresh }: HeaderProps) {
                   Messages
                 </button>
                 {/* Compact mobile icon */}
-                <Link href="/login" className="md:hidden p-2 rounded-full hover:bg-gray-800 text-gray-300">
+                <Link href="/signup" className="md:hidden p-2 rounded-full hover:bg-gray-800 text-gray-300">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
@@ -280,10 +280,10 @@ export default function Header({ onRefresh }: HeaderProps) {
                 {/* Full desktop links */}
                 <div className="hidden md:flex items-center space-x-4">
                   <Link
-                    href="/login"
+                    href="/signup"
                     className="text-white text-xs hover:text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200"
                   >
-                    Login
+                    Signup
                   </Link>
                 </div>
               </div>

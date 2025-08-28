@@ -228,7 +228,7 @@ export default function Home() {
     <div className="relative pt-14 min-h-screen px-custom">
       <Header />
       <div className="flex flex-row">
-        <div className="flex flex-col items-center w-[100%] pr-custom">
+        <div className="flex flex-col items-center w-[100%] pr-custom overflow-y-auto min-h-0 h-[calc(100vh-3.5rem)]">
           {selectedRequests.map((request) => (
             <RequestCard key={request.id} request={request} />
           ))}

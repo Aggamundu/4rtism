@@ -23,7 +23,7 @@ export default function CommissionColumn({ commissions, className = "", showProf
     setSelectedCommission(null);
   };
   return (
-    <div className={`flex flex-col gap-4 sm:block hidden ${className}`}>
+    <div className={`flex flex-col gap-4 sm:block hidden overflow-y-auto min-h-0 h-[calc(100vh-3.5rem)] ${className}`}>
       {commissions.map((commission) => (
         <CommissionCard
           key={commission.id}
