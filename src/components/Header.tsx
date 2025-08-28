@@ -127,7 +127,7 @@ export default function Header({ onRefresh }: HeaderProps) {
         <div className="flex justify-between items-center h-14">
           {/* Logo/Brand */}
           <div className="flex items-center">
-            <Link href="/home" className="flex items-center space-x-2">
+            <Link href="/" className="flex items-center space-x-2">
               <div className="w-7 h-7 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">4</span>
               </div>

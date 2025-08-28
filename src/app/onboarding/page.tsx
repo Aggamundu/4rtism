@@ -14,7 +14,7 @@ export default function OnboardingPage() {
   useEffect(() => {
     console.log(user)
     if (!loading && !user) {
-      router.push('/home')
+      router.push('/')
     } else if (!loading && user) {  
       setPageLoading(false)
       checkHasOnboarded()
@@ -51,7 +51,7 @@ export default function OnboardingPage() {
       console.error(error)
       setError("Username already exists")
     } else {
-      router.push('/home')
+      router.push('/')
     }
   }
 

@@ -38,7 +38,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
       .single();
 
     if (error) {
-      router.push('/home');
+      router.push('/');
     } else {
       setProfile(data);
       setProfileId(data.id);
