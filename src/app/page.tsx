@@ -225,10 +225,10 @@ export default function Home() {
 
 
   return (
-    <div className="relative pt-14 min-h-screen">
+    <div className="relative pt-14 min-h-screen px-custom">
       <Header />
       <div className="flex flex-row">
-        <div className="flex flex-col items-center w-[90%] px-custom">
+        <div className="flex flex-col items-center w-[100%] pr-custom">
           {selectedRequests.map((request) => (
             <RequestCard key={request.id} request={request} />
           ))}

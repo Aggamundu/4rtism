@@ -27,7 +27,9 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <style>
-          @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
+          {/* @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap'); */}
+          {/* @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Vend+Sans:ital,wght@0,300..700;1,300..700&display=swap'); */}
+          @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Vend+Sans:ital,wght@0,300..700;1,300..700&display=swap');
         </style>
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>

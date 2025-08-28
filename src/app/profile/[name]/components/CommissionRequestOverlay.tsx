@@ -387,12 +387,12 @@ export default function CommissionRequestOverlay({
 
             {/* Content - Full width on mobile, 60% on desktop */}
             <div className="w-full sm:w-[60%] sm:h-[90vh] sm:overflow-y-auto scrollbar-thin scrollbar-thumb-custom-gray scrollbar-track-transparent hover:scrollbar-thumb-custom-lightgray">
-              <p className="text-xl font-bold">{title}</p>
+              <p className="text-xl font-bold mb-1">{title}</p>
               <div className="relative -top-[1rem]">
                 <div className="flex flex-row gap-[3%] text-lg text-custom-lightgray ">
-                  <p>Est. ${price}</p>
+                  <p>Est.${price}</p>
                   <div className="flex items-center gap-1">
-                    <p>{delivery_days} Days</p>
+                    <p>{delivery_days}sol</p>
                     <img src="/truck.svg" alt="truck" className="w-6 h-6" />
                   </div>
                 </div>

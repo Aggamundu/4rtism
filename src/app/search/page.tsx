@@ -1,15 +1,18 @@
 "use client";
+import CommissionColumn from "@/components/CommissionColumn";
 import Header from "@/components/Header";
+import RequestCard from "@/components/RequestCard";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { supabaseClient } from "../../../utils/supabaseClient";
+import { Commission, Option, Question, Request } from "../types/Types";
 import CommissionCardGrid from "../home/components/CommissionCardGrid";
-import { Commission, Option, Question } from "../types/Types";
 
 function SearchPageContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query");
   const [results, setResults] = useState<Commission[]>([]);
+  const [requests, setRequests] = useState<Request[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const getOptions = async (questionId: number) => {
     const { data, error } = await supabaseClient
@@ -66,6 +69,26 @@ function SearchPageContent() {
     return data
   }
 
+  const fetchRequests = async () => {
+    const { data, error } = await supabaseClient.from('requests').select('*').textSearch('search_vector', query || '', { type: 'websearch' });
+    if (error) {
+      console.error(error)
+    } else {
+      const requestsData: Request[] = []
+      for (const request of data) {
+        const requestData = {
+          id: request.id,
+          title: request.title,
+          description: request.description,
+          image_urls: request.image_urls,
+          user_id: request.user_id
+        } as Request
+        requestsData.push(requestData)
+      }
+      setRequests(requestsData)
+    }
+  }
+
   const fetchCommissions = async () => {
     setIsLoading(true);
     const { data, error } = await supabaseClient
@@ -100,10 +123,22 @@ function SearchPageContent() {
   }
 
   const displayResults = () => {
-    if (results.length > 0) {
-      return <div className="">
-        <div className="px-custom text-white mb-2 mt-2">Results for {query}</div>
-        <CommissionCardGrid commissions={results} />
+    if (results.length > 0 && requests.length > 0) {
+      return <div className="flex flex-row">
+        <div className="flex flex-col items-center w-[100%] pr-custom">
+          {requests.map((request) => (
+            <RequestCard key={request.id} request={request} />
+          ))}
+        </div>
+        <CommissionColumn commissions={results} showProfileInfo={true} />
+      </div>
+    } else if (results.length > 0) {
+      return <CommissionCardGrid commissions={results} />
+    } else if (requests.length > 0) {
+      return <div className="flex flex-col items-center w-[100%] pr-custom">
+        {requests.map((request) => (
+          <RequestCard key={request.id} request={request} />
+        ))}
       </div>
     } else {
       return <div className="flex justify-center items-center min-h-[50vh]">
@@ -114,6 +149,7 @@ function SearchPageContent() {
 
   useEffect(() => {
     fetchCommissions()
+    fetchRequests()
   }, [query]);
 
 
