@@ -15,7 +15,7 @@ export default function ChangePasswordPage() {
 
   const handleForgotPassword = async () => {
     await supabaseClient.auth.resetPasswordForEmail(email, {
-      redirectTo: `http://localhost:3000/change-password`
+      redirectTo: `https://art-commission.vercel.app//change-password`
     })
     toast.success('Password reset link sent to email')
   }

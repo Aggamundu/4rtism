@@ -92,7 +92,8 @@ export async function POST(request: Request) {
       
       if (artistData && clientData) {
         try {
-          const emailResponse = await fetch(`http://localhost:3000/api/mail`, {
+          //localhost:3000/api/mail
+          const emailResponse = await fetch(`https://art-commission.vercel.app/api/mail`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -115,7 +116,7 @@ export async function POST(request: Request) {
                        <div style="background-color: white; border-radius: 0.25rem; padding: 0.75rem; margin-top: 0.5rem; font-style: italic;">
                          ${message}
                        </div>
-                        <a href="http://localhost:3000/dash" style="color: #2563eb; text-decoration: underline;">Resubmit work in your dashboard</a>
+                        <a href="https://art-commission.vercel.app/dash" style="color: #2563eb; text-decoration: underline;">Resubmit work in your dashboard</a>
                      </div>
   
                      <div style="text-align: center;">
@@ -216,7 +217,8 @@ export async function POST(request: Request) {
 
       if(artistData && clientData) {
         try {
-          const emailResponse = await fetch(`http://localhost:3000/api/mail`, {
+          //localhost:3000/api/mail
+          const emailResponse = await fetch(`https://art-commission.vercel.app/api/mail`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

@@ -178,13 +178,13 @@ export default function WIPOverlay({ isOpen, onClose, commission, onRefresh }: A
             <div style="margin-bottom: 1.25rem; text-align: center;">
               <h2 style="font-size: 1rem; font-weight: 600; color: #1f2937; margin-bottom: 0.75rem; font-family: 'Lexend', sans-serif;">Approve or Reject</h2>
               <a 
-                href="http://localhost:3000/action?token=${token}&action=accept"
+                href="https://art-commission.vercel.app/action?token=${token}&action=accept"
                 style="display: block; padding: 0.5rem; background-color: #f3f4f6; border-radius: 0.375rem; color: #2563eb; text-decoration: none; margin-bottom: 0.5rem; font-family: 'Lexend', sans-serif;"
               >
                 Click here to accept
               </a>
               <a 
-                href="http://localhost:3000/action?token=${token}&action=reject"
+                href="https://art-commission.vercel.app/action?token=${token}&action=reject"
                 style="display: block; padding: 0.5rem; background-color: #f3f4f6; border-radius: 0.375rem; color: #2563eb; text-decoration: none; margin-bottom: 0.5rem; font-family: 'Lexend', sans-serif;"
               >
                 Click here to reject

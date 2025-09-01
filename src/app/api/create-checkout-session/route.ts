@@ -44,9 +44,11 @@ export async function POST(request: NextRequest) {
             quantity: 1,
           }
         ],
+        //localhost:3000/success
+        //localhost:3000/dashboard?payment=cancelled
         mode: 'payment',
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/success`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard?payment=cancelled`,
+        success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://art-commission.vercel.app/success'}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://art-commission.vercel.app/dashboard?payment=cancelled'}`,
         metadata: {
           responseId: responseId || 'unknown',
           ...metadata,

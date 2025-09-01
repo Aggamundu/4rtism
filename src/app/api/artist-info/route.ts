@@ -4,7 +4,8 @@ import { NextResponse } from "next/server";
 
 const sendEmail = async (artistData: any, email: string) => {
   try {
-    const emailResponse = await fetch(`http://localhost:3000/api/mail`, {
+    //localhost:3000/api/mail
+    const emailResponse = await fetch(`https://art-commission.vercel.app/api/mail`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -23,7 +24,7 @@ const sendEmail = async (artistData: any, email: string) => {
 
               <div style="background-color: #f9fafb; padding: 0.5rem; border-radius: 0.375rem; margin-bottom: 0.75rem;">
                 <p style="font-size: 0.75rem; color: #1f2937; margin: 0; font-family: 'Lexend', sans-serif;">
-                  A new commission request has been received from ${email}. View it in your <a href="http://localhost:3000/dash" style="color: #2563eb; text-decoration: underline;">dashboard</a>.
+                    A new commission request has been received from ${email}. View it in your <a href="https://art-commission.vercel.app/dash" style="color: #2563eb; text-decoration: underline;">dashboard</a>.
                 </p>
               </div>
             </div>
