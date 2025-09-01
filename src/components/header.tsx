@@ -168,7 +168,7 @@ export default function Header({ onRefresh }: HeaderProps) {
             </div>
             <button 
             onClick={() => router.push('/request')}
-            className="border-[1px] sm:text-base h-10 text-xs bg-white text-black border-custom-lightgray hover:text-white hover:bg-custom-blue hover:border-white rounded-full px-2 py-1 transition-colors duration-200 flex-[2]">
+            className="sm:text-base h-10 text-xs bg-custom-blue text-white hover:text-white hover:bg-custom-blue/90 rounded-full px-2 py-1 transition-colors duration-200 flex-[1]">
               Post
             </button>
           </div>
@@ -283,7 +283,7 @@ export default function Header({ onRefresh }: HeaderProps) {
                     href="/signup"
                     className="text-white text-xs hover:text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200"
                   >
-                    Signup
+                    Login
                   </Link>
                 </div>
               </div>

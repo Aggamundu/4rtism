@@ -23,6 +23,8 @@ export interface Request {
   description: string;
   image_urls: string[];
   user_id: string;
+  user_name: string;
+  pfp_url: string;
 }
 
 export interface ServiceDisplay {

@@ -113,7 +113,7 @@ export default function Request() {
         {error && <p className="text-sm text-red-500">{error}</p>}
         <button
           onClick={handlePost}
-          className="w-full flex items-center hover:text-white hover:bg-black hover:border-white justify-center gap-3 bg-white text-gray-900 font-semibold py-3 px-4 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
+          className="w-full flex items-center hover:bg-custom-blue/90 justify-center gap-3 bg-custom-blue text-white py-3 px-4 rounded-lg transition-colors disabled:opacity-50"
         >
           Post
         </button>

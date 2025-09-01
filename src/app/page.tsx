@@ -225,19 +225,13 @@ export default function Home() {
 
 
   return (
-    <div className="relative pt-14 min-h-screen px-custom">
+    <div className="flex relative justify-center pt-14 min-h-screen px-custom">
       <Header />
-      <div className="flex flex-row">
-        <div className="flex flex-col items-center w-[100%] pr-custom overflow-y-auto min-h-0 h-[calc(100vh-3.5rem)]">
+        <div className="flex flex-col w-[50%] pr-custom overflow-y-auto min-h-0 h-[calc(100vh-3.5rem)]">
           {selectedRequests.map((request) => (
             <RequestCard key={request.id} request={request} />
           ))}
         </div>
-        <CommissionColumn commissions={selectedCommissions} showProfileInfo={true} />
-      </div>
-      {/* Categories */}
-
-
     </div>
   );
 }

@@ -34,7 +34,8 @@ module.exports = withMT({
           lightblue: '#4EC2FF',
           accent: '#2096f3',
           darkblue: '#494599',
-          red: "#ad0015"
+          red: "#ad0015",
+          orange: "#f78066"
 
         }
       },
