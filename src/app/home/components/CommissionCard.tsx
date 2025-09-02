@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useRef, useState } from "react";
 import { Commission } from "../../types/Types";
+import { useRouter } from "next/navigation";
 
 interface CommissionCardProps {
   commission: Commission;
@@ -18,7 +19,7 @@ export default function CommissionCard({
 
   const { title, price, artist, image_urls, pfp_url } = commission;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
+  const router = useRouter();
   // Size-based styling
   const sizeClasses = {
     small: {
@@ -185,22 +186,6 @@ export default function CommissionCard({
         {/* Hidden canvas for color extraction */}
         <canvas ref={canvasRef} className="hidden" />
 
-        {/* Heart icon on hover */}
-        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              // Add your heart/favorite logic here
-            }}
-            className="bg-black bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-full"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
-        </div>
-
         {/* Navigation buttons */}
         {images.length > 1 && (
           <>
@@ -250,7 +235,11 @@ export default function CommissionCard({
         </div>
 
         {showProfileInfo && (
-          <div className="flex items-center">
+          <div className="flex items-center" onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            router.push(`/profile/${artist}`);
+          }}>
             <img src={pfp_url} alt={artist} className={`${currentSize.pfp} rounded-full mr-2 object-cover`} />
             <span className={`text-custom-lightgray ${currentSize.artist}`}>@{artist}</span>
           </div>

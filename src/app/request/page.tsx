@@ -82,13 +82,13 @@ export default function Request() {
       <Header />
 
       <button
-        onClick={() => window.history.back()}
+        onClick={() => router.push('/')}
         className="absolute top-14 left-4 text-white hover:text-gray-300 flex items-center gap-2 p-2 rounded-lg transition-colors"
       >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
         </svg>
-        Back
+        Home
       </button>
       <div className="w-full max-w-md space-y-4">
         <input

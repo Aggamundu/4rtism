@@ -21,6 +21,7 @@ export default function AuthPage() {
 
   // Google Sign In
   const handleGoogleSignIn = async () => {
+    console.log(window.location.origin)
     setGoogleLoading(true)
     try {
       const { data, error } = await supabaseClient.auth.signInWithOAuth({

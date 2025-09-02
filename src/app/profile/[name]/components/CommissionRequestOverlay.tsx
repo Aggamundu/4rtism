@@ -7,7 +7,7 @@ import { useAuth } from "../../../../contexts/AuthContext";
 import { Answer, Commission } from "../../../types/Types";
 import Question from "./Question";
 import UploadImages from "./UploadImages";
-
+import { useRouter } from "next/navigation";
 export default function CommissionRequestOverlay({
   isOpen,
   onClose,
@@ -27,7 +27,7 @@ export default function CommissionRequestOverlay({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { user } = useAuth();
-
+  const router = useRouter();
   const [formData, setFormData] = useState({
     image_urls: [] as string[],
     description: "",
@@ -397,8 +397,12 @@ export default function CommissionRequestOverlay({
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-y-[.5rem] ">
-                <div className="flex flex-row gap-[1%] mb-[.5rem] items-center">
+              <div className="flex flex-col gap-y-[.5rem]  ">
+                <div className="flex flex-row gap-[1%] mb-[.5rem] items-center cursor-pointer" onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  router.push(`/profile/${artist}`);
+                }}>
                   <img src={pfp_url} alt="pfp" className="w-[3.2rem] h-[3.2rem] rounded-full border-[1px] border-custom-lightgray object-cover" />
                   <div>
                     <p className="">@{artist}</p>
