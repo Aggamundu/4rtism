@@ -1,6 +1,7 @@
 'use client'
 
-import { Menu } from 'lucide-react';
+import { Home, Menu, PlusSquare, User } from 'lucide-react';
+import { MessageCircle, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -158,10 +159,42 @@ export default function Header({ onRefresh }: HeaderProps) {
 
             </div>
 
-            <div className="sm:hidden flex items-center min-w-fit">
+            <div className="sm:hidden flex items-center min-w-fit" onClick={() => setIsSearchExpanded(!isSearchExpanded)}>
               <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
+            </div>
+
+            <div className={`sm:hidden fixed top-0 left-0 w-full h-16 bg-[#121212] flex items-center px-4 ${isSearchExpanded ? 'translate-y-0' : '-translate-y-full'}`}>
+              <div className="relative flex-1">
+                <input 
+                  type="text" 
+                  placeholder="Search" 
+                  className="w-full bg-[#121212] text-white h-10 px-3 pl-10 rounded-full border border-[#303030] focus:border-blue-500 focus:outline-none text-sm"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch(e as any);
+                      setIsSearchExpanded(false);
+                    }
+                  }}
+                  autoFocus
+                />
+                <button 
+                  className="absolute inset-y-0 left-3 flex items-center text-gray-400"
+                  onClick={() => setIsSearchExpanded(false)}
+                >
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                </button>
+                <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
+                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
             </div>
 
             {/* Auth Section */}
@@ -301,6 +334,39 @@ export default function Header({ onRefresh }: HeaderProps) {
             <a href="/signup" className="block text-white hover:text-blue-400 transition-colors">Sign Up</a>
           )}
         </nav>
+      </div>
+
+      {/* Mobile Menu */}
+      <div className="sm:hidden fixed bottom-0 left-0 w-full h-16 bg-[#121212] flex items-center justify-around px-custom">
+        <a href="/" className="flex flex-col items-center">
+          <Home className="w-6 h-6 text-white" />
+          <span className="text-xs text-white mt-1">Home</span>
+        </a>
+        <a href="/messaging" className="flex flex-col items-center">
+          <MessageCircle className="w-6 h-6 text-white" />
+          <span className="text-xs text-white mt-1">Messages</span>
+        </a>
+        <a href="/request" className="flex flex-col items-center">
+          <PlusSquare className="w-6 h-6 text-white" />
+          <span className="text-xs text-white mt-1">Post</span>
+        </a>
+        <a href="/dash" className="flex flex-col items-center">
+          <LayoutDashboard className="w-6 h-6 text-white" />
+          <span className="text-xs text-white mt-1">Dashboard</span>
+        </a>
+
+        <a href={user ? `/profile/${username}` : "/login"} className="flex flex-col items-center">
+          {profilePicture ? (
+            <img
+              src={profilePicture}
+              alt="Profile"
+              className="w-6 h-6 rounded-full object-cover"
+            />
+          ) : (
+            <User className="w-6 h-6 text-white" />
+          )}
+          <span className="text-xs text-white mt-1">You</span>
+        </a>
       </div>
     </>
   );
