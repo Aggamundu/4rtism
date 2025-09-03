@@ -7,10 +7,10 @@ export default function TextArea(props: {
 }) {
   const { title, value = "", onChange, maxLength, showCharCount = false } = props;
   return (
-    <div className="flex flex-col w-full bg-white rounded-card px-custom py-[1%] sm:max-w-[60%]">
-      <label className="text-black text-sm mb-2 font-bold">{title}<span className="text-red-500"> *</span></label>
+    <div className="flex flex-col w-full rounded-card px-custom py-[1%] sm:max-w-[60%]">
+      <label className="text-custom-lightgray text-sm mb-2 font-bold">{title}<span className="text-red-500"> *</span></label>
       <textarea
-        className="w-full h-32 bg-white text-black rounded-lg p-3 border border-gray-200 focus:outline-none "
+        className="w-full h-32 bg-custom-gray text-white rounded-lg p-3 focus:outline-none "
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
         maxLength={maxLength}

@@ -1,13 +1,13 @@
+import TextArea from "@/app/dash/components/TextArea";
 import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { v4 as uuidv4 } from 'uuid';
 import { supabaseClient } from "../../../../../utils/supabaseClient";
 import { useAuth } from "../../../../contexts/AuthContext";
-import TextArea from "@/app/dash/components/TextArea";
+import Category from "./Category";
 import CreateForm from "./CreateForm";
 import TextInput from "./TextInput";
 import UploadServiceImages from "./UploadServiceImages";
-import { toast } from "react-hot-toast";
-import Category from "./Category";
 
 interface Service {
   id: string;
@@ -243,7 +243,7 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess, onRefres
       };
 
       console.log('Category being saved:', category); // Debug log
-      
+
       // Create the commission/service with the updated data
       const { data: commissionData, error } = await supabaseClient.from('commissions').insert({
         title: updatedFormData.title,
@@ -287,92 +287,81 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess, onRefres
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-custom-offwhite rounded-card max-h-[100vh] overflow-y-auto w-full relative">
-        <div className="sticky top-0 bg-custom-offwhite z-10 flex justify-end items-center p-4 border-b border-gray-200">
+      <div className="bg-custom-darkgray rounded-card max-h-[100vh] overflow-y-auto w-full relative">
+        {/* Header */}
+        <div className="sticky top-0 bg-custom-darkgray z-10 flex justify-between items-center p-6 border-b border-custom-gray">
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-custom-accent hover:text-white transition-colors"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            Cancel
           </button>
-        </div>
-        <div className="flex flex-col p-6 justify-center items-center gap-y-4">
-          <div className="flex flex-col w-full sm:max-w-[60%] bg-white rounded-card px-custom py-[1%]">
-            <TextInput
-              title="Title"
-              value={formData.title}
-              onChange={(value) => setFormData(prev => ({ ...prev, title: value }))}
-              maxLength={50}
-              showCharCount={true}
-            />
-          </div>
-
-          <TextArea
-            title="Description"
-            value={formData.description}
-            onChange={(value) => setFormData(prev => ({ ...prev, description: value }))}
-            maxLength={500}
-            showCharCount={true}
-          />
-          <div className="flex flex-col w-full sm:max-w-[60%] bg-white rounded-card px-custom py-[1%]">
-            <TextInput
-              title="Price (USD)"
-              value={formData.price}
-              onChange={(value) => {
-                setFormData(prev => ({ ...prev, price: value }));
-                validatePrice(value);
-              }}
-            />
-            {priceError && (
-              <div className="text-red-500 text-xs mt-1">
-                {priceError}
-              </div>
-            )}
-          </div>
-          <UploadServiceImages
-            onFilesChange={(files) => setSelectedFiles(files)}
-          />
-          <div className="flex flex-col w-full sm:max-w-[60%] bg-white rounded-card px-custom py-[1%]">
-            <TextInput
-              title="Delivery Time (Days)"
-              value={formData.deliveryTime}
-              onChange={(value) => {
-                setFormData(prev => ({ ...prev, deliveryTime: value }));
-                validateDeliveryTime(value);
-              }}
-            />
-            {deliveryTimeError && (
-              <div className="text-red-500 text-xs mt-1">
-                {deliveryTimeError}
-              </div>
-            )}
-          </div>
-          <Category value={category} onChange={setCategory} />
-          <CreateForm onQuestionChange={handleQuestionChange} />
-
-        </div>
-        <div className="flex flex-row justify-center items-center gap-x-4 pb-[1%]">
+          <h2 className="text-white text-base font-semibold">Create New Service</h2>
           <button
-            className={`rounded-card w-[50%] sm:w-[25%] py-[.5%] px-custom relative top-[10%] ${isSubmitting
-              ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-              : isFormValid()
-                ? 'bg-custom-accent text-white hover:bg-custom-accent/90 active:scale-95 cursor-pointer'
-                : 'bg-gray-400 text-gray-600 cursor-not-allowed'
-              }`}
             onClick={handleSubmit}
             disabled={!isFormValid() || isSubmitting}
+            className="text-custom-accent hover:text-white transition-colors disabled:opacity-50"
           >
-            {isSubmitting ? (
-              <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Submitting...
-              </div>
-            ) : (
-              'Submit'
-            )}
+            {isSubmitting ? 'Creating...' : 'Create'}
           </button>
+        </div>
+
+        {/* Content Area */}
+        <div className="p-6">
+          <div className="flex flex-col justify-center items-center gap-y-4">
+            <div className="flex flex-col w-full sm:max-w-[60%] rounded-card px-custom py-[1%]">
+              <TextInput
+                title="Title"
+                value={formData.title}
+                onChange={(value) => setFormData(prev => ({ ...prev, title: value }))}
+                maxLength={50}
+                showCharCount={true}
+              />
+            </div>
+
+            <TextArea
+              title="Description"
+              value={formData.description}
+              onChange={(value) => setFormData(prev => ({ ...prev, description: value }))}
+              maxLength={500}
+              showCharCount={true}
+            />
+            <div className="flex flex-col sm:max-w-[60%] w-full rounded-card px-custom py-[1%]">
+              <TextInput
+                title="Price (USD)"
+                value={formData.price}
+                onChange={(value) => {
+                  setFormData(prev => ({ ...prev, price: value }));
+                  validatePrice(value);
+                }}
+              />
+              {priceError && (
+                <div className="text-red-500 text-xs mt-1">
+                  {priceError}
+                </div>
+              )}
+            </div>
+            <UploadServiceImages
+              onFilesChange={(files) => setSelectedFiles(files)}
+            />
+            <div className="flex flex-col w-full sm:max-w-[60%] rounded-card px-custom py-[1%]">
+              <TextInput
+                title="Delivery Time (Days)"
+                value={formData.deliveryTime}
+                onChange={(value) => {
+                  setFormData(prev => ({ ...prev, deliveryTime: value }));
+                  validateDeliveryTime(value);
+                }}
+              />
+              {deliveryTimeError && (
+                <div className="text-red-500 text-xs mt-1">
+                  {deliveryTimeError}
+                </div>
+              )}
+            </div>
+            <Category value={category} onChange={setCategory} />
+            <CreateForm onQuestionChange={handleQuestionChange} />
+          </div>
         </div>
       </div>
     </div>

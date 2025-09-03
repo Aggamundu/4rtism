@@ -87,21 +87,21 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
   };
 
   return (
-    <div className="flex flex-col w-full sm:max-w-[60%] bg-white rounded-card px-custom py-[1%]">
+    <div className="flex flex-col w-full sm:max-w-[60%] bg-custom-gray rounded-card px-custom py-[1%]">
 
       {/* Current Question Builder */}
       <div className="">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
-          <h2 className="text-lg font-semibold">Add Question</h2>
+          <h2 className="text-base font-semibold text-custom-lightgray">Add Question</h2>
           <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-custom-lightgray">
                 Type:
               </label>
               <select
                 value={currentQuestion.type}
                 onChange={(e) => updateCurrentQuestion('type', e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded-lg focus:outline-none text-sm text-black"
+                className="px-3 py-1  rounded-lg focus:outline-none text-sm text-black"
               >
                 {questionTypes.map((type) => (
                   <option key={type.value} value={type.value}>
@@ -117,7 +117,7 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
                 ((currentQuestion.type === 'multiple-choice' || currentQuestion.type === 'checkboxes') &&
                   (!currentQuestion.options || currentQuestion.options.length === 0 || currentQuestion.options.some(opt => !opt.option_text.trim())))
               }
-              className="bg-black text-white px-4 py-2 rounded-lg hover:bg-black/80 disabled:bg-gray-300 disabled:cursor-not-allowed w-[50%] sm:w-auto"
+              className="bg-custom-accent text-white px-4 py-2 rounded-lg hover:bg-custom-accent/80 disabled:bg-gray-300 disabled:cursor-not-allowed w-[50%] sm:w-auto"
             >
               Add Question
             </button>
@@ -126,22 +126,22 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
 
         {/* Question Title */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Question Title *
+          <label className="block text-sm font-medium text-custom-lightgray mb-2">
+            Question Title <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             value={currentQuestion.question_text}
             onChange={(e) => updateCurrentQuestion('question_text', e.target.value)}
             placeholder="Enter your question"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none text-black"
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none text-black"
           />
         </div>
 
         {/* Options for Multiple Choice and Checkboxes */}
         {(currentQuestion.type === 'multiple-choice' || currentQuestion.type === 'checkboxes') && (
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-custom-lightgray mb-2">
               Options
             </label>
             <div className="space-y-2">
@@ -152,7 +152,7 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
                     value={option.option_text}
                     onChange={(e) => updateOption(index, e.target.value)}
                     placeholder={`Option ${index + 1}`}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none "
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none "
                   />
                   <button
                     onClick={() => removeOption(index)}
@@ -174,7 +174,7 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
 
         {/* Required Toggle */}
         <div className="flex items-center gap-x-2 justify-end">
-          <label className="text-sm font-medium text-gray-700">
+          <label className="text-sm font-medium text-custom-lightgray">
             Required
           </label>
           <button
@@ -183,7 +183,7 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
               }`}
           >
             <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${currentQuestion.is_required ? 'translate-x-6' : 'translate-x-1'
+              className={`inline-block h-4 w-4 transform rounded-full transition-transform ${currentQuestion.is_required ? 'translate-x-6' : 'translate-x-1'
                 }`}
             />
           </button>
@@ -200,10 +200,10 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-custom-lightgray">
                         {questionTypes.find(t => t.value === question.type)?.icon}
                       </span>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-custom-lightgray">
                         {questionTypes.find(t => t.value === question.type)?.label}
                       </span>
                       {question.is_required && (
@@ -214,7 +214,7 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
                     {(question.type === 'multiple-choice' || question.type === 'checkboxes') && question.options && (
                       <div className="mt-2 space-y-1">
                         {question.options.map((option, index) => (
-                          <div key={index} className="text-sm text-gray-600">
+                          <div key={index} className="text-sm text-custom-lightgray">
                             {question.type === 'multiple-choice' ? '○' : '☐'} {option.option_text}
                           </div>
                         ))}

@@ -112,7 +112,6 @@ export default function Help() {
           <section id="use" className="mb-12">
             <h2 className="text-lg font-semibold mb-4">Why should I use 4rtism?</h2>
             <p className="text-gray-400 mb-3">The only fee is the 2.9% + $0.30 transaction fee from Stripe for debit and credit cards.</p>
-            <p className="text-gray-400 mb-3">I make no money from transactions, so if you have a preferred way of getting paid, like Zelle or Venmo, which have no transaction fees, I encourage you to use those instead.</p>
             <p className="text-gray-400 mb-3">However, you can use 4rtism as another avenue to receive commission requests, then handle the payment directly with the client.</p>
           </section>
 

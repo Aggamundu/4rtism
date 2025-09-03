@@ -17,7 +17,7 @@ interface ServiceCardProps {
 export default function ServiceCard({ service, onCardClick, deleteService }: ServiceCardProps) {
   return (
     <div
-      className="flex flex-row w-[100%] h-32 bg-white rounded-card text-base"
+      className="flex flex-row w-[100%] h-32 bg-custom-gray rounded-card text-base"
     >
       <img src={service.image_urls[0] || '/blank_pfp.webp'} alt={service.title} className="w-[30%] rounded-l-card object-cover" />
       <div className="grid grid-cols-2 sm:grid-cols-3 w-[80%] items-center px-[1%] sm:px-[5%]">
@@ -25,7 +25,7 @@ export default function ServiceCard({ service, onCardClick, deleteService }: Ser
         <div className="sm:block text-custom-lightgray text-center">Est. ${service.price}</div>
         <div className="flex flex-row  text-center items-center justify-end">
           <button
-            className="bg-black text-white hover:bg-black/80 rounded-card w-[40%] py-[.5%] px-custom"
+            className="bg-black text-white hover:bg-black/80 rounded-card w-[60%] py-[.5%] px-custom"
             onClick={(e) => {
               e.stopPropagation();
               onCardClick(service);

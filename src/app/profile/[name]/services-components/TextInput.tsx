@@ -8,9 +8,9 @@ export default function TextInput(props: {
   const { title, value = "", onChange, maxLength, showCharCount = false } = props;
   return (
     <div className="">
-      <label className="text-black text-sm mb-2 font-bold">{title}<span className="text-red-500"> *</span></label>
+      <label className="text-custom-lightgray text-sm mb-2 font-bold">{title}<span className="text-red-500"> *</span></label>
       <input
-        className="w-full h-10 bg-white text-black rounded-lg p-3 border border-gray-200 focus:outline-none "
+        className="w-full h-10 bg-custom-gray text-white rounded-lg p-3 focus:outline-none "
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
         maxLength={maxLength}
