@@ -18,13 +18,13 @@ export default function Category({ value, onChange }: CategoryProps) {
 
   return (
     <div className="flex flex-col w-full sm:max-w-[60%] bg-white rounded-card px-custom py-[1%]">
-      <label className="text-sm font-bold ">
+      <label className="text-sm font-bold text-black">
         Category:
       </label>
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="px-3 py-1 border border-gray-300 rounded-lg focus:outline-none text-sm"
+      className="px-3 py-1 border border-gray-300 rounded-lg focus:outline-none text-sm text-black"
     >
       {categories.map((category) => (
         <option key={category} value={category}>

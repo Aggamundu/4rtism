@@ -130,7 +130,7 @@ export default function Portfolio({ onClose, onRefresh }: { onClose: () => void,
           >
             Cancel
           </button>
-          <h2 className="text-white text-lg font-semibold">Edit Portfolio</h2>
+          <h2 className="text-white text-base font-semibold">Edit Portfolio</h2>
           <button
             onClick={() => {
               handleSubmit();

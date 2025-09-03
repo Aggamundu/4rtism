@@ -2,13 +2,12 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import { supabaseClient } from '../../../../../utils/supabaseClient';
+import { Option, Question, Service } from '../../../types/Types';
 import NewServiceOverlay from './NewServiceOverlay';
 import ServiceCard from './ServiceCard';
 import ServiceOverlay from './ServiceOverlay';
-import { Option, Question } from '../../../types/Types';
-import { Service } from '../../../types/Types';
 
-export default function Services({ onClose, onRefresh }: { onClose: () => void, onRefresh: () => void }) {
+export default function Services({ onClose, onRefresh }: { onClose: () => void, onRefresh?: () => void }) {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
@@ -108,41 +107,57 @@ export default function Services({ onClose, onRefresh }: { onClose: () => void, 
 
 
   return (
-    <div className="bg-custom-offwhite min-h-screen overflow-y-auto w-[100%] float-right text-black px-[5%] py-[.5%] rounded-[30px]">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center mb-6 gap-4 sm:gap-0">
-        <div className="text-xl sm:mr-[5%]">
-          Services
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-custom-darkgray rounded-card max-h-[100vh] overflow-y-auto w-full sm:w-[40rem] relative">
+        {/* Header */}
+        <div className="sticky top-0 bg-custom-darkgray z-10 flex justify-between items-center p-6 border-b border-custom-gray">
+          <button
+            onClick={onClose}
+            className="text-custom-accent hover:text-white transition-colors"
+          >
+            Cancel
+          </button>
+          <h2 className="text-white text-base font-semibold">Edit Services</h2>
+          <button
+            onClick={() => setIsCreateFormOpen(true)}
+            className="text-custom-accent hover:text-white transition-colors"
+          >
+            + Service
+          </button>
         </div>
-        <button className="bg-black text-white hover:bg-black/80 rounded-card  py-[.5%] px-custom" onClick={() => setIsCreateFormOpen(true)}>
-          + Service
-        </button>
-      </div>
-      <div className="flex flex-col gap-y-4">
-        {isLoading ? (
-          <div className="flex justify-center items-center min-h-[50vh]">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-custom-pink4"></div>
+
+        {/* Content Area */}
+        <div className="p-6">
+          <div className="flex flex-col gap-y-4">
+            {isLoading ? (
+              <div className="flex justify-center items-center min-h-[50vh]">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-custom-pink4"></div>
+              </div>
+            ) : (
+              services.map((service) => (
+                <ServiceCard
+                  key={service.id}
+                  service={service}
+                  onCardClick={handleCardClick}
+                  deleteService={handleDeleteService}
+                />
+              ))
+            )}
           </div>
-        ) : (
-          services.map((service) => (
-            <ServiceCard
-              key={service.id}
-            service={service}
-            onCardClick={handleCardClick}
-            deleteService={handleDeleteService}
-          />
-        ))
-        )}
+        </div>
       </div>
       <ServiceOverlay
         isOpen={isOverlayOpen}
         onClose={handleCloseOverlay}
         service={selectedService}
         onSuccess={fetchCommissions}
+        onRefresh={onRefresh}
       />
       <NewServiceOverlay
         isOpen={isCreateFormOpen}
         onClose={handleCloseOverlay}
         onSuccess={fetchCommissions}
+        onRefresh={onRefresh}
       />
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

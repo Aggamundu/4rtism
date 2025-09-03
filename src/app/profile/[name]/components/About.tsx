@@ -330,7 +330,7 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
               >
                 Cancel
               </button>
-              <h2 className="text-white text-lg font-semibold">Edit Profile</h2>
+              <h2 className="text-white text-base font-semibold">Edit Profile</h2>
               <button
                 onClick={handleSaveProfile}
                 disabled={isLoading}

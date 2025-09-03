@@ -24,9 +24,10 @@ interface ServiceOverlayProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  onRefresh?: () => void;
 }
 
-export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: ServiceOverlayProps) {
+export default function NewServiceOverlay({ isOpen, onClose, onSuccess, onRefresh }: ServiceOverlayProps) {
   const { user } = useAuth();
   const [formData, setFormData] = useState({
     title: "",
@@ -271,6 +272,7 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess }: Servic
       clearForm();
       onSuccess?.();
       onClose();
+      onRefresh?.();
       toast.success('Service created successfully');
     } catch (error) {
       console.error('Error submitting form:', error);

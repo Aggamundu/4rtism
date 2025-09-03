@@ -27,9 +27,10 @@ interface ServiceOverlayProps {
   onClose: () => void;
   service?: Service | null;
   onSuccess?: () => void;
+  onRefresh?: () => void;
 }
 
-export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: ServiceOverlayProps) {
+export default function ServiceOverlay({ isOpen, onClose, service, onSuccess, onRefresh }: ServiceOverlayProps) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -361,6 +362,7 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess }: 
 
       // Close the overlay after successful submission
       onClose();
+      onRefresh?.();
       toast.success('Service updated successfully');
     } catch (error) {
       console.error('Error updating service:', error);

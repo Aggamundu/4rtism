@@ -101,7 +101,7 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
               <select
                 value={currentQuestion.type}
                 onChange={(e) => updateCurrentQuestion('type', e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded-lg focus:outline-none text-sm"
+                className="px-3 py-1 border border-gray-300 rounded-lg focus:outline-none text-sm text-black"
               >
                 {questionTypes.map((type) => (
                   <option key={type.value} value={type.value}>
@@ -134,7 +134,7 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
             value={currentQuestion.question_text}
             onChange={(e) => updateCurrentQuestion('question_text', e.target.value)}
             placeholder="Enter your question"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none "
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none text-black"
           />
         </div>
 
