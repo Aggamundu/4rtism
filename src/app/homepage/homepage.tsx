@@ -21,7 +21,7 @@ export default function Homepage({ pictures }: { pictures: string[] }) {
 
   useEffect(() => {
     loadPictures();
-  }, []);
+  }, [pictures]);
 
   return (
     <div className="homepage-container">

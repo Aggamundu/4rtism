@@ -1,9 +1,9 @@
 
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
-import { supabaseClient } from "../../../../utils/supabaseClient";
-import { Question } from "../../types/Types";
-import TextArea from "../components/TextArea";
+import { supabaseClient } from "../../../../../utils/supabaseClient";
+import { Question } from "../../../types/Types";
+import TextArea from "@/app/dash/components/TextArea";
 import CreateForm from "./CreateForm";
 import TextInput from "./TextInput";
 import UploadServiceImages from "./UploadServiceImages";

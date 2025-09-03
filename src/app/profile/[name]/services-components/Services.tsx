@@ -1,14 +1,14 @@
 'use client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
-import { supabaseClient } from '../../../../utils/supabaseClient';
+import { supabaseClient } from '../../../../../utils/supabaseClient';
 import NewServiceOverlay from './NewServiceOverlay';
 import ServiceCard from './ServiceCard';
 import ServiceOverlay from './ServiceOverlay';
-import { Option, Question } from '../../types/Types';
-import { Service } from '../../types/Types';
+import { Option, Question } from '../../../types/Types';
+import { Service } from '../../../types/Types';
 
-export default function Services() {
+export default function Services({ onClose, onRefresh }: { onClose: () => void, onRefresh: () => void }) {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);

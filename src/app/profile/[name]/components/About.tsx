@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
 import { supabaseClient } from '../../../../../utils/supabaseClient';
+import Portfolio from '../portfolio-components/Portfolio';
+import Services from '../services-components/Services';
 import Banner from './Banner';
 
 
@@ -17,12 +19,15 @@ interface AboutProps {
   showSettings?: boolean;
   onSettingsClick?: () => void;
   onUpdateProfile?: (updates: { displayName?: string; bio?: string; imageSrc?: string; bannerSrc?: string; instagram?: string; twitter?: string }) => void;
+  onRefresh?: () => void;
 }
 
-export default function About({ imageSrc, displayName, userName, bio, bannerSrc, showSettings = false, onSettingsClick, onUpdateProfile, instagram, twitter }: AboutProps) {
+export default function About({ imageSrc, displayName, userName, bio, bannerSrc, showSettings = false, onSettingsClick, onUpdateProfile, instagram, twitter, onRefresh }: AboutProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
   const [showEditOverlay, setShowEditOverlay] = useState(false);
+  const [showEditPortfolioOverlay, setShowEditPortfolioOverlay] = useState(false);
+  const [showEditServicesOverlay, setShowEditServicesOverlay] = useState(false);
   const [editDisplayName, setEditDisplayName] = useState(displayName);
   const [editBio, setEditBio] = useState(bio);
   const [editImageSrc, setEditImageSrc] = useState(imageSrc);
@@ -46,6 +51,20 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
   const shouldShowSeeMore = bio.length > maxLength;
   const handleSeeMore = () => {
     setShowOverlay(true);
+  };
+
+  const handleEditPortfolioClick = () => {
+    setShowEditPortfolioOverlay(true);
+  };
+  const handleCloseEditPortfolioOverlay = () => {
+    setShowEditPortfolioOverlay(false);
+  };
+
+  const handleEditServicesClick = () => {
+    setShowEditServicesOverlay(true);
+  };
+  const handleCloseEditServicesOverlay = () => {
+    setShowEditServicesOverlay(false);
   };
 
   const handleCloseOverlay = () => {
@@ -179,7 +198,7 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
       <div className="flex w-full flex-col items-start justify-left gap-x-6 px-custom sm:px-custom mt-[.5rem] flex-wrap">
         <div className="flex flex-row items-center gap-x-4 ">
           {imageSrc ? (
-          <img src={imageSrc} alt="Profile" className="sm:w-[10rem] sm:h-[10rem] w-[8rem] h-[8rem] rounded-full border-2 border-custom-darkgray object-cover relative sm:top-[-6rem] top-[-4.5rem]" />
+            <img src={imageSrc} alt="Profile" className="sm:w-[10rem] sm:h-[10rem] w-[8rem] h-[8rem] rounded-full border-2 border-custom-darkgray object-cover relative sm:top-[-6rem] top-[-4.5rem]" />
           ) : (
             <div className="bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center sm:w-[10rem] sm:h-[10rem] w-[8rem] h-[8rem] rounded-full border-2 border-custom-darkgray object-cover relative sm:top-[-6rem] top-[-4.5rem]">
               <span className="text-white font-semibold text-lg">
@@ -188,12 +207,26 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
             </div>
           )}
           {showSettings && (
-            <button
-              onClick={handleSettingsClick}
-              className="text-custom-white hover:text-custom-blue hover:border-custom-blue transition-colors px-4 py-1 rounded-lg border border-custom-lightgray text-sm font-medium relative sm:top-[-3rem] top-[-2rem]"
-            >
-              Edit Profile
-            </button>
+            <div className="flex flex-col gap-y-1">
+              <button
+                onClick={handleSettingsClick}
+                className="text-xs hover:text-custom-blue hover:border-custom-blue transition-colors px-4 py-1 rounded-lg border border-custom-lightgray relative sm:top-[-2rem] top-[-1rem]"
+              >
+                Edit Profile
+              </button>
+              <button
+                onClick={handleEditPortfolioClick}
+                className="text-xs hover:text-custom-blue hover:border-custom-blue transition-colors px-4 py-1 rounded-lg border border-custom-lightgray relative sm:top-[-2rem] top-[-1rem]"
+              >
+                Edit Portfolio
+              </button>
+              <button
+                onClick={handleEditServicesClick}
+                className="text-xs hover:text-custom-blue hover:border-custom-blue transition-colors px-4 py-1 rounded-lg border border-custom-lightgray relative sm:top-[-2rem] top-[-1rem]"
+              >
+                Edit Services
+              </button>
+            </div>
           )}
         </div>
 
@@ -252,43 +285,6 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
 
           </div>
         </div>
-        {/* <div className="hidden sm:flex flex-col items-left justify-start text-left relative top-[-1.5rem]">
-          <div className="flex items-center gap-4">
-            <div className="text-xl font-bold">{displayName}</div>
-
-          </div>
-          <div className="relative -top-2">
-            <div className="flex flex-row items-center w-[100%] justify-between">
-              <div className="flex items-center">
-                <div className="text-base mb-0">@{userName}</div>
-                <button className="bg-custom-gray w-7 h-7 justify-center text-white rounded-full hover:bg-opacity-80 transition-all flex items-center ml-[1%] mr-[1%]">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                </button>
-              </div>
-              {showSettings && (
-                <button
-                  onClick={handleSettingsClick}
-                  className="text-custom-white hover:text-custom-accent transition-colors px-4 py-1 rounded-lg border border-custom-lightgray text-sm font-medium"
-                >
-                  Edit
-                </button>
-              )}
-            </div>
-            <div className="text-sm text-custom-lightgray mb-0 relative top-1">
-
-              {shouldShowSeeMore && (
-                <button
-                  onClick={handleSeeMore}
-                  className="text-custom-accent hover:text-custom-darkAccent font-medium ml-1"
-                >
-                  About me
-                </button>
-              )}
-            </div>
-          </div>
-        </div> */}
       </div>
 
       {/* Bio Overlay */}
@@ -310,6 +306,16 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
             </div>
           </div>
         </div>
+      )}
+
+      {/* Edit Portfolio Overlay */}
+      {showEditPortfolioOverlay && (
+        <Portfolio onClose={handleCloseEditPortfolioOverlay} onRefresh={onRefresh} />
+      )}
+
+      {/* Edit Services Overlay */}
+      {showEditServicesOverlay && (
+        <Services onClose={handleCloseEditServicesOverlay} onRefresh={onRefresh} />
       )}
 
       {/* Edit Profile Overlay */}
@@ -373,10 +379,10 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
                 <div className="relative">
                   {editImageSrc ? (
                     <img
-                    src={editImageSrc}
-                    alt="Profile"
-                    className="w-24 h-24 rounded-full object-cover"
-                  />
+                      src={editImageSrc}
+                      alt="Profile"
+                      className="w-24 h-24 rounded-full object-cover"
+                    />
                   ) : (
                     <div className="bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center w-24 h-24 rounded-full border-2 border-custom-darkgray object-cover">
                       <span className="text-white font-semibold text-lg">

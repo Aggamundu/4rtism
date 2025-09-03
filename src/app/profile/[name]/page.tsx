@@ -48,6 +48,10 @@ export default function ProfilePage({ params }: ProfilePageProps) {
     }
   }
 
+  const onRefresh = () => {
+    getProfile(name);
+  }
+
   const getOptions = async (questionId: number) => {
     const { data, error } = await supabaseClient
       .from('question_options')
@@ -121,6 +125,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
       console.log(data);
       setCommissions(commissions);
       console.log(profileData.portfolio_urls);
+      console.log("profileData.portfolio_urls", profileData.portfolio_urls);
       setPictures(profileData.portfolio_urls);
     }
   }
@@ -172,9 +177,9 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
   return (
     <div className="pt-14">
-      <Header onRefresh={() => getProfile(name)} />
+      <Header onRefresh={() => getProfile(name)} showSettings={user?.id === profileId} />
       <Banner imageSrc={profile?.banner_url || null} />
-      <About {...aboutProps} showSettings={user?.id === profileId} onUpdateProfile={handleProfileUpdate} />
+      <About {...aboutProps} showSettings={user?.id === profileId} onUpdateProfile={handleProfileUpdate} onRefresh={onRefresh} />
       <div className="relative top-[-3.5rem]">
         <ProfileTabs commissions={commissions} pictures={pictures} reviews={reviews} displayName={profile?.display_name || ''} />
       </div>

@@ -1,7 +1,6 @@
 'use client'
 
-import { Home, Menu, PlusSquare, User } from 'lucide-react';
-import { MessageCircle, LayoutDashboard } from 'lucide-react';
+import { Home, LayoutDashboard, Menu, MessageCircle, PlusSquare, Settings, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -10,9 +9,10 @@ import { useAuth } from '../contexts/AuthContext';
 
 interface HeaderProps {
   onRefresh?: () => void;
+  showSettings?: boolean;
 }
 
-export default function Header({ onRefresh }: HeaderProps) {
+export default function Header({ onRefresh, showSettings }: HeaderProps) {
   const { user, loading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
@@ -90,6 +90,7 @@ export default function Header({ onRefresh }: HeaderProps) {
   };
 
   const handleProfileClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     setIsMenuOpen(!isMenuOpen);
   };
 
@@ -159,17 +160,54 @@ export default function Header({ onRefresh }: HeaderProps) {
 
             </div>
 
-            <div className="sm:hidden flex items-center min-w-fit" onClick={() => setIsSearchExpanded(!isSearchExpanded)}>
-              <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="sm:hidden flex items-center min-w-fit gap-2" >
+              <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" onClick={() => setIsSearchExpanded(!isSearchExpanded)}>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
+              {showSettings && (
+                <div className="relative">
+                  <button
+                    className="p-1 hover:bg-gray-800 rounded-full transition-colors"
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  >
+                    <Settings className="w-5 h-5 text-gray-400" />
+                  </button>
+
+                  {/* Mobile Settings Dropdown */}
+                  {isMenuOpen && (
+                    <div className="absolute right-0 w-48 bg-gray-800 rounded-sm shadow-lg z-50 mt-1">
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300 transition-colors duration-200"
+                      >
+                        Sign Out
+                      </button>
+                      <Link
+                        href="/forgot-password"
+                        className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300 transition-colors duration-200"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Change Password
+                      </Link>
+                      <button
+                        onClick={() => router.push('/delete-account')}
+                        className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300 transition-colors duration-200"
+                      >
+                        Delete Account
+                      </button>
+
+                      {/* Add other menu items as needed */}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className={`sm:hidden fixed top-0 left-0 w-full h-16 bg-[#121212] flex items-center px-4 ${isSearchExpanded ? 'translate-y-0' : '-translate-y-full'}`}>
               <div className="relative flex-1">
-                <input 
-                  type="text" 
-                  placeholder="Search" 
+                <input
+                  type="text"
+                  placeholder="Search"
                   className="w-full bg-[#121212] text-white h-10 px-3 pl-10 rounded-full border border-[#303030] focus:border-blue-500 focus:outline-none text-sm"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -181,7 +219,7 @@ export default function Header({ onRefresh }: HeaderProps) {
                   }}
                   autoFocus
                 />
-                <button 
+                <button
                   className="absolute inset-y-0 left-3 flex items-center text-gray-400"
                   onClick={() => setIsSearchExpanded(false)}
                 >
@@ -323,12 +361,10 @@ export default function Header({ onRefresh }: HeaderProps) {
           <a href="/" className="block text-white hover:text-blue-400 transition-colors">Home</a>
           <a href="/request" className="block text-white hover:text-blue-400 transition-colors">Post Request</a>
           <a href="/messaging" className="block text-white hover:text-blue-400 transition-colors">Messages</a>
-          {user && (
-            <>
-              <a href={`/profile/${username}`} className="block text-white hover:text-blue-400 transition-colors">Profile</a>
-              <a href="/dash" className="block text-white hover:text-blue-400 transition-colors">Dashboard</a>
-            </>
-          )}
+
+          <a href={`/profile/${username}`} className="block text-white hover:text-blue-400 transition-colors">Profile</a>
+          <a href="/dash" className="block text-white hover:text-blue-400 transition-colors">Dashboard</a>
+
           <a href="/help" className="block text-white hover:text-blue-400 transition-colors">Help</a>
           {!user && (
             <a href="/signup" className="block text-white hover:text-blue-400 transition-colors">Sign Up</a>

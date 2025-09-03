@@ -2,11 +2,11 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
-import { supabaseClient } from '../../../../utils/supabaseClient';
-import { useAuth } from '../../../contexts/AuthContext';
+import { supabaseClient } from '../../../../../utils/supabaseClient';
+import { useAuth } from '../../../../contexts/AuthContext';
 import UploadImage from "./UploadImage";
 
-export default function Portfolio() {
+export default function Portfolio({ onClose, onRefresh }: { onClose: () => void, onRefresh?: () => void }) {
   const [deletedImageUrls, setDeletedImageUrls] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
@@ -111,6 +111,7 @@ export default function Portfolio() {
       setResetKey(prev => prev + 1); // Increment reset key to reset UploadImage
       setIsLoading(false);
       toast.success('Portfolio updated successfully');
+      onRefresh?.(); // Call onRefresh if provided
     }
   }
 
@@ -119,33 +120,50 @@ export default function Portfolio() {
   }, [user]);
 
   return (
-    <div className="bg-custom-offwhite min-h-screen overflow-y-auto w-[100%] float-right text-black px-[5%] py-[.5%] rounded-[30px]">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center mb-6 gap-4 sm:gap-0">
-        <div className="text-xl sm:mr-[5%]">
-          Portfolio
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-custom-darkgray rounded-card max-h-[100vh] overflow-y-auto w-full sm:w-[40rem] relative">
+        {/* Header */}
+        <div className="sticky top-0 bg-custom-darkgray z-10 flex justify-between items-center p-6 border-b border-custom-gray">
+          <button
+            onClick={onClose}
+            className="text-custom-accent hover:text-white transition-colors"
+          >
+            Cancel
+          </button>
+          <h2 className="text-white text-lg font-semibold">Edit Portfolio</h2>
+          <button
+            onClick={() => {
+              handleSubmit();
+              onClose();
+            }}
+            disabled={isLoading}
+            className="text-custom-accent hover:text-white transition-colors disabled:opacity-50"
+          >
+            {isLoading ? 'Saving...' : 'Save'}
+          </button>
         </div>
-        <button className="bg-black text-white hover:bg-black/80 rounded-card  py-[.5%] px-custom" onClick={handleSubmit}>
-          Save
-        </button>
-      </div>
-      {isLoading ? (
-        <div className="flex justify-center items-center min-h-[50vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-custom-pink4"></div>
-        </div>
-      ) : (
-        <UploadImage
-          key={resetKey} // Add key to force re-render
-          resetKey={resetKey}
-          onFilesChange={(files) => setSelectedFiles(files)}
-          onImagesChange={(images, deletedUrls) => {
-            setImageUrls(images);
-            if (deletedUrls && deletedUrls.length > 0) {
-              setDeletedImageUrls(prev => [...prev, ...deletedUrls]);
-            }
-          }}
-          initialImages={imageUrls} />
-      )}
 
+        {/* Content Area */}
+        <div className="p-6">
+          {isLoading ? (
+            <div className="flex justify-center items-center min-h-[50vh]">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-custom-pink4"></div>
+            </div>
+          ) : (
+            <UploadImage
+              key={resetKey} // Add key to force re-render
+              resetKey={resetKey}
+              onFilesChange={(files) => setSelectedFiles(files)}
+              onImagesChange={(images, deletedUrls) => {
+                setImageUrls(images);
+                if (deletedUrls && deletedUrls.length > 0) {
+                  setDeletedImageUrls(prev => [...prev, ...deletedUrls]);
+                }
+              }}
+              initialImages={imageUrls} />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

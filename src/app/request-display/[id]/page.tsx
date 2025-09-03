@@ -73,7 +73,7 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
 
   return (
     <div className="flex flex-col pt-16 pb-[1%] min-h-screen items-center justify-center">
-      <Header />
+      <Header/>
       <button
         onClick={() => window.history.back()}
         className="absolute top-14 left-4 text-white hover:text-gray-300 flex items-center gap-2 p-2 rounded-lg transition-colors"

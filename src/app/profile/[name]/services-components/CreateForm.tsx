@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Question } from '../../types/Types';
+import { Question } from '../../../types/Types';
 
 interface CreateFormProps {
   onQuestionChange?: (questions: Question[], deletedIds?: string[]) => void;

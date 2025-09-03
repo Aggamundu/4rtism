@@ -3,10 +3,9 @@ import Header from '@/components/Header';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { supabaseClient } from '../../../utils/supabaseClient';
 import CommissionsSeller from './components/CommissionsSeller';
-import Portfolio from './portfolio-components/Portfolio';
-import Services from './services-components/Services';
 import Stripe from './stripe-components/Stripe';
 
 export default function DashPage() {
@@ -16,9 +15,7 @@ export default function DashPage() {
   const router = useRouter();
   const navOptions = [
     { value: 'commissions', label: 'Commissions' },
-    { value: 'services', label: 'Services' },
     { value: 'stripe', label: 'Stripe Dashboard' },
-    { value: 'portfolio', label: 'Portfolio' }
   ];
 
   const checkHasOnboarded = async () => {
@@ -32,17 +29,19 @@ export default function DashPage() {
     switch (activeNav) {
       case 'commissions':
         return <CommissionsSeller />;
-      case 'services':
-        return <Services />
       case 'stripe':
         return <Stripe />;
-      case 'portfolio':
-        return <Portfolio />;
+
       default:
         return <CommissionsSeller />;
     }
   };
   useEffect(() => {
+    if (!user && !loading) {
+      router.push('/');
+      toast.error('Please login to access the dashboard', { duration: 2000 });
+      return;
+    }
     if (!loading && user) {
       checkHasOnboarded()
     }
@@ -59,11 +58,7 @@ export default function DashPage() {
     );
   }
 
-  // Redirect if not authenticated
-  if (!user) {
-    router.push('/');
-    return null;
-  }
+
 
   return (
     <div className="flex flex-col sm:flex-row pt-14">
@@ -112,22 +107,10 @@ export default function DashPage() {
               Commissions
             </button>
             <button
-              onClick={() => setActiveNav('services')}
-              className={`w-[100%] text-left ${activeNav === 'services' ? 'text-custom-beige' : ''}`}
-            >
-              Services
-            </button>
-            <button
               onClick={() => setActiveNav('stripe')}
               className={`w-[100%] text-left ${activeNav === 'stripe' ? 'text-custom-beige' : ''}`}
             >
               Stripe
-            </button>
-            <button
-              onClick={() => setActiveNav('portfolio')}
-              className={`w-[100%] text-left ${activeNav === 'portfolio' ? 'text-custom-beige' : ''}`}
-            >
-              Portfolio
             </button>
           </nav>
         </div>

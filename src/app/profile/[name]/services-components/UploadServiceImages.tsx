@@ -98,50 +98,33 @@ export default function UploadServiceImages({
 
   const removeImage = (index: number) => {
     const imageToRemove = uploadedImages[index];
+    const updatedImages = uploadedImages.filter((_, i) => i !== index);
+    const updatedFiles = selectedFiles.filter((_, i) => i !== index);
 
-    // Check if it's a new file (data URL) or existing image (URL)
-    if (imageToRemove.startsWith('data:')) {
-      // It's a new file, remove from selectedFiles
-      const fileIndex = index - (uploadedImages.length - selectedFiles.length);
-      if (fileIndex >= 0 && fileIndex < selectedFiles.length) {
-        setSelectedFiles(prev => prev.filter((_, i) => i !== fileIndex));
-      }
-    } else {
-      // It's an existing image, add to deletedImageUrls
+    setUploadedImages(updatedImages);
+    setSelectedFiles(updatedFiles);
+
+    // Track deleted image URL if it's not a data URL (actual uploaded URL)
+    if (imageToRemove && !imageToRemove.startsWith('data:')) {
       setDeletedImageUrls(prev => [...prev, imageToRemove]);
-
-      // Notify parent about the deletion
-      if (onImagesChangeRef.current) {
-        const remainingImages = uploadedImages.filter((_, i) => i !== index);
-        onImagesChangeRef.current(remainingImages, [imageToRemove]);
-      }
     }
 
-    // Remove from uploadedImages
-    setUploadedImages(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const clearAll = () => {
-    setSelectedFiles([]);
-    setUploadedImages([]);
-    setDeletedImageUrls([]);
+    // Reset file input to allow re-uploading the same file
     setFileInputKey(prev => prev + 1);
 
-    // Notify parent
-    if (onFilesChangeRef.current) {
-      onFilesChangeRef.current([]);
-    }
+    // Notify parent with updated images and deleted URLs
     if (onImagesChangeRef.current) {
-      onImagesChangeRef.current([], []);
+      const actualUrls = updatedImages.filter(img => !img.startsWith('data:'));
+      onImagesChangeRef.current(actualUrls, [imageToRemove]);
     }
   };
 
   return (
     <div className="flex flex-col w-full sm:max-w-[60%] bg-white rounded-card px-custom py-[1%]">
-      <label className="text-black text-sm mb-2 font-bold">{title || "Upload Images"}</label>
+      <label className="text-black text-sm mb-2 font-bold">{title || "Upload Images"} <span className="text-red-500"> *</span></label>
       <div className="flex flex-col px-custom py-[1%] items-center">
         <div
-          className={`flex items-center justify-center w-[30%] border-2 border-dashed rounded-lg p-4 transition-all duration-200 ${isDragOver
+          className={`flex items-center justify-center sm:w-[30%] border-2 border-dashed rounded-lg p-4 transition-all duration-200 aspect-square ${isDragOver
             ? 'border-custom-accent bg-blue-50'
             : 'border-[#484659] hover:border-custom-accent hover:bg-gray-50'
             }`}
@@ -174,8 +157,8 @@ export default function UploadServiceImages({
               or browse
             </p>
             <input
-              id="file-input"
               key={fileInputKey}
+              id="file-input"
               type="file"
               accept="image/*"
               multiple
@@ -187,16 +170,8 @@ export default function UploadServiceImages({
 
         {/* Display uploaded images */}
         {uploadedImages.length > 0 && (
-          <div className="mt-4 w-full">
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="text-black text-sm font-bold">Uploaded Images:</h3>
-              <button
-                onClick={clearAll}
-                className="text-red-500 text-sm hover:text-red-700 underline"
-              >
-                Clear All
-              </button>
-            </div>
+          <div className="mt-4">
+            <h3 className="text-black text-sm font-bold mb-2">Uploaded Images:</h3>
             <div className="grid grid-cols-3 gap-2">
               {uploadedImages.map((image, index) => (
                 <div key={index} className="relative aspect-square">
