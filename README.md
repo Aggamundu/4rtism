@@ -21,8 +21,6 @@
 3. To provide a cheaper alternative to other art commission websites
 ## Usage
 - The website is currently deployed with Vercel [at this link](https://art-commission-cdcaev0fq-aggamundus-projects.vercel.app)
-
-  *Google sign in, and other routing things may be broken in deployment by the time you read this*
   
 To run the app for development  
 1. Clone this repo
