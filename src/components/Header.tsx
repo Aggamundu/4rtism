@@ -361,9 +361,10 @@ export default function Header({ onRefresh, showSettings }: HeaderProps) {
           <a href="/" className="block text-white hover:text-blue-400 transition-colors">Home</a>
           <a href="/request" className="block text-white hover:text-blue-400 transition-colors">Post Request</a>
           <a href="/messaging" className="block text-white hover:text-blue-400 transition-colors">Messages</a>
-
           <a href={`/profile/${username}`} className="block text-white hover:text-blue-400 transition-colors">Profile</a>
           <a href="/dash" className="block text-white hover:text-blue-400 transition-colors">Dashboard</a>
+          <a href="/my-requests" className="block text-white hover:text-blue-400 transition-colors">My Requests</a>
+          <a href="/stripe" className="block text-white hover:text-blue-400 transition-colors">Stripe</a>
 
           <a href="/help" className="block text-white hover:text-blue-400 transition-colors">Help</a>
           {!user && (

@@ -22,19 +22,19 @@ export default function Stripe() {
 
   const getStripeAccountId = async () => {
     const { data, error } = await supabaseClient.from("profiles").select("stripe_account_id").eq("id", user?.id).single();
-    if (error) {
-      console.error(error);
-    } else {
+    if (!error) {
       setConnectedAccountId(data?.stripe_account_id);
+    } else {
+      console.error('Error getting stripe account id:', error);
     }
   }
 
   //Check if profile has stripe account id
   const checkIsComplete = async () => {
     const { data, error } = await supabaseClient.from("profiles").select("added_stripe_information").eq("id", user?.id).single();
-    if (error) {
-      console.error(error);
-    }
+    // if (error) {
+    //   console.error('Error checking stripe information:', error);
+    // }
     if (data?.added_stripe_information) {
       setIsComplete(true);
     } else {
@@ -142,8 +142,8 @@ export default function Stripe() {
         )}
         {isComplete && (
           <div>
-            <a href = "https://dashboard.stripe.com" target="_blank" rel="noopener noreferrer"
-            className="bg-black w-fit px-4 text-white text-sm hover:bg-black/80 active:scale-95 rounded-card h-[30px] py-[.5%]">
+            <a href="https://dashboard.stripe.com" target="_blank" rel="noopener noreferrer"
+              className="bg-black w-fit px-4 text-white text-sm hover:bg-black/80 active:scale-95 rounded-card h-[30px] py-[.5%]">
               Go to Stripe Dashboard
             </a>
           </div>

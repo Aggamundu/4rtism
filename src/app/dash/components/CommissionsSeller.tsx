@@ -126,10 +126,7 @@ export default function CommissionsSeller() {
 
 
   return (
-    <div className="bg-custom-offwhite min-h-screen overflow-y-auto w-[100%] float-right text-black px-[5%] py-[.5%] rounded-[30px]">
-      <div className="text-xl mb-6">
-        Commissions
-      </div>
+    <div className="bg-custom-offwhite min-h-screen overflow-y-auto w-[100%] float-right text-black px-[5%] py-[.5%] rounded-[30px] pt-6">
 
       {/* Tab Navigation */}
       <div className="flex mb-6 gap-x-4">

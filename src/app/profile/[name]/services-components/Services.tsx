@@ -160,22 +160,22 @@ export default function Services({ onClose, onRefresh }: { onClose: () => void, 
         onRefresh={onRefresh}
       />
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 text-sm">
+          <div className="bg-custom-darkgray rounded-lg p-6 max-w-sm w-full mx-4">
             <h3 className="text-lg font-semibold mb-4">Delete Service</h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-white mb-6">
               This action cannot be undone. Deleting this service will also delete all associated commission requests.
             </p>
             <div className="flex justify-end gap-4">
               <button
                 onClick={cancelDelete}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium"
+                className="px-4 py-2 text-white border border-custom-lightgray hover:border-white font-medium rounded-lg"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 "
               >
                 Delete
               </button>
