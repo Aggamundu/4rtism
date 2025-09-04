@@ -84,7 +84,7 @@ export default function Request() {
   };
 
   return (
-    <div className="flex flex-col pt-16 pb-[1%] min-h-screen items-center justify-center">
+    <div className="flex flex-col pt-16 pb-[1%] min-h-screen items-center sm:justify-center">
       <Header />
 
       <button
@@ -96,7 +96,7 @@ export default function Request() {
         </svg>
         Home
       </button>
-      <div className="w-full max-w-md space-y-4">
+      <div className="w-full max-w-md space-y-4 sm:mt-0 mt-10">
         <input
           type="text"
           placeholder="Drawing request title"

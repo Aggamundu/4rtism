@@ -1,11 +1,11 @@
 'use client'
 import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { supabaseClient } from "../../../../utils/supabaseClient";
 import { Request } from "../../types/Types";
-import { useRouter } from "next/navigation";
 
 interface RequestDisplayPageProps {
   params: Promise<{
@@ -74,8 +74,8 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
   }
 
   return (
-    <div className="flex flex-col pt-16 pb-[1%] min-h-screen items-center justify-center">
-      <Header/>
+    <div className="flex flex-col pt-16 pb-[1%] min-h-screen items-center sm:justify-center ">
+      <Header />
       <button
         onClick={() => window.history.back()}
         className="absolute top-14 left-4 text-white hover:text-gray-300 flex items-center gap-2 p-2 rounded-lg transition-colors"
@@ -85,9 +85,9 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
         </svg>
         Back
       </button>
-      <div className="w-full max-w-md space-y-4 overflow-y-auto">
+      <div className="w-full max-w-md space-y-4 overflow-y-auto mt-10 sm:mt-0">
         <div className="flex items-center gap-2 cursor-pointer"
-        onClick={() => router.push(`/profile/${request?.user_name}`)}
+          onClick={() => router.push(`/profile/${request?.user_name}`)}
         >
           <img src={request?.pfp_url} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
           <h2 className="text-base">{request?.user_name}</h2>
