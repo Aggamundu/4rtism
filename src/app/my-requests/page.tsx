@@ -5,6 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import { supabaseClient } from '../../../utils/supabaseClient';
 import { Request } from '../types/Types';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 interface ConfirmationOverlayProps {
   isOpen: boolean;
@@ -61,12 +63,30 @@ export default function MyRequestsPage() {
     requestId: null
   });
   const { user, loading } = useAuth();
-
+  const router = useRouter();
   useEffect(() => {
     if (user && !loading) {
       fetchRequests();
     }
   }, [user]);
+
+  const checkHasOnboarded = async () => {
+    const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single()
+    if (!data?.has_onboarded) {
+      router.push('/onboarding')
+    }
+  }
+
+  useEffect(() => {
+    if (!user && !loading) {
+      router.push('/');
+      toast.error('Please login to access requests', { duration: 2000 });
+      return;
+    }
+    if (!loading && user) {
+      checkHasOnboarded()
+    }
+  }, [user, loading])
 
   const fetchRequests = async () => {
     const { data, error } = await supabaseClient.from('requests').select('*').eq('user_id', user?.id);

@@ -1,13 +1,12 @@
 "use client"
 import UploadImages from "@/app/profile/[name]/components/UploadImages";
 import Header from "@/components/Header";
-import { useState } from "react";
-import { supabaseClient } from "../../../utils/supabaseClient";
-import { v4 as uuidv4 } from 'uuid';
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { v4 as uuidv4 } from 'uuid';
+import { supabaseClient } from "../../../utils/supabaseClient";
 
 export default function Request() {
   const [title, setTitle] = useState("");
@@ -16,7 +15,14 @@ export default function Request() {
   const [deletedImageUrls, setDeletedImageUrls] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!user && !loading) {
+      setError("Please login to post a request");
+      console.log("error");
+    }
+  }, [user, loading]);
 
   const handlePost = async () => {
     if (!user?.id) {
@@ -38,7 +44,7 @@ export default function Request() {
   }
 
   const createRequest = async (uploadedImages: string[]) => {
-    const {data, error} = await supabaseClient.from('requests').insert({
+    const { data, error } = await supabaseClient.from('requests').insert({
       title,
       description,
       image_urls: uploadedImages,
@@ -47,35 +53,35 @@ export default function Request() {
     console.log(data, error);
   }
 
-    // Upload multiple images to Supabase Storage
-    const uploadImagesToStorage = async (files: File[]): Promise<string[]> => {
-      const { data: { user } } = await supabaseClient.auth.getUser();
-      const uploadedUrls: string[] = [];
-  
-      // Upload each file individually
-      for (const file of files) {
-        const filePath = `${user?.id}/${uuidv4()}_${file.name}`;
-  
-        const { data, error } = await supabaseClient.storage
-          .from('images')
-          .upload(filePath, file);
-  
-        if (error) {
-          console.error('Error uploading image:', error);
-          throw error;
-        }
-  
-        // Get public URL for this file
-        const { data: urlData } = supabaseClient.storage
-          .from('images')
-          .getPublicUrl(filePath);
-  
-        uploadedUrls.push(urlData.publicUrl);
-  
+  // Upload multiple images to Supabase Storage
+  const uploadImagesToStorage = async (files: File[]): Promise<string[]> => {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const uploadedUrls: string[] = [];
+
+    // Upload each file individually
+    for (const file of files) {
+      const filePath = `${user?.id}/${uuidv4()}_${file.name}`;
+
+      const { data, error } = await supabaseClient.storage
+        .from('images')
+        .upload(filePath, file);
+
+      if (error) {
+        console.error('Error uploading image:', error);
+        throw error;
       }
-  
-      return uploadedUrls;
-    };  
+
+      // Get public URL for this file
+      const { data: urlData } = supabaseClient.storage
+        .from('images')
+        .getPublicUrl(filePath);
+
+      uploadedUrls.push(urlData.publicUrl);
+
+    }
+
+    return uploadedUrls;
+  };
 
   return (
     <div className="flex flex-col pt-16 pb-[1%] min-h-screen items-center justify-center">
@@ -105,10 +111,10 @@ export default function Request() {
           className="mb-3 w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"
         />
         <UploadImages
-        onFilesChange={(files) => setSelectedFiles(files)}
-        onImagesChange={(images, deletedUrls) => {
-          setDeletedImageUrls(deletedUrls || []);
-        }}
+          onFilesChange={(files) => setSelectedFiles(files)}
+          onImagesChange={(images, deletedUrls) => {
+            setDeletedImageUrls(deletedUrls || []);
+          }}
         />
         {error && <p className="text-sm text-red-500">{error}</p>}
         <button

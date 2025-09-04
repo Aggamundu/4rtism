@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { supabaseClient } from "../../../../utils/supabaseClient";
 import { Request } from "../../types/Types";
+import { useRouter } from "next/navigation";
 
 interface RequestDisplayPageProps {
   params: Promise<{
@@ -16,6 +17,7 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
   const { user } = useAuth();
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter();
   useEffect(() => {
     const getParams = async () => {
       const resolvedParams = await params;
@@ -84,7 +86,9 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
         Back
       </button>
       <div className="w-full max-w-md space-y-4 overflow-y-auto">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 cursor-pointer"
+        onClick={() => router.push(`/profile/${request?.user_name}`)}
+        >
           <img src={request?.pfp_url} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
           <h2 className="text-base">{request?.user_name}</h2>
         </div>

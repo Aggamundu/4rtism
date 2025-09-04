@@ -176,6 +176,27 @@ export default function Header({ onRefresh, showSettings }: HeaderProps) {
                   {/* Mobile Settings Dropdown */}
                   {isMenuOpen && (
                     <div className="absolute right-0 w-48 bg-gray-800 rounded-sm shadow-lg z-50 mt-1">
+                      <Link
+                        href={`/my-requests`}
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:rounded-t-sm hover:text-white transition-colors duration-200"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        My Requests
+                      </Link>
+                      <Link
+                        href={`/stripe`}
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:rounded-t-sm hover:text-white transition-colors duration-200"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Stripe
+                      </Link>
+                      <Link
+                        href={`/help`}
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:rounded-t-sm hover:text-white transition-colors duration-200"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Help
+                      </Link>
                       <button
                         onClick={handleLogout}
                         className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300 transition-colors duration-200"
