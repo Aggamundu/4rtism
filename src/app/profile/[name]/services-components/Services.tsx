@@ -108,7 +108,7 @@ export default function Services({ onClose, onRefresh }: { onClose: () => void, 
 
   return (
     <div className="flex items-center justify-center pt-14 px-custom w-full">
-      <div className="bg-custom-darkgray rounded-card max-h-[100vh] overflow-y-auto w-full sm:w-[60%] relative">
+      <div className="flex flex-col w-full sm:w-[60%]">
         {/* Header */}
         <div className="sticky top-0 bg-custom-darkgray flex justify-between items-center p-6 border-b border-custom-gray">
           <button
@@ -127,7 +127,7 @@ export default function Services({ onClose, onRefresh }: { onClose: () => void, 
         </div>
 
         {/* Content Area */}
-        <div className="p-6">
+        <div className="p-6 pb-24">
           <div className="flex flex-col gap-y-4">
             {isLoading ? (
               <div className="flex justify-center items-center min-h-[50vh]">

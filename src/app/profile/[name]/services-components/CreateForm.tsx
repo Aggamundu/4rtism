@@ -127,7 +127,7 @@ export default function CreateForm({ onQuestionChange, value }: CreateFormProps)
         {/* Question Title */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-custom-lightgray mb-2">
-            Question Title <span className="text-red-500">*</span>
+            Question Title *
           </label>
           <input
             type="text"

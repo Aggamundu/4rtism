@@ -32,7 +32,7 @@ export default function EditServices() {
           router.push(`/profile/${username}`);
         }}
         onRefresh={() => {
-          router.push(`/profile/${username}`);
+          router.push(`/edit-services`);
         }}
       />
     </div>
