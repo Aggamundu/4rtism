@@ -107,15 +107,15 @@ export default function Services({ onClose, onRefresh }: { onClose: () => void, 
 
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-custom-darkgray rounded-card max-h-[100vh] overflow-y-auto w-full sm:w-[40rem] relative">
+    <div className="flex items-center justify-center pt-14 px-custom w-full">
+      <div className="bg-custom-darkgray rounded-card max-h-[100vh] overflow-y-auto w-full sm:w-[60%] relative">
         {/* Header */}
-        <div className="sticky top-0 bg-custom-darkgray z-10 flex justify-between items-center p-6 border-b border-custom-gray">
+        <div className="sticky top-0 bg-custom-darkgray flex justify-between items-center p-6 border-b border-custom-gray">
           <button
             onClick={onClose}
             className="text-custom-accent hover:text-white transition-colors"
           >
-            Cancel
+            Back
           </button>
           <h2 className="text-white text-base font-semibold">Edit Services</h2>
           <button

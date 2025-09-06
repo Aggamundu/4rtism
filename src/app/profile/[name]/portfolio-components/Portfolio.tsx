@@ -124,10 +124,10 @@ export default function Portfolio({ onClose, onRefresh }: { onClose: () => void,
   useScrollPrevention(true);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-custom-darkgray h-screen w-screen overflow-y-auto relative">
+    <div className="flex items-center justify-center pt-14 px-custom w-full">
+      <div className="flex flex-col w-full sm:w-[60%]">
         {/* Header */}
-        <div className="sticky top-0 bg-custom-darkgray z-10 flex justify-between items-center p-6 border-b border-custom-gray">
+        <div className="sticky top-0 bg-custom-darkgray flex justify-between items-center p-6 border-b border-custom-gray">
           <button
             onClick={onClose}
             className="text-custom-accent hover:text-white transition-colors"
@@ -148,7 +148,7 @@ export default function Portfolio({ onClose, onRefresh }: { onClose: () => void,
         </div>
 
         {/* Content Area */}
-        <div className="p-6">
+        <div className="p-6 pb-24">
           {isLoading ? (
             <div className="flex justify-center items-center min-h-[50vh]">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-custom-pink4"></div>

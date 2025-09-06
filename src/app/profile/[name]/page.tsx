@@ -28,7 +28,6 @@ export default function ProfilePage({ params }: ProfilePageProps) {
   const [pictures, setPictures] = useState<string[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
 
-
   const getProfile = async (userName: string) => {
     // Fetch profile data
     const { data, error } = await supabaseClient

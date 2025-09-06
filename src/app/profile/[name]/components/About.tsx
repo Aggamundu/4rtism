@@ -1,12 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { v4 as uuidv4 } from 'uuid';
-import { supabaseClient } from '../../../../../utils/supabaseClient';
 import { useScrollPrevention } from '../../../../hooks/useScrollPrevention';
 import Portfolio from '../portfolio-components/Portfolio';
 import Services from '../services-components/Services';
-import Banner from './Banner';
 import { useRouter } from 'next/navigation';
 
 
@@ -101,13 +98,13 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
                 Edit Profile
               </button>
               <button
-                onClick={handleEditPortfolioClick}
+                onClick={() => router.push(`/edit-portfolio`)}
                 className="text-xs hover:text-custom-blue hover:border-custom-blue transition-colors px-4 py-1 rounded-lg border border-custom-lightgray relative sm:top-[-2rem] top-[-1rem]"
               >
                 Edit Portfolio
               </button>
               <button
-                onClick={handleEditServicesClick}
+                onClick={() => router.push(`/edit-services`)}
                 className="text-xs hover:text-custom-blue hover:border-custom-blue transition-colors px-4 py-1 rounded-lg border border-custom-lightgray relative sm:top-[-2rem] top-[-1rem]"
               >
                 Edit Services

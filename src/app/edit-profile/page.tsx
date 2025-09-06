@@ -146,7 +146,7 @@ export default function EditProfile() {
 
   return (
       <div className="flex items-center justify-center pt-14 px-custom w-full">
-        <div className="flex flex-col w-full sm:w-[50%]">
+        <div className="flex flex-col w-full sm:w-[60%]">
           <Header />
           {/* Header */}
           <div className="bg-custom-darkgray flex justify-between items-center p-4 border-b border-custom-gray">

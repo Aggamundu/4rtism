@@ -127,7 +127,7 @@ export default function UploadImage({
   return (
     <div className="flex flex-col px-custom py-[1%] items-center">
       <div
-        className={`flex items-center justify-center sm:w-[30%] border-2 border-dashed rounded-lg p-4 transition-all duration-200 aspect-square ${isDragOver
+        className={`flex items-center justify-center w-32 h-32 border-2 border-dashed rounded-lg p-4 transition-all duration-200 aspect-square ${isDragOver
           ? 'border-custom-accent bg-blue-50'
           : 'border-[#484659] hover:border-custom-accent'
           }`}
