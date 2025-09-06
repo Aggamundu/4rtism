@@ -224,7 +224,7 @@ export default function Header({ onRefresh, showSettings }: HeaderProps) {
               )}
             </div>
 
-            <div className={`sm:hidden fixed top-0 left-0 w-full h-16 bg-[#121212] flex items-center px-4 ${isSearchExpanded ? 'translate-y-0' : '-translate-y-full'}`}>
+            <div className={`sm:hidden fixed top-0 left-0 w-full z-50 h-16 bg-[#121212] flex items-center px-4 ${isSearchExpanded ? 'translate-y-0' : '-translate-y-full'}`}>
               <div className="relative flex-1">
                 <input
                   type="text"

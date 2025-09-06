@@ -27,7 +27,9 @@ export default function EditProfile() {
   }, [user])
 
   useEffect(() => {
-    getProfile()
+    if (user && !loading) {
+      getProfile()
+    }
   }, [user])
   
 
@@ -143,11 +145,11 @@ export default function EditProfile() {
 
 
   return (
-      <div className="flex relative justify-center pt-14 min-h-screen px-custom">
-        <Header />
-        <div className="bg-custom-darkgray rounded-card max-h-[100vh] w-full relative sm:w-[50%] w-full">
+      <div className="flex items-center justify-center pt-14 px-custom w-full">
+        <div className="flex flex-col w-full sm:w-[50%]">
+          <Header />
           {/* Header */}
-          <div className="bg-custom-darkgray z-30 flex justify-between items-center p-6 border-b border-custom-gray">
+          <div className="bg-custom-darkgray flex justify-between items-center p-4 border-b border-custom-gray">
             <button
               onClick={() => router.push(`/profile/${userName}`)}
               className="text-custom-accent hover:text-white transition-colors"
@@ -165,7 +167,7 @@ export default function EditProfile() {
           </div>
 
           {/* Content Area */}
-          <div className="p-6">
+          <div className="p-custom pb-24">
             {/* Banner Section */}
             <div className="mb-8">
               <label className="block text-custom-lightgray text-sm mb-3">Banner Image</label>
@@ -238,24 +240,13 @@ export default function EditProfile() {
             <div className="space-y-6">
               {/* Display Name */}
               <div>
-                <label className="block text-custom-lightgray text-sm mb-2">Display Name</label>
+                <label className="text-custom-lightgray text-sm mb-2">Display Name</label>
                 <input
                   type="text"
                   value={editDisplayName}
                   onChange={(e) => setEditDisplayName(e.target.value)}
                   className="w-full bg-custom-gray text-white px-4 py-3 rounded-lg focus:outline-none transition-colors"
                   placeholder="Enter display name"
-                />
-              </div>
-
-              {/* Username (Read-only) */}
-              <div>
-                <label className="block text-custom-lightgray text-sm mb-2">Username</label>
-                <input
-                  type="text"
-                  value={`@${userName}`}
-                  disabled
-                  className="w-full bg-custom-gray text-custom-lightgray px-4 py-3 rounded-lg opacity-50 cursor-not-allowed"
                 />
               </div>
 
@@ -301,6 +292,7 @@ export default function EditProfile() {
             </div>
           </div>
         </div>
+
       </div>
   )
 }
