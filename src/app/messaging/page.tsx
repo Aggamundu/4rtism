@@ -235,7 +235,7 @@ export default function Messaging() {
   };
 
   return (
-    <div className="rounded-lg shadow h-screen flex pt-14">
+    <div className="rounded-lg shadow h-screen flex pt-14 pb-14">
       <Header />
       {/* Conversations List */}
       <div className="w-1/3 border-r border-custom-gray flex flex-col h-full">

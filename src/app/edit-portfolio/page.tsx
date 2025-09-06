@@ -18,10 +18,10 @@ export default function EditPortfolio() {
   }
 
   useEffect(() => {
-    if(!user && !loading) {
+    if (!user && !loading) {
       router.push('/');
     }
-    if(user && !loading) {
+    if (user && !loading) {
       fetchUsername();
     }
   }, [user]);
