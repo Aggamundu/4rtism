@@ -7,6 +7,7 @@ import { useScrollPrevention } from '../../../../hooks/useScrollPrevention';
 import Portfolio from '../portfolio-components/Portfolio';
 import Services from '../services-components/Services';
 import Banner from './Banner';
+import { useRouter } from 'next/navigation';
 
 
 interface AboutProps {
@@ -24,7 +25,8 @@ interface AboutProps {
 }
 
 export default function About({ imageSrc, displayName, userName, bio, bannerSrc, showSettings = false, onSettingsClick, onUpdateProfile, instagram, twitter, onRefresh }: AboutProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const router = useRouter();
+    const [isExpanded, setIsExpanded] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
   const [showEditOverlay, setShowEditOverlay] = useState(false);
   const [showEditPortfolioOverlay, setShowEditPortfolioOverlay] = useState(false);
@@ -213,7 +215,7 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
           {showSettings && (
             <div className="flex flex-col gap-y-1">
               <button
-                onClick={handleSettingsClick}
+                onClick={() => router.push(`/edit-profile`)}
                 className="text-xs hover:text-custom-blue hover:border-custom-blue transition-colors px-4 py-1 rounded-lg border border-custom-lightgray relative sm:top-[-2rem] top-[-1rem]"
               >
                 Edit Profile

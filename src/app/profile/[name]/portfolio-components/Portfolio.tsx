@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
 import { supabaseClient } from '../../../../../utils/supabaseClient';
 import { useAuth } from '../../../../contexts/AuthContext';
+import { useScrollPrevention } from '../../../../hooks/useScrollPrevention';
 import UploadImage from "./UploadImage";
 
 export default function Portfolio({ onClose, onRefresh }: { onClose: () => void, onRefresh?: () => void }) {
@@ -119,9 +120,12 @@ export default function Portfolio({ onClose, onRefresh }: { onClose: () => void,
     fetchPortfolioUrls();
   }, [user]);
 
+  // Prevent body scrolling when overlay is open
+  useScrollPrevention(true);
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-custom-darkgray rounded-card max-h-[100vh] overflow-y-auto w-full sm:w-[40rem] relative">
+      <div className="bg-custom-darkgray h-screen w-screen overflow-y-auto relative">
         {/* Header */}
         <div className="sticky top-0 bg-custom-darkgray z-10 flex justify-between items-center p-6 border-b border-custom-gray">
           <button

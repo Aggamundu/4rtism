@@ -37,6 +37,7 @@ export default function Request() {
       await createRequest(uploadedImages);
       setTitle("");
       setDescription("");
+      router.push('/');
       toast.success("Request created successfully");
     }
   }
