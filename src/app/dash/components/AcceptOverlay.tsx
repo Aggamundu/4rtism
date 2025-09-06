@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { supabaseClient } from "../../../../utils/supabaseClient";
 import { useAuth } from "../../../contexts/AuthContext";
+import { useScrollPrevention } from "../../../hooks/useScrollPrevention";
 import { AnswerDisplay, CommissionRequest } from "../../types/Types";
 import ImageDisplay from "./ImageDisplay";
 import ServiceDisplay from "./ServiceDisplay";
@@ -28,10 +29,13 @@ export default function AcceptOverlay({ isOpen, onClose, commission, onRefresh }
   useEffect(() => {
     setArtistEmail(user.email);
     if (commission) {
-    getClientEmail(commission.response_id);
-    getArtistName(user.id);
+      getClientEmail(commission.response_id);
+      getArtistName(user.id);
     }
   }, [user, commission]);
+
+  // Prevent body scrolling when overlay is open
+  useScrollPrevention(isOpen);
 
   if (!isOpen || !commission) return null;
 

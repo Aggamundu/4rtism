@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import { v4 as uuidv4 } from 'uuid';
 import { supabaseClient } from "../../../../utils/supabaseClient";
 import { useAuth } from "../../../contexts/AuthContext";
+import { useScrollPrevention } from "../../../hooks/useScrollPrevention";
 import UploadServiceImages from "../services-components/UploadServiceImages";
 import ImageDisplay from "./ImageDisplay";
 import ServiceDisplay from "./ServiceDisplay";
@@ -31,6 +32,9 @@ export default function WIPOverlay({ isOpen, onClose, commission, onRefresh }: A
       getArtistName(user.id);
     }
   }, [commission, user]);
+
+  // Prevent body scrolling when overlay is open
+  useScrollPrevention(isOpen);
 
   if (!isOpen || !commission) return null;
 

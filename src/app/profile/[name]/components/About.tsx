@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
 import { supabaseClient } from '../../../../../utils/supabaseClient';
+import { useScrollPrevention } from '../../../../hooks/useScrollPrevention';
 import Portfolio from '../portfolio-components/Portfolio';
 import Services from '../services-components/Services';
 import Banner from './Banner';
@@ -47,6 +48,9 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
     setEditInstagram(instagram || '');
     setEditTwitter(twitter || '');
   }, [displayName, bio, imageSrc, bannerSrc, instagram, twitter]);
+
+  // Prevent body scrolling when any overlay is open
+  useScrollPrevention(showOverlay || showEditOverlay || showEditPortfolioOverlay || showEditServicesOverlay);
 
   const shouldShowSeeMore = bio.length > maxLength;
   const handleSeeMore = () => {

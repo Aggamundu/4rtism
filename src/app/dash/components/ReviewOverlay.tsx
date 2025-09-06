@@ -1,7 +1,4 @@
-import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
-import { supabaseClient } from "../../../../utils/supabaseClient";
-import { useAuth } from "../../../contexts/AuthContext";
+import { useScrollPrevention } from "../../../hooks/useScrollPrevention";
 import { AnswerDisplay, CommissionRequest } from "../../types/Types";
 import ImageDisplay from "./ImageDisplay";
 import ServiceDisplay from "./ServiceDisplay";
@@ -14,6 +11,9 @@ interface AcceptOverlayProps {
 }
 
 export default function ReviewOverlay({ isOpen, onClose, commission }: AcceptOverlayProps) {
+  // Prevent body scrolling when overlay is open
+  useScrollPrevention(isOpen);
+
   if (!isOpen || !commission) return null;
 
   const renderAnswer = (answer: AnswerDisplay, index: number) => {
@@ -55,7 +55,7 @@ export default function ReviewOverlay({ isOpen, onClose, commission }: AcceptOve
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-custom-offwhite rounded-card h-screen w-full flex flex-col">
-      <div className="sticky top-0 bg-custom-offwhite border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-custom-offwhite border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
           <div className="text-lg font-bold flex-1 text-center">Pending Payment</div>
           <button
             onClick={onClose}
@@ -87,13 +87,13 @@ export default function ReviewOverlay({ isOpen, onClose, commission }: AcceptOve
               </div>
             </div>
             {commission.description && (
-            <div className="flex flex-col w-full sm:max-w-[60%] bg-white rounded-card px-custom py-[1%]">
-              <label className="text-black text-sm mb-2 font-bold">Description</label>
-              <p className="text-black text-sm">{commission.description}</p>
-            </div>)}
+              <div className="flex flex-col w-full sm:max-w-[60%] bg-white rounded-card px-custom py-[1%]">
+                <label className="text-black text-sm mb-2 font-bold">Description</label>
+                <p className="text-black text-sm">{commission.description}</p>
+              </div>)}
             {commission.reference_image_urls && commission.reference_image_urls.length > 0 && (
-                <ImageDisplay images={commission.reference_image_urls} title="Reference Images" />
-              )}
+              <ImageDisplay images={commission.reference_image_urls} title="Reference Images" />
+            )}
             {commission.answers.map((answer, index) => renderAnswer(answer, index))}
           </div>
         </div>

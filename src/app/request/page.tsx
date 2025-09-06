@@ -31,8 +31,6 @@ export default function Request() {
     }
     if (title.length < 3) {
       setError("Title must be at least 3 characters long");
-    } else if (description.length < 10) {
-      setError("Description must be at least 10 characters long");
     } else {
       setError("");
       const uploadedImages = await uploadImagesToStorage(selectedFiles);

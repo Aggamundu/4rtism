@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import { v4 as uuidv4 } from 'uuid';
 import { supabaseClient } from "../../../../../utils/supabaseClient";
 import { useAuth } from "../../../../contexts/AuthContext";
+import { useScrollPrevention } from "../../../../hooks/useScrollPrevention";
 import Category from "./Category";
 import CreateForm from "./CreateForm";
 import TextInput from "./TextInput";
@@ -165,6 +166,9 @@ export default function NewServiceOverlay({ isOpen, onClose, onSuccess, onRefres
       getArtistName();
     }
   }, [user?.id, category]);
+
+  // Prevent body scrolling when overlay is open
+  useScrollPrevention(isOpen);
 
   // Upload multiple images to Supabase Storage
   const uploadImagesToStorage = async (files: File[]): Promise<string[]> => {

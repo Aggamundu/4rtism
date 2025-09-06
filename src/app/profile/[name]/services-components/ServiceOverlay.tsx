@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { v4 as uuidv4 } from 'uuid';
 import { supabaseClient } from "../../../../../utils/supabaseClient";
+import { useScrollPrevention } from "../../../../hooks/useScrollPrevention";
 import { Question } from "../../../types/Types";
 import Category from "./Category";
 import CreateForm from "./CreateForm";
@@ -112,6 +113,9 @@ export default function ServiceOverlay({ isOpen, onClose, service, onSuccess, on
       setCategory(service.category || "Chibi");
     }
   }, [service]);
+
+  // Prevent body scrolling when overlay is open
+  useScrollPrevention(isOpen);
 
   // Handle question changes
   const handleQuestionChange = (newQuestions: Question[], deletedIds: string[] = []) => {
