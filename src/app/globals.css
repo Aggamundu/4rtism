@@ -1,3 +1,5 @@
+@import url('/fonts/Chillax_Complete/Fonts/WEB/css/chillax.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,7 +14,7 @@ html,
 body {
   background-color: #1e1e1e !important;
   color: #ffffff;
-  font-family: 'Roboto Mono', sans-serif;
+  font-family: 'Chillax-Regular', sans-serif;
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;

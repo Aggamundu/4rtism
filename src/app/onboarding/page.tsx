@@ -56,7 +56,7 @@ export default function OnboardingPage() {
   }
 
   const disable = () => {
-    if (username.length < 1 || pageLoading) {
+    if (username.length < 1 || username.trim() === '' || username.includes(' ') || pageLoading) {
       return true
     }
     return false
@@ -87,6 +87,7 @@ export default function OnboardingPage() {
         <div className="flex flex-col gap-4 mb-6 justify-center">
           <div className="h-6">
             {error && <p className="text-red-500 text-sm">{error}</p>}
+            {disable() && <p className="text-red-500 text-sm">Username cannot have spaces</p>}
           </div>
           <div>
             <p className="text-lg font-bold">Choose your username</p>
@@ -96,7 +97,7 @@ export default function OnboardingPage() {
             type="text"
             placeholder="Username"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value.toLowerCase())}
             className="mb-3 w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"
           />
            <button

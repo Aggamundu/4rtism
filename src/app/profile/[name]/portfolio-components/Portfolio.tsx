@@ -148,7 +148,7 @@ export default function Portfolio({ onClose, onRefresh }: { onClose: () => void,
         </div>
 
         {/* Content Area */}
-        <div className="p-6 pb-24">
+        <div className="p-6 pb-24 sm:pb-0">
           {isLoading ? (
             <div className="flex justify-center items-center min-h-[50vh]">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-custom-pink4"></div>

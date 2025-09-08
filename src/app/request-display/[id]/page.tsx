@@ -95,9 +95,9 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
         <div className="mb-3 w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none">
           {request?.title}
         </div>
-        <div className="mb-3 w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none">
+        {request?.description && <div className="mb-3 w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none">
           {request?.description}
-        </div>
+        </div>}
         {/* Display uploaded images */}
         {request?.image_urls && request.image_urls.length > 0 && (
           <div className="mt-[1%]">

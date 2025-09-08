@@ -167,7 +167,7 @@ export default function EditProfile() {
         </div>
 
         {/* Content Area */}
-        <div className="p-custom pb-24">
+        <div className="p-custom pb-24 sm:pb-0">
           {/* Banner Section */}
           <div className="mb-8">
             <label className="block text-custom-lightgray text-sm mb-3">Banner Image</label>

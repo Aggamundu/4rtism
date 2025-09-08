@@ -127,7 +127,7 @@ export default function Services({ onClose, onRefresh }: { onClose: () => void, 
         </div>
 
         {/* Content Area */}
-        <div className="p-6 pb-24">
+        <div className="p-6 pb-24 sm:pb-0">
           <div className="flex flex-col gap-y-4">
             {isLoading ? (
               <div className="flex justify-center items-center min-h-[50vh]">

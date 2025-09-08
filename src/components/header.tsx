@@ -261,9 +261,9 @@ export default function Header({ onRefresh, showSettings }: HeaderProps) {
               {user ? (
                 /* Authenticated User */
                 <div className="flex flex-row items-center space-x-4">
-                  <button onClick={() => router.push('/request')} className="text-xs text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200 hidden sm:block">
+                  {/* <button onClick={() => router.push('/request')} className="text-xs text-white border-[1px] border-custom-lightgray hover:border-white rounded-lg px-2 py-1 transition-colors duration-200 hidden sm:block">
                     + Post Request
-                  </button>
+                  </button> */}
 
                   <div className="relative">
 

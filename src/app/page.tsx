@@ -227,7 +227,7 @@ export default function Home() {
   return (
     <div className="flex relative justify-center pt-14 min-h-screen px-custom">
       <Header />
-        <div className="flex flex-col sm:w-[50%] w-full pb-16">
+        <div className="flex flex-col sm:w-[50%] w-full pb-16 sm:pb-0">
           {selectedRequests.map((request) => (
             <RequestCard key={request.id} request={request} />
           ))}
