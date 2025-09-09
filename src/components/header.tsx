@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { supabaseClient } from '../../utils/supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
+import Image from 'next/image';
 
 interface HeaderProps {
   onRefresh?: () => void;
@@ -120,10 +121,8 @@ export default function Header({ onRefresh, showSettings }: HeaderProps) {
 
               {/* Logo/Brand */}
               <div className="flex items-center min-w-fit">
-                <Link href="/" className="flex items-center space-x-4">
-                  <div className="w-7 h-7 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">4</span>
-                  </div>
+                <Link href="/" className="flex items-center">
+                  <Image src="/boat.svg" alt="Boat" width={12} height={12} />
                   <span className="text-white font-semibold text-base">rtism</span>
                 </Link>
               </div>
