@@ -85,7 +85,7 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col">
       <div className="flex flex-col items-center justify-center h-screen">
-        <div className="flex flex-row justify-center w-full sm:w-[50%]">
+        <div className="flex flex-row justify-center w-full sm:w-[50%]" onClick={() => router.push('/')}>
           <Image
             id="boat"
             src={'/boat.svg'}
@@ -94,7 +94,7 @@ export default function LandingPage() {
             height={55}
             className="self-center opacity-0"
           />
-          <p id="title" className="text-3xl font-bold self-center opacity-0 translate-y-10">rtism</p>
+          <p id="title" className="text-3xl font-bold self-center opacity-0 translate-y-10 cursor-pointer">rtism</p>
         </div>
         <p id="subtitle" className="text-base opacity-0 mb-[1rem]">Start your art commission journey</p>
         <div className="mb-[1rem] flex flex-row gap-x-2">
