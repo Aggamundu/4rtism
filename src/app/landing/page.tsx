@@ -6,15 +6,17 @@ import { CreditCard, Grid, MessageCircle, Search, User, UserPlus } from 'lucide-
 import Image from 'next/image'
 import { useRef } from 'react'
 import FeatureCard from './FeatureCard'
+import {useRouter} from 'next/navigation'
 export default function LandingPage() {
 
   gsap.registerPlugin(ScrollTrigger)
   const scrollRef = useRef<HTMLDivElement>(null);
+  const router = useRouter()
 
 
   useGSAP(() => {
     // Only apply scroll animation on mobile (768px and below)
-    if (window.innerWidth >= 768) {
+    if (window.innerWidth > 768) {
       const featureCards = gsap.utils.toArray(scrollRef.current?.children || []) as HTMLElement[];
 
       featureCards.forEach((featureCard) => {
@@ -99,7 +101,7 @@ export default function LandingPage() {
           <button className="get-started bg-white text-black px-4 py-2 rounded-card opacity-0">
             <a href="#features" className="get-started bg-white text-black px-4 py-2 rounded-card opacity-0">View Features</a>
           </button>
-          <button className="get-started bg-custom-blue text-white px-4 py-2 rounded-card opacity-0">Get Started</button>
+          <button className="get-started bg-custom-blue text-white px-4 py-2 rounded-card opacity-0" onClick={() => router.push('/login')}>Get Started</button>
 
         </div>
       </div>
