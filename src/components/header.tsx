@@ -122,8 +122,8 @@ export default function Header({ onRefresh, showSettings }: HeaderProps) {
               {/* Logo/Brand */}
               <div className="flex items-center min-w-fit">
                 <Link href="/" className="flex items-center">
-                  <Image src="/boat.svg" alt="Boat" width={12} height={12} />
-                  <span className="text-white font-semibold text-base">rtism</span>
+                  <Image src="/boat.svg" alt="Boat" width={16} height={16} />
+                  <span className="text-white font-semibold text-md">rtism</span>
                 </Link>
               </div>
             </div>

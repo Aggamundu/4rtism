@@ -2,7 +2,6 @@ import CommissionRequestOverlay from "@/app/profile/[name]/components/Commission
 import { useState } from "react";
 import { Commission } from "../../types/Types";
 import CommissionCard from "./CommissionCard";
-import CommissionColumn from "@/components/CommissionColumn";
 
 interface CommissionCardGridProps {
   commissions: Commission[];
