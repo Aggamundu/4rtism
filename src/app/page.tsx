@@ -1,5 +1,4 @@
 "use client"
-import CommissionColumn from "@/components/CommissionColumn";
 import Header from "@/components/Header";
 import RequestCard from "@/components/RequestCard";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,8 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { supabaseClient } from "../../utils/supabaseClient";
 import { Commission, Option, Question, Request } from "./types/Types";
-import { useGSAP } from '@gsap/react'
-import gsap from 'gsap'
+
 
 export default function Home() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -24,7 +22,6 @@ export default function Home() {
   const router = useRouter()
   useEffect(() => {
     fetchRequests()
-    fetchCommissions()
   }, [])
 
 
@@ -49,12 +46,14 @@ export default function Home() {
   }, [isCategoryOpen, isSortOpen]);
 
   const fetchRequests = async () => {
+    setIsLoading(true);
     const { data, error } = await supabaseClient.from('requests').select('*');
     if (error) {
       console.error(error)
     } else {
       setSelectedRequests(data as Request[])
     }
+    setIsLoading(false);
   }
   const handleShuffle = () => {
     const shuffledCommissions = [...selectedCommissions].sort(() => Math.random() - 0.5);
