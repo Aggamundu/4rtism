@@ -1,5 +1,4 @@
 'use client'
-import Header from '@/components/Header';
 import RequestCard from '@/components/RequestCard';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
@@ -132,7 +131,6 @@ export default function MyRequestsPage() {
 
   return (
     <div className="flex flex-col pt-14 items-center">
-      <Header />
       <div className="flex flex-col sm:w-[50%] w-full px-custom overflow-y-auto min-h-0 h-[calc(100vh-3.5rem)]">
         {selectedRequests.map((request) => (
           <div key={request.id} className="flex flex-row">

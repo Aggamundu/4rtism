@@ -1,6 +1,5 @@
 "use client"
 
-import Header from "@/components/Header";
 import Stripe from "../dash/stripe-components/Stripe";
 import { useEffect } from "react";
 import { toast } from "react-hot-toast";
@@ -29,7 +28,6 @@ export default function StripePage() {
   }, [user, loading])
   return (
     <div className="flex flex-col pt-14">
-      <Header />
       <Stripe />
     </div>
 

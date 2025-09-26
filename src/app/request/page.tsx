@@ -1,6 +1,5 @@
 "use client"
 import UploadImages from "@/app/profile/[name]/components/UploadImages";
-import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -84,7 +83,6 @@ export default function Request() {
 
   return (
     <div className="flex flex-col pt-16 pb-[1%] min-h-screen items-center sm:justify-center">
-      <Header />
 
       <button
         onClick={() => router.push('/')}

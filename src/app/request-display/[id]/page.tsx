@@ -1,5 +1,4 @@
 'use client'
-import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -27,8 +26,6 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
 
     getParams();
   }, [params]);
-
-
   const getRequest = async (id: number) => {
     const { data, error } = await supabaseClient.from('requests').select('*, profiles(user_name, pfp_url)').eq('id', id).single();
     if (error) {
@@ -75,7 +72,6 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
 
   return (
     <div className="flex flex-col pt-16 pb-[1%] min-h-screen items-center sm:justify-center ">
-      <Header />
       <button
         onClick={() => window.history.back()}
         className="absolute top-14 left-4 text-white hover:text-gray-300 flex items-center gap-2 p-2 rounded-lg transition-colors"

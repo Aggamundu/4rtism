@@ -1,5 +1,4 @@
 'use client'
-import Header from '@/components/Header'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -31,15 +30,13 @@ export default function EditProfile() {
       getProfile()
     }
   }, [user])
-
-
   const getProfile = async () => {
     const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single()
     if (error) {
       console.error(error)
     }
     setEditDisplayName(data.display_name)
-    setEditBio(data.biography)
+    setEditBio(data.biography || '')
     setEditImageSrc(data.pfp_url)
     setEditBannerSrc(data.banner_url || '')
     setEditInstagram(data.instagram || '')
@@ -84,8 +81,6 @@ export default function EditProfile() {
       }
     }
   };
-
-
   const handleBannerChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -140,14 +135,9 @@ export default function EditProfile() {
     }
   };
 
-
-
-
-
   return (
     <div className="flex items-center justify-center pt-14 px-custom w-full">
       <div className="flex flex-col w-full sm:w-[60%]">
-        <Header />
         {/* Header */}
         <div className="bg-custom-darkgray flex justify-between items-center p-4 border-b border-custom-gray">
           <button
@@ -261,8 +251,9 @@ export default function EditProfile() {
                 className="w-full bg-custom-gray text-white px-4 py-1 rounded-lg focus:outline-none transition-colors resize-none"
                 placeholder="Write a bio..."
               />
+
               <div className="text-right text-custom-lightgray text-xs mt-1">
-                {editBio.length}/150
+                {(editBio || '').length}/150
               </div>
             </div>
 

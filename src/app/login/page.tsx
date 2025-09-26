@@ -1,6 +1,5 @@
 'use client'
 
-import Header from '@/components/Header'
 import { useState } from 'react'
 import { supabaseClient } from '../../../utils/supabaseClient'
 export default function AuthPage() {
@@ -9,8 +8,6 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState('')
-
-
   const checkHasOnboarded = async (id: string) => {
     const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', id)
     if (error) {
@@ -27,7 +24,7 @@ export default function AuthPage() {
       const { data, error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`
+          redirectTo: `http://localhost:3000`
         }
       })
 
@@ -41,8 +38,6 @@ export default function AuthPage() {
       setGoogleLoading(false)
     }
   }
-
-
 
   //Signs up a new user
   const handleSignUp = async () => {
@@ -78,7 +73,6 @@ export default function AuthPage() {
   //Displays the UI
   return (
     <div className="">
-      <Header />
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-full max-w-md space-y-4">
           {/* Header */}
@@ -151,11 +145,7 @@ export default function AuthPage() {
                 Sign up
               </a>
             </div>
-
-
           </div>
-
-
           {/* Test Button */}
           {/* <button
           onClick={testAuth}

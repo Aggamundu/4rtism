@@ -1,5 +1,4 @@
 "use client"
-import Header from "@/components/Header";
 import RequestCard from "@/components/RequestCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
@@ -229,15 +228,14 @@ export default function Home() {
 
   return (
     <div className="flex relative justify-center pt-14 min-h-screen px-custom">
-      <Header />
-        <div id = "requests" className="flex flex-col sm:w-[50%] w-full pb-16 sm:pb-0">
-          {selectedRequests.map((request) => (
-            <div key={request.id} className="request">
-              <RequestCard request={request} />
-            </div>
+      <div id="requests" className="flex flex-col sm:w-[50%] w-full pb-16 sm:pb-0">
+        {selectedRequests.map((request) => (
+          <div key={request.id} className="request">
+            <RequestCard request={request} />
+          </div>
 
-          ))}
-        </div>
+        ))}
+      </div>
     </div>
   );
 }

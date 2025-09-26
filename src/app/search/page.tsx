@@ -1,6 +1,5 @@
 "use client";
 import CommissionColumn from "@/components/CommissionColumn";
-import Header from "@/components/Header";
 import RequestCard from "@/components/RequestCard";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
@@ -151,10 +150,7 @@ function SearchPageContent() {
     fetchCommissions()
     fetchRequests()
   }, [query]);
-
-
   return <div className="min-h-screen pt-14">
-    <Header />
     <div>
       {isLoading ? (
         <div className="flex justify-center items-center min-h-[50vh]">
@@ -171,7 +167,6 @@ export default function SearchPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen pt-14">
-        <Header />
         <div className="flex justify-center items-center min-h-[50vh]">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
         </div>

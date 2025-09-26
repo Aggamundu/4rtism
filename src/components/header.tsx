@@ -1,12 +1,13 @@
 'use client'
 
-import { Home, LayoutDashboard, Menu, MessageCircle, PlusSquare, Settings, User } from 'lucide-react';
+import { Home, LayoutDashboard, Menu, MessageCircle, PlusSquare, Settings } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { supabaseClient } from '../../utils/supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
-import Image from 'next/image';
+import ProfilePicture from './ProfilePicture';
 
 interface HeaderProps {
   onRefresh?: () => void;
@@ -21,7 +22,6 @@ export default function Header({ onRefresh, showSettings }: HeaderProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [username, setUsername] = useState('');
-  const [profilePicture, setProfilePicture] = useState('');
   const [search, setSearch] = useState('');
   const router = useRouter();
 
@@ -36,13 +36,12 @@ export default function Header({ onRefresh, showSettings }: HeaderProps) {
     }
   };
 
-  const getNameAndProfilePicture = async () => {
+  const getUsername = async () => {
     const { data, error } = await supabaseClient
       .from('profiles')
-      .select('user_name, pfp_url')
+      .select('user_name')
       .eq('id', user?.id);
     setUsername(data?.[0]?.user_name);
-    setProfilePicture(data?.[0]?.pfp_url);
   };
 
   // Handle click outside to close dropdown
@@ -61,7 +60,7 @@ export default function Header({ onRefresh, showSettings }: HeaderProps) {
   }, [isMenuOpen]);
 
   useEffect(() => {
-    getNameAndProfilePicture();
+    getUsername();
   }, [user]);
 
   // Listen for profile updates and refresh
@@ -69,7 +68,7 @@ export default function Header({ onRefresh, showSettings }: HeaderProps) {
     if (onRefresh) {
       // Create a custom event listener for profile updates
       const handleProfileUpdate = () => {
-        getNameAndProfilePicture();
+        getUsername();
       };
 
       // Listen for custom profile update events
@@ -101,9 +100,9 @@ export default function Header({ onRefresh, showSettings }: HeaderProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14">
             <div className="flex items-center">
-              <div className="h-7 w-28 bg-gray-700 rounded animate-pulse"></div>
+              <div className="h-7 w-28 bg-custom-darkgray rounded animate-pulse"></div>
             </div>
-            <div className="h-7 w-24 bg-gray-700 rounded animate-pulse"></div>
+            <div className="h-7 w-24 bg-custom-darkgray rounded animate-pulse"></div>
           </div>
         </div>
       </header>
@@ -274,19 +273,7 @@ export default function Header({ onRefresh, showSettings }: HeaderProps) {
                       aria-controls="profile-menu"
                     >
                       <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
-                          {profilePicture ? (
-                            <img
-                              src={profilePicture}
-                              alt="Profile"
-                              className="w-8 h-8 rounded-full object-cover"
-                            />
-                          ) : (
-                            <span className="text-white font-semibold text-sm">
-                              {user.email?.charAt(0).toUpperCase() || 'U'}
-                            </span>
-                          )}
-                        </div>
+                        <ProfilePicture size="md" />
                         <svg className={`w-4 h-4 transform transition-transform duration-200 ${isMenuOpen ? 'rotate-180' : 'rotate-0'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
@@ -378,52 +365,44 @@ export default function Header({ onRefresh, showSettings }: HeaderProps) {
         </div>
 
         <nav className="space-y-3">
-          <a href="/" className="block text-white hover:text-blue-400 transition-colors">Home</a>
-          <a href="/request" className="block text-white hover:text-blue-400 transition-colors">Post Request</a>
-          <a href="/messaging" className="block text-white hover:text-blue-400 transition-colors">Messages</a>
-          <a href={`/profile/${username}`} className="block text-white hover:text-blue-400 transition-colors">Profile</a>
-          <a href="/dash" className="block text-white hover:text-blue-400 transition-colors">Dashboard</a>
-          <a href="/my-requests" className="block text-white hover:text-blue-400 transition-colors">My Requests</a>
-          <a href="/stripe" className="block text-white hover:text-blue-400 transition-colors">Stripe</a>
+          <Link href="/" className="block text-white hover:text-blue-400 transition-colors" onClick={() => setIsHamburgerOpen(false)}>Home</Link>
+          <Link href="/request" className="block text-white hover:text-blue-400 transition-colors" onClick={() => setIsHamburgerOpen(false)}>Post Request</Link>
+          <Link href="/messaging" className="block text-white hover:text-blue-400 transition-colors" onClick={() => setIsHamburgerOpen(false)}>Messages</Link>
+          <Link href={`/profile/${username}`} className="block text-white hover:text-blue-400 transition-colors" onClick={() => setIsHamburgerOpen(false)}>Profile</Link>
+          <Link href="/dash" className="block text-white hover:text-blue-400 transition-colors" onClick={() => setIsHamburgerOpen(false)}>Dashboard</Link>
+          <Link href="/my-requests" className="block text-white hover:text-blue-400 transition-colors" onClick={() => setIsHamburgerOpen(false)}>My Requests</Link>
+          <Link href="/stripe" className="block text-white hover:text-blue-400 transition-colors" onClick={() => setIsHamburgerOpen(false)}>Stripe</Link>
 
-          <a href="/help" className="block text-white hover:text-blue-400 transition-colors">Help</a>
+          <Link href="/help" className="block text-white hover:text-blue-400 transition-colors" onClick={() => setIsHamburgerOpen(false)}>Help</Link>
           {!user && (
-            <a href="/signup" className="block text-white hover:text-blue-400 transition-colors">Sign Up</a>
+            <Link href="/signup" className="block text-white hover:text-blue-400 transition-colors" onClick={() => setIsHamburgerOpen(false)}>Sign Up</Link>
           )}
         </nav>
       </div>
 
       {/* Mobile Menu */}
       <div className="sm:hidden fixed bottom-0 left-0 w-full h-16 bg-[#121212] flex items-center justify-around px-custom">
-        <a href="/" className="flex flex-col items-center">
+        <Link href="/" className="flex flex-col items-center">
           <Home className="w-6 h-6 text-white" />
           <span className="text-xs text-white mt-1">Home</span>
-        </a>
-        <a href="/messaging" className="flex flex-col items-center">
+        </Link>
+        <Link href="/messaging" className="flex flex-col items-center">
           <MessageCircle className="w-6 h-6 text-white" />
           <span className="text-xs text-white mt-1">Messages</span>
-        </a>
-        <a href="/request" className="flex flex-col items-center">
+        </Link>
+        <Link href="/request" className="flex flex-col items-center">
           <PlusSquare className="w-6 h-6 text-white" />
           <span className="text-xs text-white mt-1">Post</span>
-        </a>
-        <a href="/dash" className="flex flex-col items-center">
+        </Link>
+        <Link href="/dash" className="flex flex-col items-center">
           <LayoutDashboard className="w-6 h-6 text-white" />
           <span className="text-xs text-white mt-1">Dashboard</span>
-        </a>
+        </Link>
 
-        <a href={user ? `/profile/${username}` : "/login"} className="flex flex-col items-center">
-          {profilePicture ? (
-            <img
-              src={profilePicture}
-              alt="Profile"
-              className="w-6 h-6 rounded-full object-cover"
-            />
-          ) : (
-            <User className="w-6 h-6 text-white" />
-          )}
+        <Link href={user ? `/profile/${username}` : "/login"} className="flex flex-col items-center">
+          <ProfilePicture size="sm" />
           <span className="text-xs text-white mt-1">You</span>
-        </a>
+        </Link>
       </div>
     </>
   );

@@ -1,5 +1,4 @@
 'use client'
-import Header from '@/components/Header'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -14,8 +13,6 @@ export default function ChangePasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-
-
   useEffect(() => {
     if (!loading && !user) {
       router.push('/')
@@ -50,7 +47,6 @@ export default function ChangePasswordPage() {
   }
   return (
     <div className="min-h-screen flex items-center justify-center px-custom">
-      <Header />
       <div className="w-full max-w-md space-y-4">
         <div className="text-center">
           Enter your new password

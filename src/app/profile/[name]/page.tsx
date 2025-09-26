@@ -1,5 +1,4 @@
 'use client';
-import Header from "@/components/Header";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../../../../utils/supabaseClient";
@@ -14,8 +13,6 @@ interface ProfilePageProps {
     name: string;
   }>;
 }
-
-
 export default function ProfilePage({ params }: ProfilePageProps) {
   const [name, setName] = useState<string>('');
   const { user } = useAuth();
@@ -27,8 +24,10 @@ export default function ProfilePage({ params }: ProfilePageProps) {
   const [commissions, setCommissions] = useState<Commission[]>([]);
   const [pictures, setPictures] = useState<string[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getProfile = async (userName: string) => {
+    setIsLoading(true);
     // Fetch profile data
     const { data, error } = await supabaseClient
       .from('profiles')
@@ -42,8 +41,9 @@ export default function ProfilePage({ params }: ProfilePageProps) {
       setProfile(data);
       setProfileId(data.id);
       // Call getCommissions after profile is fetched
-      getCommissions(data.id, data);
-      getReviews(data.id, data);
+      await getCommissions(data.id, data);
+      await getReviews(data.id, data);
+      setIsLoading(false);
     }
   }
 
@@ -174,10 +174,20 @@ export default function ProfilePage({ params }: ProfilePageProps) {
     await getProfile(name);
   };
 
+  // Loading skeleton component
+  const LoadingSkeleton = () => (
+    <div className="pt-14">
+      <Banner imageSrc={null} isLoading={true} />
+    </div>
+  );
+
+  if (isLoading) {
+    return <LoadingSkeleton />;
+  }
+
   return (
     <div className="pt-14">
-      <Header onRefresh={() => getProfile(name)} showSettings={user?.id === profileId} />
-      <Banner imageSrc={profile?.banner_url || null} />
+      <Banner imageSrc={profile?.banner_url || null} isLoading={isLoading} />
       <About {...aboutProps} showSettings={user?.id === profileId} onUpdateProfile={handleProfileUpdate} onRefresh={onRefresh} />
       <div className="relative top-[-3.5rem]">
         <ProfileTabs commissions={commissions} pictures={pictures} reviews={reviews} displayName={profile?.display_name || ''} />

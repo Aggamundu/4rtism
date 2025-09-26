@@ -1,5 +1,4 @@
 "use client"
-import Header from '@/components/Header';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { supabaseClient } from '../../../utils/supabaseClient';
@@ -236,7 +235,6 @@ export default function Messaging() {
 
   return (
     <div className="rounded-lg shadow h-screen flex pt-14 pb-14 sm:pb-0">
-      <Header />
       {/* Conversations List */}
       <div className="w-1/3 border-r border-custom-gray flex flex-col h-full">
         <div className="flex-1 overflow-y-auto">

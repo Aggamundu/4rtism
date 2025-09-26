@@ -1,5 +1,4 @@
 'use client'
-import Header from '@/components/Header'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { supabaseClient } from '../../../utils/supabaseClient'
@@ -21,7 +20,6 @@ export default function ChangePasswordPage() {
   }
   return (
     <div className="min-h-screen flex items-center justify-center px-custom">
-      <Header />
       <div className="w-full max-w-md space-y-4">
         <div className="text-center">
           Enter your email to receive a password reset link
@@ -41,8 +39,6 @@ export default function ChangePasswordPage() {
           Reset Password
         </button>
       </div>
-
-
     </div>
   )
 }

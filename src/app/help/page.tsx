@@ -1,5 +1,4 @@
 "use client"
-import Header from "@/components/Header"
 import { useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast";
 import { supabaseClient } from "../../../utils/supabaseClient";
@@ -59,7 +58,6 @@ export default function Help() {
 
   return (
     <div className="flex min-h-screen pt-14">
-      <Header />
       {/* Sidebar with sections */}
       <nav className="w-64 bg-custom-darkgray px-custom hidden md:block pt-6">
         <div className="fixed">

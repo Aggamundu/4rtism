@@ -1,10 +1,11 @@
 'use client';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { useAuth } from '../../../../contexts/AuthContext';
 import { useScrollPrevention } from '../../../../hooks/useScrollPrevention';
 import Portfolio from '../portfolio-components/Portfolio';
 import Services from '../services-components/Services';
-import { useRouter } from 'next/navigation';
 
 
 interface AboutProps {
@@ -23,7 +24,8 @@ interface AboutProps {
 
 export default function About({ imageSrc, displayName, userName, bio, bannerSrc, showSettings = false, onSettingsClick, onUpdateProfile, instagram, twitter, onRefresh }: AboutProps) {
   const router = useRouter();
-    const [isExpanded, setIsExpanded] = useState(false);
+  const { user } = useAuth();
+  const [isExpanded, setIsExpanded] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
   const [showEditOverlay, setShowEditOverlay] = useState(false);
   const [showEditPortfolioOverlay, setShowEditPortfolioOverlay] = useState(false);
@@ -36,7 +38,17 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
   const [editTwitter, setEditTwitter] = useState(twitter || '');
   const [isLoading, setIsLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
+  const [googleAvatar, setGoogleAvatar] = useState('');
+  const [profilePictureLoaded, setProfilePictureLoaded] = useState(false);
   const maxLength = 0; // Characters to show before "see more"
+
+  // Helper function to get the profile picture with fallback hierarchy
+  const getProfilePicture = (): string => {
+    // Priority: database pfp -> Google avatar -> default
+    if (imageSrc) return imageSrc;
+    if (googleAvatar) return googleAvatar;
+    return '';
+  };
 
   // Update edit state when props change
   useEffect(() => {
@@ -47,6 +59,24 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
     setEditInstagram(instagram || '');
     setEditTwitter(twitter || '');
   }, [displayName, bio, imageSrc, bannerSrc, instagram, twitter]);
+
+  // Get Google avatar from user metadata if available
+  useEffect(() => {
+    if (user) {
+      const googleAvatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
+      setGoogleAvatar(googleAvatarUrl || '');
+    }
+  }, [user]);
+
+  // Set profile picture loaded state when imageSrc changes
+  useEffect(() => {
+    setProfilePictureLoaded(false);
+    const timer = setTimeout(() => {
+      setProfilePictureLoaded(true);
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [imageSrc]);
 
   // Prevent body scrolling when any overlay is open
   useScrollPrevention(showOverlay || showEditOverlay || showEditPortfolioOverlay || showEditServicesOverlay);
@@ -80,10 +110,12 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
     <>
       <div className="flex w-full flex-col items-start justify-left gap-x-6 px-custom sm:px-custom mt-[.5rem] flex-wrap">
         <div className="flex flex-row items-center gap-x-4 ">
-          {imageSrc ? (
-            <img src={imageSrc} alt="Profile" className="sm:w-[10rem] sm:h-[10rem] w-[8rem] h-[8rem] rounded-full border-2 border-custom-darkgray object-cover relative sm:top-[-6rem] top-[-4.5rem]" />
+          {!profilePictureLoaded ? (
+            <div className="sm:w-[10rem] sm:h-[10rem] w-[8rem] h-[8rem] rounded-full border-2 border-custom-darkgray bg-custom-darkgray animate-pulse relative sm:top-[-6rem] top-[-4.5rem]"></div>
+          ) : getProfilePicture() !== '' ? (
+            <img src={getProfilePicture()} alt="Profile" className="sm:w-[10rem] sm:h-[10rem] w-[8rem] h-[8rem] rounded-full border-2 border-custom-darkgray object-cover relative sm:top-[-6rem] top-[-4.5rem]" />
           ) : (
-            <div className="bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center sm:w-[10rem] sm:h-[10rem] w-[8rem] h-[8rem] rounded-full border-2 border-custom-darkgray object-cover relative sm:top-[-6rem] top-[-4.5rem]">
+            <div className="bg-custom-darkgray flex items-center justify-center sm:w-[10rem] sm:h-[10rem] w-[8rem] h-[8rem] rounded-full border-2 border-custom-darkgray object-cover relative sm:top-[-6rem] top-[-4.5rem]">
               <span className="text-white font-semibold text-lg">
                 {userName?.charAt(0).toUpperCase() || 'U'}
               </span>
@@ -200,7 +232,7 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
       {showEditServicesOverlay && (
         <Services onClose={handleCloseEditServicesOverlay} onRefresh={onRefresh} />
       )}
-      
+
     </>
   );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import Header from "../components/Header";
 import { AuthProvider } from "../contexts/AuthContext";
 import "./globals.css";
 
@@ -34,6 +35,7 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
+          <Header />
           {children}
           <Toaster position="top-center" />
         </AuthProvider>

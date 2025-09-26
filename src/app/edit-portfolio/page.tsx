@@ -1,5 +1,4 @@
 'use client';
-import Header from '@/components/Header';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { supabaseClient } from '../../../utils/supabaseClient';
@@ -36,7 +35,6 @@ export default function EditPortfolio() {
 
   return (
     <div className="">
-      <Header />
       <Portfolio
         onClose={() => {
           router.push(`/profile/${username}`);

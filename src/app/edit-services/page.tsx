@@ -1,5 +1,4 @@
 'use client';
-import Header from '@/components/Header';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { supabaseClient } from '../../../utils/supabaseClient';
@@ -26,7 +25,6 @@ export default function EditServices() {
 
   return (
     <div>
-      <Header />
       <Services
         onClose={() => {
           router.push(`/profile/${username}`);

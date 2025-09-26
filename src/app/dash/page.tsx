@@ -1,5 +1,4 @@
 'use client';
-import Header from '@/components/Header';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -47,7 +46,6 @@ export default function DashPage() {
   if (loading) {
     return (
       <div className="flex flex-col sm:flex-row pt-14">
-        <Header />
         <div className="w-full h-screen flex items-center justify-center">
           <div className="text-white">Loading...</div>
         </div>
@@ -55,14 +53,9 @@ export default function DashPage() {
     );
   }
 
-
-
   return (
     <div className="flex flex-col sm:flex-row pt-14">
-      <Header />
       {/* Desktop Sidebar */}
-
-
       {/* Main Content */}
       <div className="w-full min-h-screen">
         {/* Content Area */}

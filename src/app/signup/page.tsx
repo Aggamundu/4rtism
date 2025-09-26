@@ -1,6 +1,5 @@
 'use client'
 
-import Header from '@/components/Header'
 import { useState } from 'react'
 import { supabaseClient } from '../../../utils/supabaseClient'
 
@@ -42,8 +41,6 @@ export default function SignupPage() {
     return data?.[0]?.has_onboarded || false
   }
 
-
-
   //Logs in a user
   const handleLogin = async () => {
     setLoading(true)
@@ -79,7 +76,6 @@ export default function SignupPage() {
   //Displays the UI
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <Header />
       <div className="w-full max-w-md space-y-4">
         {/* Header */}
         <div className="text-center">
@@ -146,11 +142,7 @@ export default function SignupPage() {
               Login
             </a>
           </div>
-
-
         </div>
-
-
         {/* Test Button */}
         {/* <button
           onClick={testAuth}
