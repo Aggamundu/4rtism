@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { supabaseClient } from "../../../../utils/supabaseClient";
 import { Request } from "../../types/Types";
+import { Avatar } from "@mui/material";
 
 interface RequestDisplayPageProps {
   params: Promise<{
@@ -32,17 +33,8 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
       console.error(error);
       return;
     }
-    const requestData = {
-      id: data.id,
-      title: data.title,
-      description: data.description,
-      image_urls: data.image_urls,
-      user_id: data.user_id,
-      user_name: data.profiles.user_name,
-      pfp_url: data.profiles.pfp_url
-    } as Request
-    setRequest(requestData);
-    console.log(requestData.image_urls);
+
+    setRequest(data as Request);
   }
 
   const handleSendMessage = async () => {
@@ -82,11 +74,19 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
         Back
       </button>
       <div className="w-full max-w-md space-y-4 overflow-y-auto mt-10 sm:mt-0">
-        <div className="flex items-center gap-2 cursor-pointer"
-          onClick={() => router.push(`/profile/${request?.user_name}`)}
-        >
-          <img src={request?.pfp_url} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
-          <h2 className="text-base">{request?.user_name}</h2>
+        <div className="flex items-center gap-2">
+          <Avatar 
+            src={request?.profiles?.pfp_url}
+            sx={{ width: 32, height: 32 }}
+            className="cursor-pointer transition-all duration-200"
+            onClick={() => router.push(`/profile/${request?.profiles?.user_name}`)}
+          />
+          <h2 
+            className="text-base hover:text-custom-blue transition-all duration-200 cursor-pointer"
+            onClick={() => router.push(`/profile/${request?.profiles?.user_name}`)}
+          >
+            {request?.profiles?.user_name}
+          </h2>
         </div>
         <div className="mb-3 w-full p-3 bg-custom-darkgray border-2 border-white focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none">
           {request?.title}
@@ -114,7 +114,7 @@ export default function RequestDisplayPage({ params }: RequestDisplayPageProps) 
       <div className="mt-[2rem] max-w-md w-full flex flex-col gap-3">
         {error && <p className="text-sm text-red-500">{error}</p>}
         <textarea
-          placeholder={`Enter your message to ${request?.user_name} here`}
+          placeholder={`Enter your message to ${request?.profiles?.user_name} here`}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           className="w-full p-3 bg-custom-darkgray border-2 border-custom-lightgray focus:bg-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none"

@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { supabaseClient } from '../../utils/supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
+import { Avatar } from '@mui/material';
+import { deepOrange } from '@mui/material/colors';
 
 interface ProfilePictureProps {
   size?: 'sm' | 'md' | 'lg';
@@ -80,19 +82,30 @@ export default function ProfilePicture({
   }, [user?.id, userId]); // Only depend on user ID, not the entire user object
 
   return (
-    <div className={`${currentSize.container} rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center ${className}`}>
+    <div className={`${currentSize.container} rounded-full flex items-center justify-center ${className}`}>
       {!profilePictureLoaded && showLoading ? (
         <div className={`${currentSize.container} rounded-full bg-custom-darkgray animate-pulse`}></div>
       ) : getProfilePicture() !== '' ? (
-        <img
+        <Avatar
           src={getProfilePicture()}
           alt="Profile"
-          className={`${currentSize.container} rounded-full object-cover`}
+          sx={{
+            width: 36,
+            height: 36,
+            objectFit: 'cover'
+          }}
         />
       ) : (
-        <span className={`text-white font-semibold ${currentSize.text}`}>
-          {user?.email?.charAt(0).toUpperCase() || 'U'}
-        </span>
+        <Avatar
+          sx={{
+            width: 36,
+            height: 36,
+            bgcolor: '#f10101',
+           
+          }}
+          className="text-white"
+        >
+        </Avatar>
       )}
     </div>
   );

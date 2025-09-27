@@ -1,4 +1,5 @@
 'use client';
+import { Avatar } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -116,9 +117,14 @@ export default function About({ imageSrc, displayName, userName, bio, bannerSrc,
             <img src={getProfilePicture()} alt="Profile" className="sm:w-[10rem] sm:h-[10rem] w-[8rem] h-[8rem] rounded-full border-2 border-custom-darkgray object-cover relative sm:top-[-6rem] top-[-4.5rem]" />
           ) : (
             <div className="bg-custom-darkgray flex items-center justify-center sm:w-[10rem] sm:h-[10rem] w-[8rem] h-[8rem] rounded-full border-2 border-custom-darkgray object-cover relative sm:top-[-6rem] top-[-4.5rem]">
-              <span className="text-white font-semibold text-lg">
-                {userName?.charAt(0).toUpperCase() || 'U'}
-              </span>
+              <Avatar
+                sx={{ width: '8rem', height: '8rem', '@media (min-width: 640px)': { width: '10rem', height: '10rem' },
+                bgcolor: '#f10101',
+                border: '2px solid #1e1e1e'
+              }}
+                className="text-white"
+              >
+              </Avatar>
             </div>
           )}
           {showSettings && (

@@ -46,7 +46,15 @@ export default function Home() {
 
   const fetchRequests = async () => {
     setIsLoading(true);
-    const { data, error } = await supabaseClient.from('requests').select('*');
+    const { data, error } = await supabaseClient
+      .from('requests')
+      .select(`
+        *,
+        profiles(
+          user_name,
+          pfp_url
+        )
+      `);
     if (error) {
       console.error(error)
     } else {

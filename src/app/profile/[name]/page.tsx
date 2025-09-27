@@ -7,6 +7,7 @@ import { Commission, Option, Question, Review } from "../../types/Types";
 import About from "./components/About";
 import Banner from "./components/Banner";
 import ProfileTabs from "./components/ProfileTabs";
+import { Avatar } from "@mui/material";
 
 interface ProfilePageProps {
   params: Promise<{
