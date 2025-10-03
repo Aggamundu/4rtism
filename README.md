@@ -1,4 +1,3 @@
-# Hello MLH!
 ## 4rtism - A platform for artists and art-enjoyers to find each other
 
 ## Table of Contents
