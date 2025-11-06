@@ -381,7 +381,7 @@ export default function Header({ onRefresh, showSettings }: HeaderProps) {
       </div>
 
       {/* Mobile Menu */}
-      <div className="sm:hidden fixed bottom-0 left-0 w-full h-16 bg-[#121212] flex items-center justify-around px-custom">
+      <div className="sm:hidden fixed bottom-0 left-0 w-full h-16 bg-[#121212] flex items-center justify-around px-custom z-50">
         <Link href="/" className="flex flex-col items-center">
           <Home className="w-6 h-6 text-white" />
           <span className="text-xs text-white mt-1">Home</span>
