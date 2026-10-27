@@ -19,7 +19,8 @@
 2. To allow art-enjoyers to view and contact artists willing to work with them
 3. To provide a cheaper alternative to other art commission websites
 ## Usage
-- The website is currently deployed with Vercel [at this link](https://art-commission-cdcaev0fq-aggamundus-projects.vercel.app)
+- ~~The website is currently deployed with Vercel [at this link](https://art-commission-cdcaev0fq-aggamundus-projects.vercel.app)~~
+- 4rtism is no longer hosteed. The live site was discontinued due to inactivity, but it can still be run locally
   
 To run the app for development  
 1. Clone this repo
